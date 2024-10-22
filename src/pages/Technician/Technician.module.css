@@ -1,0 +1,35 @@
+.technician {
+    width: auto;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: start;
+    padding: 2rem 2rem;
+}
+
+.mainContent {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    gap: 1rem;
+}
+
+.calendarParent {
+    margin-top: 1rem;
+    border-radius: 5px;
+    width: 100%;
+    height: auto;
+    background-color: white;
+    padding: 1rem;
+}
+
+.displayTechnicians {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}

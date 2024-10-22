@@ -1,0 +1,43 @@
+.userstable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.userstable th,
+.userstable td {
+  padding: 5px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  height: 100%;
+  background-color: white;
+  
+}
+
+.userstable th {
+  background-color: #fffaf1;
+  color: #424242;
+   margin: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 10px; /* Space between buttons */
+  justify-content: center; /* Center the buttons */
+  
+ 
+}
+.hidetext{
+   -webkit-text-security: disc; 
+}
+  
+
+@media (max-width: 768px) {
+  .userstable {
+      font-size: 14px; /* Slightly smaller font size for smaller screens */
+  }
+
+  .userstable th,
+  .userstable td {
+      padding: 8px; /* Less padding on smaller screens */
+  }
+}

@@ -1,0 +1,74 @@
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.profileTrigger {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dropdownMenu {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: white;
+  padding: 0.5rem;
+  min-width: 160px;
+  border-radius: 4px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdownItem {
+  padding: 10px 20px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  color: black;
+  white-space: nowrap;
+}
+
+.dropdownItem img {
+  margin-right: 8px;
+  height: 21px;
+  width: auto;
+}
+
+.dropdownItem:hover {
+  background-color: #f1f1f1;
+  border-radius: 6px;
+}
+
+.logoutButton {
+  display: flex;
+  align-items: center;
+  color: #EF3939;
+}
+
+.historyButton {
+  display: flex;
+  align-items: center;
+  color: black;
+}
+
+.myProfileButton {
+  display: flex;
+  align-items: center;
+  color: black;
+}
+
+.profileImage{
+  padding: 5px;
+}
+
+.profileImage:hover{
+  display: flex;
+  cursor: pointer;
+  background-color: rgba(240, 149, 59, 0.29);
+  border-radius: 50%;
+  padding: 5px;
+}

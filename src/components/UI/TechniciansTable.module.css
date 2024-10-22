@@ -1,0 +1,51 @@
+
+.technicianstable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.technicianstable th,
+.technicianstable td {
+    padding: 5px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    height: 100%;
+    background-color: white;
+}
+
+.technicianstable th {
+    background-color: #fffaf1;
+  color: #424242;
+   margin: 0;
+}
+
+.technicianstable tr:hover {
+    background-color: #f1f1f1; /* Light background on row hover */
+}
+
+.actions {
+  display: flex;
+  gap: 10px; /* Space between buttons */
+  justify-content: center; /* Center the buttons */
+}
+.AddButton{
+    color:green;
+
+}
+.CancelButton{
+    color: red;
+}
+
+
+
+/* Optional: Responsive styles for smaller screens */
+@media (max-width: 768px) {
+    .technicianstable {
+        font-size: 14px; /* Slightly smaller font size for smaller screens */
+    }
+
+    .technicianstable th,
+    .technicianstable td {
+        padding: 8px; /* Less padding on smaller screens */
+    }
+}

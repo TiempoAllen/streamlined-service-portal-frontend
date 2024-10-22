@@ -1,0 +1,217 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 2rem;
+    background-color: #631C21;
+    border-bottom: solid 0.25rem #F0953B;
+    box-sizing: border-box;
+    /* position: fixed;
+    width: 100vw; */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    height: 3rem;
+    width: auto;
+}
+
+.logo p,
+li {
+    font-size: 1rem;
+    color: #ffffff;
+}
+
+.list {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 2.5rem;
+}
+
+.list li {
+    list-style: none;
+    cursor: pointer;
+}
+
+.list a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 16px;
+    padding: 0.25rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.list a:hover,
+.list a.active {
+    /* color: #F0953B; */
+    border-radius: 18px;
+    background-color: #9C3338;
+}
+
+/* .list a:hover .icon,
+.list a.active .icon {
+    filter: brightness(0) saturate(100%) invert(67%) sepia(73%) saturate(843%) hue-rotate(331deg) brightness(97%) contrast(94%);
+} */
+
+.buttons {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.buttons img {
+    height: 27px;
+    width: auto;
+}
+
+.buttons p {
+    margin: 0;
+    cursor: pointer;
+}
+
+.header button {
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+
+}
+
+.btnSignIn {
+    border-color: #9C3338;
+    border-style: solid;
+    color: #e6e6e6;
+}
+
+.btnSignUp {
+    background-color: #9C3338;
+    color: #e6e6e6
+}
+
+.icon {
+    width: auto;
+    height: 24px;
+}
+
+.bellNotification {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background-color: white;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    z-index: 1000;
+    /* ensure it appears above other elements */
+}
+
+.bellNotification header {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.bellNotification h3 {
+    margin: 0;
+}
+
+.bellNotification ul {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.bellNotification ul li {
+    padding: 0.5rem;
+    list-style: none;
+    background-color: white;
+    color: black;
+    border-bottom: solid 1px rgb(177, 177, 177);
+}
+
+.bellNotification ul li .message {
+    font-weight: bold;
+}
+
+.badgeContainer {
+    color: white;
+    display: inline-block;
+    position: relative;
+    padding: 2px 5px;
+}
+
+.badge {
+    /* circle shape, size and position */
+    position: absolute;
+    right: -0.3em;
+    top: -0.5em;
+    min-width: 1.6em;
+    /* or width, explained below. */
+    height: 1.6em;
+    border-radius: 100px;
+    /* or 50%, explained below. */
+    background-color: #fa3e3e;
+
+    /* number size and position */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+    color: white;
+}
+
+.TabsRoot {
+    margin-top: 1rem;
+}
+
+.TabsList {
+    display: flex;
+    gap: 1rem;
+    border-bottom: solid 1px rgb(177, 177, 177);
+}
+
+.TabsTrigger {
+    font-family: inherit;
+    background-color: white;
+    padding: 0 20px;
+    height: 45px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    line-height: 1;
+    color: var(--mauve-11);
+    user-select: none;
+}
+
+.TabsTrigger:first-child {
+    border-top-left-radius: 6px;
+}
+
+.TabsTrigger:last-child {
+    border-top-right-radius: 6px;
+}
+
+.TabsTrigger:hover {
+    color: black;
+}
+
+.TabsTrigger[data-state="active"] {
+    border-bottom: solid 1px black;
+}
+
+.TabsTrigger:focus {
+    position: relative;
+}

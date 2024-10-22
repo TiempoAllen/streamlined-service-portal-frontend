@@ -1,0 +1,15 @@
+
+.selectAreaSuper {
+    width: 100%;
+    display: flex;
+  }
+  
+  .selectAreaSuper h1 {
+    color: #424242;
+    font-size: 2rem;
+    margin: 0;
+  }
+  
+  .selectAreaSuper select {
+    margin-left: auto;
+  }

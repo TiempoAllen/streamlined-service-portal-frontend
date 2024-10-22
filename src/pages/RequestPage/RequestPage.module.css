@@ -1,0 +1,155 @@
+.request {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.request .main {
+    display: flex;
+    flex-direction: column;
+    /* border: 1px solid #848484; */
+    border-radius: 10px;
+    padding: 1.5rem;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    min-width: 80vw;
+    width: auto;
+}
+
+.request .main h1 {
+    margin-top: 0;
+    color: #424242;
+}
+
+.request form {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 1rem;
+
+}
+
+.request .submitBtn {
+    cursor: pointer;
+}
+
+.request form .inputs {
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    width: 100%;
+    gap: 1rem;
+}
+
+.request form .firstHalf {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 80%;
+}
+
+.request form .firstHalf div {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.request form .firstHalf div span {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.request form .secondHalf {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.request form .secondHalf span {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.request .fileUpload {
+    display: flex;
+    justify-content: start;
+    gap: 1rem;
+}
+
+.request .fileUpload .fileArea {
+    width: auto;
+    border: solid 1px #848484;
+    height: auto;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.request .fileUpload .fileArea p {
+    cursor: pointer;
+}
+
+.request .fileUpload .fileArea p:hover {
+    color: #89343B;
+}
+
+.request .fileUpload .imageUpload {}
+
+.request .fileUpload .deleteIcon img {
+    height: 2rem;
+    width: auto;
+    background-color: #89343B;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.request .imageUpload input {
+    display: none;
+}
+
+.request .imageUpload label img {
+    height: 2rem;
+    width: auto;
+    background-color: #399918;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.request form label {
+    font-size: 1rem;
+    color: #848484;
+    font-weight: bold;
+}
+
+.request form input,
+textarea {
+    padding: 0.5rem;
+    border: 1px solid #848484;
+    font-size: 1rem;
+    border-radius: 5px;
+}
+
+.request form input[type=text]:disabled {
+    background-color: #dddddd;
+}
+
+.request form button {
+    padding: 1rem;
+    color: #e6e6e6;
+    background-color: rgba(154, 35, 35);
+    border-radius: 5px;
+    border: 1px solid #e6e6e6;
+    font-size: 1.2rem;
+    width: auto;
+}
+
+.submitBtn:hover{
+    background-color: rgb(183, 45, 45);
+}

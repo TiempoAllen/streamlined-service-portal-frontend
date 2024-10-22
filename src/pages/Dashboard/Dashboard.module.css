@@ -1,0 +1,300 @@
+.main {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 2rem;
+}
+
+  .cardBox{
+    position: relative;
+    width: 100%;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  
+  
+  .cardBox .card {
+    position: relative;
+    background-color: #FFFAF1;
+    padding: 25px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cardBox .card .requestsNumber{
+    position: relative;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: rgb(42, 38, 38);
+  }
+  
+  .cardBox .card .name{
+    color: #667085;
+    font-weight: medium;
+    font-size: 14px;
+  }
+  
+  .cardBox .card .icon{
+    font-size: 3.5rem;
+    color: black;
+  }
+  
+  .cardBox .card:hover{
+    background: #BC4A4D;
+  }
+  
+  .cardBox .card:hover .name,
+  .cardBox .card:hover .icon,
+  .cardBox .card:hover .requestsNumber{
+    color:white
+  }
+  
+  
+  .details{
+    position: relative;
+    width: 100%;
+    padding: 10px;
+    margin-left: 10px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+  }
+  
+  .details .tableDashboard{
+    position: relative;
+    display:grid;
+    min-height: 200px;
+    background:#FFFAF1;
+    padding: 20px;
+    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+  }
+  
+  .details .cardHeader{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .cardHeader h2{
+    font-weight: 500;
+  }
+  
+  .cardHeader .btn{
+    position: relative;
+    padding: 5px 10px;
+    text-decoration-line: none;
+    color: rgb(255, 255, 255);
+    background-color: #BC4A4D;
+    border-radius: 4px;
+    top: 20px;
+  }
+  
+  .cardHeader .btn:hover{
+    color: rgb(255, 255, 255);
+    background-color: rgb(218, 101, 101);
+    cursor: pointer;
+  }
+  
+  .details table{
+    width: 100%;
+    border-collapse: separate;
+    margin-top: 1px;
+    
+  }
+  
+  .details table thead td{
+    font-weight: 600;
+  }
+  
+  .details .tableDashboard table tr{
+    color: black;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .details .tableDashboard table tr:last-child{
+    border-bottom: none;
+  }
+  
+  .details .tableDashboard table tbody tr:hover{
+    background-color: #a7a1bd;
+    color:#BC4A4D;
+  }
+  
+  .details .tableDashboard table tr td{
+    padding: 20px;
+  }
+.cardBox {
+  position: relative;
+  width: 1150px;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+
+.cardBox .card {
+  position: relative;
+  background-color: #FFFAF1;
+  padding: 25px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cardBox .card .requestsNumber {
+  position: relative;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: rgb(42, 38, 38);
+}
+
+.cardBox .card .name {
+  color: #667085;
+  font-weight: medium;
+  font-size: 14px;
+}
+
+.cardBox .card .icon {
+  font-size: 3.5rem;
+  color: black;
+}
+
+.cardBox .card:hover {
+  background: #BC4A4D;
+}
+
+.cardBox .card:hover .name,
+.cardBox .card:hover .icon,
+.cardBox .card:hover .requestsNumber {
+  color: white
+}
+
+
+.details {
+  position: relative;
+  width: 96%;
+  padding: 10px;
+  margin-left: 10px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 25px;
+}
+
+.details .tableDashboard {
+  position: relative;
+  display: grid;
+  min-height: 200px;
+  background: #FFFAF1;
+  padding: 20px;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+}
+
+.details .cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.cardHeader h2 {
+  font-weight: 500;
+}
+
+.cardHeader .btn {
+  position: relative;
+  padding: 5px 10px;
+  text-decoration-line: none;
+  color: rgb(255, 255, 255);
+  background-color: #BC4A4D;
+  border-radius: 4px;
+  top: 20px;
+}
+
+.cardHeader .btn:hover {
+  color: rgb(255, 255, 255);
+  background-color: rgb(218, 101, 101);
+}
+
+.details table {
+  width: 100%;
+  border-collapse: separate;
+  margin-top: 1px;
+
+}
+
+.details table thead td {
+  font-weight: 600;
+}
+
+.details .tableDashboard table tr {
+  color: black;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.details .tableDashboard table tr:last-child {
+  border-bottom: none;
+}
+
+.details .tableDashboard table tbody tr:hover {
+  background-color: #a7a1bd;
+  color: #BC4A4D;
+}
+
+.details .tableDashboard table tr td {
+  padding: 20px;
+}
+
+.calendarContainer {
+  position: relative;
+  display: grid;
+  padding: 20px;
+  width: 350px;
+  background: #FFFAF1;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+}
+
+
+.react-calendar {
+  background: rgb(122, 23, 23);
+  border: 1px solid #a0a096;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.125em;
+}
+
+.react-calendar__navigation button {
+  color: #000000;
+  border-radius: 20px;
+}
+
+.react-calendar__navigation button:disabled {
+  background-color: #f0f0f0;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #e00000;
+}
+
+.react-calendar__tile {
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.react-calendar__tile--active {
+  background: #6f48eb;
+  color: rgb(214, 50, 50);
+  border-radius: 20px;
+}

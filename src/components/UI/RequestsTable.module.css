@@ -1,0 +1,31 @@
+.requestsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.requestsTable th,
+.requestsTable td {
+  padding: 3.5px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  background-color: white;
+ 
+}
+
+.requestsTable th {
+  background-color: #fffaf1;
+  color: #424242;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: center; /* Centers the actions horizontally */
+  align-items: center; /* Aligns actions vertically */
+  gap: 10px; /* Space between icons */
+  height: 80px; /* Ensures the .actions cell fills the row's height */
+}
+
+.requestsTable td {
+  vertical-align: middle; /* Ensures content in other cells is vertically centered */
+}

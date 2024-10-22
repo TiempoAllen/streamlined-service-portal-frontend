@@ -1,0 +1,41 @@
+.table {
+    display: table;
+    border-collapse: separate;
+    border-spacing: 0 1rem;
+    color: #424242;
+    width: 100%;
+}
+
+.table tbody {
+    width: 100%;
+}
+
+tr td:first-child {
+    /* border-left: 1px solid #424242; */
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+tr td:last-child {
+    /* border-right: 1px solid #424242; */
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+td {
+    /* border-top: 0.25px solid #424242;
+    border-bottom: 0.25px solid #424242; */
+    /* width: 100%; */
+    font-size: 1rem;
+    padding: 1rem 1rem;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* cursor: pointer; */
+}
+
+.assign {}
+
+/* .namePhone {
+    display: flex;
+    flex-direction: ;
+} */

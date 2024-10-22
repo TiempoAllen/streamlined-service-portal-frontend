@@ -1,0 +1,154 @@
+/* UserDialogPortal.module.css */
+
+.DialogOverlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+  }
+  
+  .DialogContent {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0px 10px 38px -10px rgba(22, 23, 24, 0.35),
+      0px 10px 20px -15px rgba(22, 23, 24, 0.2);
+    padding: 25px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    max-width: 450px;
+    z-index: 9999;
+  }
+  
+  .DialogTitle {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .Fieldset {
+    all: unset;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .Label {
+    font-size: 14px;
+    width: 120px;
+    color: #333;
+  }
+  
+  .Input {
+    all: unset;
+    box-shadow: 0 0 0 1px #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 100%;
+    color: #333;
+    background-color: #f9f9f9;
+    outline: none;
+  }
+  
+  .Input:read-only {
+    background-color: #e9ecef;
+  }
+  
+  .CloseButton,
+  .IconButton {
+    font-family: inherit;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    background-color: #dc3545;
+    cursor: pointer;
+  }
+  .AddButton{
+    background-color: #28a745;
+    font-family: inherit;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+  }
+  
+  
+  .SaveButton {
+    background-color: #28a745;
+    font-family: inherit;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .CancelButton {
+    background-color: #dc3545;
+  }
+  
+  .CloseButton {
+    background-color: #dc3545;
+  }
+  
+  .CloseButton:hover,
+  .SaveButton:hover,
+  .CancelButton:hover {
+    opacity: 0.9;
+  }
+  .DeleteConfirmation {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .DeleteButton {
+    background-color: #dc3545;
+    font-family: inherit;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .CancelButton {
+    background-color: #6c757d;
+    font-family: inherit;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .ButtonGroup {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    justify-content: space-between;
+  }
+  .Error{
+    color:red;
+    margin-bottom:  15px;
+  }
+
+  .Success{
+    margin-bottom: 15px;
+  }
