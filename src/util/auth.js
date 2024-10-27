@@ -1,5 +1,8 @@
-import { redirect } from "react-router-dom";
 import axios from "axios";
+import { redirect } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 export const getAuthToken = () => {
   const token = localStorage.getItem("token");
@@ -94,11 +97,10 @@ export const submitRegistration = async (formData) => {
 
   try {
     const response = await axios.post(
-      "http://localhost:8080/user/add",
-      registerData
+      `${API_URL}/user/add`,registerData
     );
 
-    if (response.status !== 200) {
+    if (response.status !== 200) { 
       throw new Error("Could not register user.");
     }
 
@@ -126,12 +128,12 @@ export const loadRequestsAndTechnicians = async () => {
     }
 
     const [requestsResponse, techniciansResponse] = await Promise.all([
-      axios.get("http://localhost:8080/request/getAllRequest", {
+      axios.get(`${API_URL}/request/getAllRequest`, {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },
       }),
-      axios.get("http://localhost:8080/technician/getAllTechnician", {
+      axios.get(`${API_URL}/technician/getAllTechnician`, {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },

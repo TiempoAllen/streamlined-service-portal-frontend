@@ -1,14 +1,17 @@
+import axios from "axios";
 import React from "react";
-import loginImage from "../../assets/login-image.png";
-import classes from "./Login.module.css";
 import {
   Form,
   json,
   redirect,
-  useNavigate,
   useActionData,
+  useNavigate,
 } from "react-router-dom";
-import axios from "axios";
+import loginImage from "../../assets/login-image.png";
+import classes from "./Login.module.css";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 const Login = () => {
   const errorMessage = useActionData();
@@ -58,7 +61,7 @@ export async function action({ request }) {
 
   try {
     const response = await axios.post(
-      "http://localhost:8080/user/login",
+      `${API_URL}/user/login`,
       authData
     );
 

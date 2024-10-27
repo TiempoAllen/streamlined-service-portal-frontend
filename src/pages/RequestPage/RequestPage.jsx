@@ -1,11 +1,14 @@
-import React, { useRef, useState } from "react";
-import classes from "./RequestPage.module.css";
-import { Form, json, redirect, useRouteLoaderData } from "react-router-dom";
-import uploadIcon from "../../assets/upload-icon.svg";
-import deleteIcon from "../../assets/delete-button.svg";
-import axios from "axios";
 import * as Dialog from "@radix-ui/react-dialog";
+import axios from "axios";
+import React, { useRef, useState } from "react";
+import { Form, json, redirect, useRouteLoaderData } from "react-router-dom";
+import deleteIcon from "../../assets/delete-button.svg";
+import uploadIcon from "../../assets/upload-icon.svg";
 import FileModal from "../../components/UI/FileModal";
+import classes from "./RequestPage.module.css";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 const RequestPage = () => {
   const user = useRouteLoaderData("home");
@@ -168,7 +171,7 @@ export const action = async ({ request, params }) => {
 
   try {
     const response = await axios.post(
-      "http://localhost:8080/request/add",
+      `${API_URL}/request/add`,
       requestData,
       {
         headers: {

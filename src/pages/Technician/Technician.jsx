@@ -1,13 +1,15 @@
-import React, { useState } from "react";
-import classes from "./Technician.module.css";
-import SelectArea from "../../components/UI/SelectArea";
-import { getAuthToken } from "../../util/auth";
-import axios from "axios";
-import { Outlet, useNavigate, useRouteLoaderData } from "react-router-dom";
-import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import AssignButtonRenderer from "../../components/UI/AssignButtonRenderer";
+import { AgGridReact } from "ag-grid-react";
+import axios from "axios";
+import React, { useState } from "react";
+import { Outlet, useNavigate, useRouteLoaderData } from "react-router-dom";
+import SelectArea from "../../components/UI/SelectArea";
+import { getAuthToken } from "../../util/auth";
+import classes from "./Technician.module.css";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 const Technician = () => {
   const data = useRouteLoaderData("technician");
@@ -89,7 +91,7 @@ export const loader = async ({ params }) => {
 
   try {
     const response = await axios.get(
-      "http://localhost:8080/technician/getAllTechnician",
+      `${API_URL}/technician/getAllTechnician`,
       {
         // headers: {
         //   Authorization: `Bearer ${token}`,

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import classes from "./Dashboard.module.css";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { useRouteLoaderData } from "react-router-dom";
-import { getAuthToken } from "../../util/auth";
-import axios from "axios";
+import classes from "./Dashboard.module.css";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 const Dashboard = () => {
   const [date, setDate] = useState(new Date());
@@ -20,7 +21,7 @@ const Dashboard = () => {
     const fetchRequest = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/request/getAllRequest"
+          `${API_URL}/request/getAllRequest`
         );
         setRequest(response.data);
         setIsLoading(false);

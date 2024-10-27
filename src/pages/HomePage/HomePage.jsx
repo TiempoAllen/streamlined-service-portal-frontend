@@ -1,9 +1,12 @@
-import React from "react";
-import homepageImage from "../../assets/homepage-image.png";
-import classes from "./HomePage.module.css";
 import axios from "axios";
+import React from "react";
 import { json, useRouteLoaderData } from "react-router-dom";
+import homepageImage from "../../assets/homepage-image.png";
 import Dashboard from "../Dashboard/Dashboard";
+import classes from "./HomePage.module.css";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 const HomePage = () => {
   const user = useRouteLoaderData("home");
@@ -43,7 +46,7 @@ export async function loader({ request, params }) {
   }
 
   try {
-    const response = await axios.get(`http://localhost:8080/user/${user_id}`, {
+    const response = await axios.get(`${API_URL}/user/${user_id}`, {
       // headers: {
       //   Authorization: `Bearer ${token}`,
       // },

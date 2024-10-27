@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react";
-import classes from "./RequestDialogPortal.module.css";
+import AddIcon from "@mui/icons-material/Add";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import DeleteIcon from "@mui/icons-material/Delete";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import MessagePortal from "./MessagePortal";
+import classes from "./RequestDialogPortal.module.css";
 import TechnicianPortal from "./TechnicianPortal";
-import DeleteIcon from "@mui/icons-material/Delete";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 const formatDateTime = (datetime) => {
   const date = new Date(datetime);
@@ -36,7 +39,7 @@ const RequestDialogPortal = ({
 
   const fetchRequestById = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:8080/request/${id}`);
+      const response = await axios.get(`${API_URL}/request/${id}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching request by ID:", error);
@@ -60,7 +63,7 @@ const RequestDialogPortal = ({
   const removeTechnician = async (request_id) => {
     try {
       await axios.post(
-        `http://localhost:8080/request/removeTechnician?request_id=${request_id}`
+        `${API_URL}/request/removeTechnician?request_id=${request_id}`
       );
       const updatedRequest = await fetchRequestById(request_id);
       setTechAssigned(updatedRequest.technician); // Update technician info
@@ -82,7 +85,7 @@ const RequestDialogPortal = ({
       const formattedEndTime = new Date(endTime).toISOString();
 
       await axios.post(
-        `http://localhost:8080/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&startTime=${formattedStartTime}&endTime=${formattedEndTime}`
+        `${API_URL}/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&startTime=${formattedStartTime}&endTime=${formattedEndTime}`
       );
       setTechAssigned(tech_id);
 

@@ -1,10 +1,12 @@
-import { React, useState, useRef, useEffect } from "react";
+import axios from "axios";
+import { React, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import bellIcon from "../../assets/bell.svg";
 import { formatDateTime } from "../../util/auth";
-import profileImg from "../../assets/profile.jpg";
 import classes from "./Notification.module.css";
-import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 const timeDifference = (timestamp) => {
   const now = new Date();
@@ -43,7 +45,7 @@ const Notification = ({ user_id }) => {
     try {
       // Fetch the user's notifications from the backend using the user_id
       const response = await axios.get(
-        `http://localhost:8080/notifications/${user_id}`
+        `${API_URL}/notifications/${user_id}`
       );
       console.log(response.data);
 
