@@ -21,7 +21,6 @@ const History = () => {
   const requests = useLoaderData();
   const navigate = useNavigate();
   const { user_id } = useParams();
-  console.log(requests);
 
   const sortedRequests = requests.sort(
     (a, b) => new Date(b.timestamp) - new Date(a.timestamp)

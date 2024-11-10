@@ -50,11 +50,9 @@ const RequestDialogPortal = ({
       if (updatedRequest) {
         setTechAssigned(updatedRequest.technicianId);
       }
-      console.log("Tech Assigned", techAssigned);
     };
 
     fetchData();
-    console.log("Technicians: ", technicians);
   }, [request.request_id]);
 
   const removeTechnician = async (request_id) => {
@@ -132,7 +130,7 @@ const RequestDialogPortal = ({
                   disabled
                 />
               </fieldset>
-              <fieldset className={classes.Fieldset}>
+              {/* <fieldset className={classes.Fieldset}>
                 <label className={classes.Label} htmlFor="name">
                   Start Date and Time
                 </label>
@@ -142,8 +140,8 @@ const RequestDialogPortal = ({
                   defaultValue={formatDateTime(request.startTime)}
                   disabled
                 />
-              </fieldset>
-              <fieldset className={classes.Fieldset}>
+              </fieldset> */}
+              {/* <fieldset className={classes.Fieldset}>
                 <label className={classes.Label} htmlFor="name">
                   End Date and Time
                 </label>
@@ -153,7 +151,7 @@ const RequestDialogPortal = ({
                   defaultValue={formatDateTime(request.endTime)}
                   disabled
                 />
-              </fieldset>
+              </fieldset> */}
               <fieldset className={classes.Fieldset}>
                 <label className={classes.Label} htmlFor="name">
                   Attachment

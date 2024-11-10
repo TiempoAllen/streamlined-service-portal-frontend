@@ -23,13 +23,15 @@ import TechnicianSchedule from "./pages/Technician/TechnicianSchedule";
 import RecordDetails from "./pages/Record/RecordDetails";
 import History, { loader as historyLoader } from "./pages/History/History";
 import DetailsModal from "./components/UI/DetailsModal";
+import LandingPage from "./pages/LandingPage/LandingPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <LoginLayout />,
     children: [
-      { index: true, element: <Login />, action: loginAction },
+      { index: true, element: <LandingPage /> },
+      { path: "login", element: <Login />, action: loginAction },
       { path: "register", element: <Register /> },
     ],
   },

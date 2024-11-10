@@ -32,8 +32,6 @@ export const checkAuthLoader = () => {
   return null;
 };
 
-
-
 export const submitRegistration = async (formData) => {
   const {
     firstname,
@@ -105,15 +103,49 @@ export const submitRegistration = async (formData) => {
     return { success: true };
   } catch (error) {
     console.error("Error: ", error.response?.data || error.message);
-    
+
     if (error.response && error.response.data === "Email already exists") {
       return { success: false, message: "Email already exists" };
     }
-    if (error.response && error.response.data === "Employee ID already exists") {
+    if (
+      error.response &&
+      error.response.data === "Employee ID already exists"
+    ) {
       return { success: false, message: "Employee ID already exists" };
     }
-    
+
     return { success: false, message: "Could not register user." };
+  }
+};
+
+export const loadUserAndRequests = async (user_id) => {
+  try {
+    const token = getAuthToken();
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const [userResponse, requestsResponse] = await Promise.all([
+      axios.get(`http://localhost:8080/user/${user_id}`, {
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
+      }),
+      axios.get("http://localhost:8080/request/getAllRequest", {
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
+      }),
+    ]);
+
+    return {
+      user: userResponse.data,
+      requests: requestsResponse.data,
+    };
+  } catch (error) {
+    console.error("Error occurred while fetching data:", error);
+    throw error;
   }
 };
 

@@ -6,12 +6,14 @@ import { Link } from "react-router-dom";
 const LoginHeader = () => {
   return (
     <header className={classes.header}>
-      <div className={classes.logo}>
-        <img src={cituLogo} alt="citu-logo" />
-        <p>Streamlined Service Portal</p>
-      </div>
+      <Link to="/">
+        <div className={classes.logo}>
+          <img src={cituLogo} alt="citu-logo" />
+          <p>Streamlined Service Portal</p>
+        </div>
+      </Link>
       <div className={classes.buttons}>
-        <Link to="/">
+        <Link to="/login">
           <button className={classes.btnSignIn}>Sign in</button>
         </Link>
         <Link to="/register">

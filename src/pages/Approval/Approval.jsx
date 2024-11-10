@@ -12,9 +12,7 @@ import RequestDialogPortal from "../../components/UI/RequestDialogPortal";
 
 const Approval = () => {
   const { requests: initialRequests, technicians } = useLoaderData();
-  console.log("Requests", initialRequests);
 
-  // Manage the `requests` state, not just `rowData`
   const [requests, setRequests] = useState(initialRequests);
   const [filter, setFilter] = useState("Pending");
   const [rowData, setRowData] = useState(
