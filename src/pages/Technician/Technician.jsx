@@ -7,7 +7,7 @@ import { Outlet, useNavigate, useRouteLoaderData } from "react-router-dom";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import AssignButtonRenderer from "../../components/UI/AssignButtonRenderer";
+import { LOCAL_ENV } from "../../util/auth";
 
 const Technician = () => {
   const data = useRouteLoaderData("technician");
@@ -89,7 +89,7 @@ export const loader = async ({ params }) => {
 
   try {
     const response = await axios.get(
-      "http://localhost:8080/technician/getAllTechnician",
+      `${LOCAL_ENV}/technician/getAllTechnician`,
       {
         // headers: {
         //   Authorization: `Bearer ${token}`,

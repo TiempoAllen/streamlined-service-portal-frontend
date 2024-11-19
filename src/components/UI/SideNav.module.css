@@ -1,11 +1,10 @@
-
 .sideNav {
   display: flex;
   width: 235px;
   background-color: #631C21;
   padding: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  
+
   /* height: 700px; */
   /* height: 836px; */
   /* height: 110.9vh; */
@@ -30,12 +29,20 @@
   text-align: center;
 }
 
-.link{
+.link {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 18px;
   border-radius: 5px;
+}
+
+.maintenance {
+  cursor: pointer;
+}
+
+.subMenu {
+  margin-left: 1rem;
 }
 
 
@@ -48,7 +55,8 @@
   margin: 10px 0;
 }
 
-.sideNav a {
+.sideNav a,
+.maintenance {
   text-decoration: none;
   color: #ffffff;
   font-size: 16px;
@@ -64,7 +72,7 @@
 
 .sideNav a.active {
   font-weight: bold;
-  background-color: rgba(240, 149, 59, 0.29); 
+  background-color: rgba(240, 149, 59, 0.29);
   border-radius: 5px;
   width: 205px;
   /* margin-left: 0; */
@@ -76,23 +84,22 @@
   height: 100%;
   background-color: rgb(240, 149, 59);
   border-radius: 5px;
-  position: absolute; 
-  left: 0; 
-  top: 0; 
+  position: absolute;
+  left: 0;
+  top: 0;
 } */
 
 
 
-.sideNav a:hover{
+.sideNav a:hover {
   font-weight: bold;
-  background-color: rgba(240, 149, 59, 0.29); 
+  background-color: rgba(240, 149, 59, 0.29);
   border-radius: 5px;
   width: 205px;
 
 }
 
-.icon{
+.icon {
   width: auto;
   height: 24px;
 }
-

@@ -3,16 +3,23 @@ import * as Dialog from "@radix-ui/react-dialog";
 import classes from "./RequestDetailsPortal.module.css";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { LOCAL_ENV } from "../../util/auth";
 
 const RequestDetailsPortal = ({ request_id }) => {
   const [request, setRequest] = useState({});
   const [user, setUser] = useState({});
+  const navigate = useNavigate();
 
   const requestor = `${request.user_firstname} ${request.user_lastname}`;
 
+  const handleResubmit = () => {
+    navigate(`resubmit/${request_id}`, { state: { request } });
+  };
+
   const getUserById = async (user_id) => {
     try {
-      const response = await axios.get(`http://localhost:8080/user/${user_id}`);
+      const response = await axios.get(`${LOCAL_ENV}/user/${user_id}`);
       setUser(response.data);
     } catch (error) {
       console.error(error);
@@ -21,9 +28,7 @@ const RequestDetailsPortal = ({ request_id }) => {
 
   const getRequestById = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/request/${request_id}`
-      );
+      const response = await axios.get(`${LOCAL_ENV}/request/${request_id}`);
       setRequest(response.data);
       if (response.data.user_id) {
         getUserById(response.data.user_id);
@@ -153,10 +158,22 @@ const RequestDetailsPortal = ({ request_id }) => {
           )}
         </div>
         <div
-          style={{ display: "flex", marginTop: 25, justifyContent: "flex-end" }}
+          style={{
+            display: "flex",
+            marginTop: 25,
+            justifyContent: "flex-end",
+            gap: "1rem",
+          }}
         >
+          {request.status === "Denied" && (
+            <Dialog.Close asChild>
+              <button className={classes.btnDeny} onClick={handleResubmit}>
+                Resubmit
+              </button>
+            </Dialog.Close>
+          )}
           <Dialog.Close asChild>
-            <button className={classes.btnClose}>Back</button>
+            <button className={classes.btnBack}>Back</button>
           </Dialog.Close>
         </div>
         <Dialog.Close asChild>

@@ -1,18 +1,23 @@
 import React from "react";
 import loginImage from "../../assets/login-image.png";
 import classes from "./Login.module.css";
+import { LOCAL_ENV } from "../../util/auth";
 import {
   Form,
   json,
   redirect,
   useNavigate,
   useActionData,
+  useNavigation,
 } from "react-router-dom";
 import axios from "axios";
 
 const Login = () => {
   const errorMessage = useActionData();
   const navigate = useNavigate();
+  const navigation = useNavigation();
+
+  const isSubmitting = navigation.state === "submitting";
 
   return (
     <section className={classes.main}>
@@ -30,7 +35,9 @@ const Login = () => {
             required
           />
           {errorMessage && <p className={classes.error}>{errorMessage}</p>}
-          <button id="loginButton">Login</button>
+          <button id="loginButton" disabled={isSubmitting}>
+            {isSubmitting ? "Loading..." : "Login"}
+          </button>
           <p>
             Don't have an account?{" "}
             <span
@@ -57,10 +64,7 @@ export async function action({ request }) {
   };
 
   try {
-    const response = await axios.post(
-      "http://localhost:8080/user/login",
-      authData
-    );
+    const response = await axios.post(`${LOCAL_ENV}/user/login`, authData);
 
     if (response.status !== 200) {
       throw json({ message: "Could not authenticate user." }, { status: 500 });
@@ -71,7 +75,6 @@ export async function action({ request }) {
     const user_id = resData.user_id;
 
     localStorage.setItem("token", token);
- 
 
     return redirect(`/home/${user_id}`);
   } catch (error) {

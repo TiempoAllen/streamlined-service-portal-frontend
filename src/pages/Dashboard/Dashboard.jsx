@@ -20,7 +20,7 @@ const Dashboard = () => {
     const fetchRequest = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/request/getAllRequest"
+          "https://streamlined-service-portal-backend-cswk.onrender.com/request/getAllRequest"
         );
         setRequest(response.data);
         setIsLoading(false);

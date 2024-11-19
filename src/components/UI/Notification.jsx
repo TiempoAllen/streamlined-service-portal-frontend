@@ -43,7 +43,7 @@ const Notification = ({ user_id }) => {
     try {
       // Fetch the user's notifications from the backend using the user_id
       const response = await axios.get(
-        `http://localhost:8080/notifications/${user_id}`
+        `https://streamlined-service-portal-backend-cswk.onrender.com/notifications/${user_id}`
       );
       console.log(response.data);
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import classes from "./RequestDialogPortal.module.css";
+import classes from "./RequestDetailsPortal.module.css";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
@@ -8,6 +8,7 @@ import axios from "axios";
 import MessagePortal from "./MessagePortal";
 import TechnicianPortal from "./TechnicianPortal";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { LOCAL_ENV } from "../../util/auth";
 
 const formatDateTime = (datetime) => {
   const date = new Date(datetime);
@@ -27,16 +28,27 @@ const RequestDialogPortal = ({
   onApproveRequest,
   onDenyRequest,
   onRemoveTechnician,
+  onRequestStart,
   onRequestDone,
 }) => {
   const requestor = `${request.user_firstname} ${request.user_lastname}`;
   const [techAssigned, setTechAssigned] = useState(null);
   const [isTimeConflict, setIsTimeConflict] = useState(false);
   const [timeConflictError, setTimeConflictError] = useState("");
+  const [user, setUser] = useState({});
+
+  const getUserById = async (user_id) => {
+    try {
+      const response = await axios.get(`${LOCAL_ENV}/user/${user_id}`);
+      setUser(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const fetchRequestById = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:8080/request/${id}`);
+      const response = await axios.get(`${LOCAL_ENV}/request/${id}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching request by ID:", error);
@@ -44,21 +56,27 @@ const RequestDialogPortal = ({
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const updatedRequest = await fetchRequestById(request.request_id);
-      if (updatedRequest) {
-        setTechAssigned(updatedRequest.technicianId);
+  useEffect(
+    () => {
+      const fetchData = async () => {
+        const updatedRequest = await fetchRequestById(request.request_id);
+        if (updatedRequest) {
+          setTechAssigned(updatedRequest.technicianId);
+        }
+      };
+      fetchData();
+      if (request.user_id) {
+        getUserById(request.user_id); // Call the function to fetch user data by user_id
       }
-    };
-
-    fetchData();
-  }, [request.request_id]);
+    },
+    [request.request_id],
+    [request.user_id]
+  );
 
   const removeTechnician = async (request_id) => {
     try {
       await axios.post(
-        `http://localhost:8080/request/removeTechnician?request_id=${request_id}`
+        `${LOCAL_ENV}/request/removeTechnician?request_id=${request_id}`
       );
       const updatedRequest = await fetchRequestById(request_id);
       setTechAssigned(updatedRequest.technician); // Update technician info
@@ -71,16 +89,14 @@ const RequestDialogPortal = ({
   const handleAssignTechnicianToRequest = async (
     request_id,
     tech_id,
-    startTime,
-    endTime,
+    scheduledDate,
     closeDialog
   ) => {
     try {
-      const formattedStartTime = new Date(startTime).toISOString();
-      const formattedEndTime = new Date(endTime).toISOString();
+      const formattedScheduledDate = new Date(scheduledDate).toISOString();
 
       await axios.post(
-        `http://localhost:8080/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&startTime=${formattedStartTime}&endTime=${formattedEndTime}`
+        `${LOCAL_ENV}/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&scheduledDate=${formattedScheduledDate}`
       );
       setTechAssigned(tech_id);
 
@@ -88,8 +104,10 @@ const RequestDialogPortal = ({
       if (updatedRequest) {
         setTechAssigned(updatedRequest.technicianId);
       }
+      alert("Success");
     } catch (error) {
       if (error.response && error.response.status === 400) {
+        console.error("Error details:", error.response.data);
         setTimeConflictError(error.response.data.message);
         setIsTimeConflict(true);
       } else {
@@ -104,191 +122,107 @@ const RequestDialogPortal = ({
         <Dialog.Overlay className={classes.DialogOverlay} />
         <Dialog.Content className={classes.DialogContent}>
           <Dialog.Title className={classes.DialogTitle}>
-            Request Details
+            <p>Request Details</p>
+            <span>ID #{request.request_id}</span>
           </Dialog.Title>
-          <div className={classes.requestDetails}>
-            <div className={classes.firstHalf}>
-              <fieldset className={classes.Fieldset}>
-                <label className={classes.Label} htmlFor="name">
-                  Title
-                </label>
-                <input
-                  className={classes.Input}
-                  id="name"
-                  defaultValue={request.title}
-                  disabled
-                />
-              </fieldset>
-              <fieldset className={classes.Fieldset}>
-                <label className={classes.Label} htmlFor="name">
-                  Description
-                </label>
-                <textarea
-                  className={classes.Input}
-                  id="name"
-                  value={request.description}
-                  disabled
-                />
-              </fieldset>
-              {/* <fieldset className={classes.Fieldset}>
-                <label className={classes.Label} htmlFor="name">
-                  Start Date and Time
-                </label>
-                <input
-                  className={classes.Input}
-                  id="name"
-                  defaultValue={formatDateTime(request.startTime)}
-                  disabled
-                />
-              </fieldset> */}
-              {/* <fieldset className={classes.Fieldset}>
-                <label className={classes.Label} htmlFor="name">
-                  End Date and Time
-                </label>
-                <input
-                  className={classes.Input}
-                  id="name"
-                  defaultValue={formatDateTime(request.endTime)}
-                  disabled
-                />
-              </fieldset> */}
-              <fieldset className={classes.Fieldset}>
-                <label className={classes.Label} htmlFor="name">
-                  Attachment
-                </label>
-                <p className={classes.attachment}>
-                  <AttachFileIcon />
-                  {request.attachment ? request.attachment : "No Attachment"}
+          <Dialog.Description className={classes.DialogDescription}>
+            Detailed Request Information
+          </Dialog.Description>
+          <div className={classes.requestDetailsPortalMain}>
+            <div className={classes.requestDetailsPortalMainInfo}>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Title</p>
+                <p className={classes.second}>{request.title}</p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Description</p>
+                <p className={classes.second}>{request.description}</p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Attachment</p>
+                <p className={classes.second}>
+                  {!request.attachment ? "No Attachment" : request.attachment}
                 </p>
-              </fieldset>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Request Type</p>
+                <p className={classes.second}>{request.request_technician}</p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Location</p>
+                <p className={classes.second}>{request.request_location}</p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Created Date and Time</p>
+                <p className={classes.second}>
+                  {formatDateTime(request.datetime)}
+                </p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Urgency Level</p>
+                <p
+                  className={`${classes.second} ${
+                    request.urgencyLevel === "Low"
+                      ? classes.lowLevel
+                      : request.urgencyLevel === "Medium"
+                      ? classes.mediumLevel
+                      : classes.highLevel
+                  }`}
+                >
+                  {request.urgencyLevel}
+                </p>
+              </div>
             </div>
-
-            <div className={classes.secondHalf}>
-              <fieldset className={classes.Fieldset}>
-                <label className={classes.Label} htmlFor="name">
-                  Requestor
-                </label>
-                <input
-                  className={classes.Input}
-                  id="name"
-                  defaultValue={requestor}
-                  disabled
-                />
-              </fieldset>
-              <fieldset className={classes.Fieldset}>
-                <label className={classes.Label} htmlFor="name">
-                  Technician Requested
-                </label>
-                <input
-                  className={classes.Input}
-                  id="name"
-                  defaultValue={request.request_technician} // Update this if necessary
-                  disabled
-                />
-              </fieldset>
-              <fieldset className={classes.Fieldset}>
-                <label className={classes.Label} htmlFor="name">
-                  Technician Assigned
-                </label>
-                <div className={classes.techAssignedInput}>
-                  {techAssigned ? (
-                    <>
-                      {technicians && technicians.length > 0 ? (
-                        <>
-                          <input
-                            className={classes.Input}
-                            id="techAssigned"
-                            value={
-                              technicians.find(
-                                (tech) => tech.tech_id === techAssigned
-                              )?.tech_name || "Unknown Technician"
-                            }
-                            disabled
-                          />
-                          <span
-                            onClick={() => removeTechnician(request.request_id)}
-                          >
-                            <DeleteIcon
-                              sx={{
-                                padding: "0.50rem",
-                                border: "solid 1px #631c21",
-                                color: "#ffffff",
-                                backgroundColor: "#631c21",
-                                cursor: "pointer",
-                              }}
-                            />
-                          </span>
-                        </>
-                      ) : (
-                        <input
-                          className={classes.Input}
-                          id="techAssigned"
-                          value="Technician Not Found"
-                          disabled
-                        />
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <Dialog.Root>
-                        <Dialog.Trigger asChild>
-                          <AddIcon
-                            sx={{
-                              padding: "0.50rem",
-                              border: "solid 1px #631c21",
-                              color: "#ffffff",
-                              backgroundColor: "#631c21",
-                              cursor: "pointer",
-                            }}
-                          />
-                        </Dialog.Trigger>
-                        <TechnicianPortal
-                          isTimeConflict={isTimeConflict}
-                          timeConflictError={timeConflictError}
-                          technicians={technicians}
-                          request={request}
-                          onAssignTechnicianToRequest={(
-                            request_id,
-                            tech_id,
-                            startTime,
-                            endTime
-                          ) => {
-                            handleAssignTechnicianToRequest(
-                              request_id,
-                              tech_id,
-                              startTime,
-                              endTime,
-                              () => {
-                                document
-                                  .querySelector('button[aria-label="Close"]')
-                                  .click();
-                              }
-                            );
-                          }}
-                        />
-                      </Dialog.Root>
-                      <input
-                        className={classes.Input}
-                        id="techAssigned"
-                        value="None"
-                        disabled
-                      />
-                    </>
-                  )}
+            <div className={classes.requestDetailsPortalReqInfo}>
+              <p className={classes.requestDetailsPortalSecHeader}>
+                Requester Information
+              </p>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Name</p>
+                <p className={classes.second}>{requestor}</p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Department</p>
+                <p className={classes.second}>{user.department}</p>
+              </div>
+            </div>
+            <div className={classes.requestDetailsPortalReqInfo}>
+              <p className={classes.requestDetailsPortalSecHeader}>
+                Status Information
+              </p>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Current Status</p>
+                <p className={classes.second}>{request.status}</p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Preferred Date and Time</p>
+                <p className={classes.second}>
+                  {formatDateTime(request.preferredDate)}
+                </p>
+              </div>
+              {request.status === "Denied" && (
+                <div className={classes.requestDetailsPortalInputs}>
+                  <p className={classes.first}>Remarks/Comments</p>
+                  <p className={classes.second}>{request.denialReason}</p>
                 </div>
-              </fieldset>
-              <fieldset className={classes.Fieldset}>
-                <label className={classes.Label} htmlFor="name">
-                  Date and Time Requested
-                </label>
-                <input
-                  className={classes.Input}
-                  id="name"
-                  defaultValue={formatDateTime(request.datetime)}
-                  disabled
-                />
-              </fieldset>
+              )}
             </div>
+            {/* Displays if a Personnel is assigned, if not assigned then empty. */}
+            {request.status === "Assigned" && (
+              <div className={classes.requestDetailsPortalReqInfo}>
+                <p className={classes.requestDetailsPortalSecHeader}>
+                  Personnel Information
+                </p>
+                <div className={classes.requestDetailsPortalInputs}>
+                  <p className={classes.first}>Assigned Personnel</p>
+                  <p className={classes.second}>Jake Doe</p>
+                </div>
+                <div className={classes.requestDetailsPortalInputs}>
+                  <p className={classes.first}>Personnel Type</p>
+                  <p className={classes.second}>Janitor</p>
+                </div>
+              </div>
+            )}
           </div>
           <div
             style={{
@@ -298,7 +232,7 @@ const RequestDialogPortal = ({
               gap: "1rem",
             }}
           >
-            {request.status === "Pending" ? (
+            {request.status === "Pending" && (
               <>
                 <Dialog.Root>
                   <Dialog.Trigger asChild>
@@ -306,7 +240,6 @@ const RequestDialogPortal = ({
                   </Dialog.Trigger>
                   <MessagePortal
                     messageType="approve"
-                    isTechnicianAssigned={techAssigned !== null}
                     request_id={request.request_id}
                     onApproveRequest={onApproveRequest}
                   />
@@ -325,7 +258,53 @@ const RequestDialogPortal = ({
                   <button className={classes.btnBack}>Back</button>
                 </Dialog.Close>
               </>
-            ) : (
+            )}
+            {request.status === "Approved" && (
+              <>
+                <Dialog.Root>
+                  <Dialog.Trigger asChild>
+                    <button className={classes.btnApprove}>
+                      Assign Personnel
+                    </button>
+                  </Dialog.Trigger>
+                  {/* <MessagePortal
+                    messageType="assign"
+                    request_id={request.request_id}
+                  /> */}
+                  <TechnicianPortal
+                    technicians={technicians}
+                    request={request}
+                    isTechnicianAssigned={techAssigned !== null}
+                    onAssignTechnicianToRequest={
+                      handleAssignTechnicianToRequest
+                    }
+                  />
+                </Dialog.Root>
+                <Dialog.Close asChild>
+                  <button className={classes.btnBack}>Back</button>
+                </Dialog.Close>
+              </>
+            )}
+            {request.status === "Assigned" && (
+              <>
+                <Dialog.Root>
+                  <Dialog.Trigger asChild>
+                    <button className={classes.btnApprove}>Start</button>
+                  </Dialog.Trigger>
+                  <MessagePortal
+                    messageType="startRequest"
+                    request_id={request.request_id}
+                    onRequestStart={(request_id) => {
+                      onRequestStart(request_id);
+                    }}
+                  />
+                </Dialog.Root>
+                <Dialog.Close asChild>
+                  <button className={classes.btnBack}>Back</button>
+                </Dialog.Close>
+              </>
+            )}
+            {request.status === "In Progress" && (
               <>
                 <Dialog.Root>
                   <Dialog.Trigger asChild>

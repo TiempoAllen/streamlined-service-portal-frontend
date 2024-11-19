@@ -16,6 +16,9 @@ import Chat from "./pages/Chat/Chat";
 import Profile from "./pages/Profile/Profile";
 import Record, { loader as recordLoader } from "./pages/Record/Record";
 import SuperUser from "./pages/SuperUser/SuperUser";
+import ResubmitForm, {
+  action as resubmitAction,
+} from "./pages/HomePage/ResubmitForm";
 import Technician, {
   loader as technicianLoader,
 } from "./pages/Technician/Technician";
@@ -52,6 +55,12 @@ const router = createBrowserRouter([
         element: <RequestPage />,
         loader: checkAuthLoader,
         action: requestAction,
+      },
+      {
+        path: "resubmit/:requestId",
+        element: <ResubmitForm />,
+        loader: checkAuthLoader,
+        action: resubmitAction,
       },
       {
         path: "history",

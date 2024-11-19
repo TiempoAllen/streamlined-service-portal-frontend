@@ -95,6 +95,11 @@
     box-sizing: border-box;
 }
 
+.request textarea:focus {
+    outline: none;
+    border: none;
+}
+
 
 .request form .preferredDateTime {
     display: flex;

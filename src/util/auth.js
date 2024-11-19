@@ -1,6 +1,10 @@
 import { redirect } from "react-router-dom";
 import axios from "axios";
 
+export const LOCAL_ENV = "http://localhost:8080";
+export const BACK_ENV =
+  "https://streamlined-service-portal-backend-cswk.onrender.com";
+
 export const getAuthToken = () => {
   const token = localStorage.getItem("token");
   return token;
@@ -20,6 +24,7 @@ export const formatDateTime = (datetime) => {
 
 export const checkAuthLoader = () => {
   const token = getAuthToken();
+  const local = LOCAL_ENV;
 
   if (!token) {
     // throw json(
@@ -91,10 +96,7 @@ export const submitRegistration = async (formData) => {
   };
 
   try {
-    const response = await axios.post(
-      "http://localhost:8080/user/add",
-      registerData
-    );
+    const response = await axios.post(`${LOCAL_ENV}/user/add`, registerData);
 
     if (response.status !== 200) {
       throw new Error("Could not register user.");
@@ -127,12 +129,12 @@ export const loadUserAndRequests = async (user_id) => {
     }
 
     const [userResponse, requestsResponse] = await Promise.all([
-      axios.get(`http://localhost:8080/user/${user_id}`, {
+      axios.get(`${LOCAL_ENV}/user/${user_id}`, {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },
       }),
-      axios.get("http://localhost:8080/request/getAllRequest", {
+      axios.get(`${LOCAL_ENV}/request/getAllRequest`, {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },
@@ -158,12 +160,12 @@ export const loadRequestsAndTechnicians = async () => {
     }
 
     const [requestsResponse, techniciansResponse] = await Promise.all([
-      axios.get("http://localhost:8080/request/getAllRequest", {
+      axios.get(`${LOCAL_ENV}/request/getAllRequest`, {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },
       }),
-      axios.get("http://localhost:8080/technician/getAllTechnician", {
+      axios.get(`${LOCAL_ENV}/technician/getAllTechnician`, {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },

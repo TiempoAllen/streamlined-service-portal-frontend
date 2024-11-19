@@ -85,8 +85,10 @@ const HomePage = () => {
     all: "All",
     Pending: "Pending",
     Approved: "Approved",
-    Done: "Done",
-    Rejected: "Rejected",
+    Assigned: "Assigned",
+    "In Progress": "In Progress",
+    Completed: "Completed",
+    Denied: "Rejected",
   };
 
   return (

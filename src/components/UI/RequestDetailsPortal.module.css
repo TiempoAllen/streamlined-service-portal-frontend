@@ -140,6 +140,30 @@
     box-shadow: 0 0 0 2px var(--violet-7);
 }
 
+.btnApprove {
+    background-color: #F0953B;
+    padding: 0.5rem;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btnDeny {
+    background-color: #631C21;
+    padding: 0.5rem;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btnBack {
+    background-color: #b8b8b8;
+    padding: 0.5rem;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 
 @keyframes contentShow {
     from {
