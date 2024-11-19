@@ -10,11 +10,13 @@ const TechnicianSchedule = () => {
   const location = useLocation();
   const { requests } = location.state || { requests: [] };
 
-  const events = requests.map((request) => ({
-    title: `${request.title}`,
-    start: request.startTime,
-    end: request.endTime,
-  }));
+  const events = requests.map((request) => {
+    return {
+      title: request.title,
+      start: request.scheduledDate,
+      end: request.scheduledDate,
+    };
+  });
 
   return (
     <div className={classes.calendarParent}>
