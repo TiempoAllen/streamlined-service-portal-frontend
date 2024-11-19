@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
 import axios from "axios";
-import UsersTable from "../../components/UI/UsersTable";
+import React, { useEffect, useState } from "react";
+import { Link, useRouteLoaderData } from "react-router-dom";
 import RequestsTable from "../../components/UI/RequestsTable";
 import TechniciansTable from "../../components/UI/TechniciansTable"; // Import the TechniciansTable
+import UsersTable from "../../components/UI/UsersTable";
 import classes from "./SuperUser.module.css";
-import { Link } from "react-router-dom";
-import { useRouteLoaderData } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 const SuperUser = () => {
   const [requests, setRequests] = useState([]);
@@ -24,7 +26,7 @@ const SuperUser = () => {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/request/all");
+        const response = await axios.get(`${API_URL}/request/all`);
         setRequests(response.data);
       } catch (error) {
         console.error("Error fetching requests:", error);

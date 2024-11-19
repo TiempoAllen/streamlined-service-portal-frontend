@@ -1,13 +1,10 @@
-import React, { useState } from "react";
-import classes from "./Approval.module.css";
-import { loadRequestsAndTechnicians } from "../../util/auth";
-import axios from "axios";
-import { useLoaderData } from "react-router-dom";
-import SelectArea from "../../components/UI/SelectArea";
-import { AgGridReact } from "ag-grid-react";
+import * as Dialog from "@radix-ui/react-dialog";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import * as Dialog from "@radix-ui/react-dialog";
+import { AgGridReact } from "ag-grid-react";
+import axios from "axios";
+import React, { useState } from "react";
+import { useLoaderData } from "react-router-dom";
 import RequestDialogPortal from "../../components/UI/RequestDialogPortal";
 import { LOCAL_ENV } from "../../util/auth";
 import { ToastContainer, toast } from "react-toastify";

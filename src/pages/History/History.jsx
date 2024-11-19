@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { json, useLoaderData, useNavigate, useParams } from "react-router-dom";
-import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
+import { AgGridReact } from "ag-grid-react";
 import axios from "axios";
+import React, { useState } from "react";
+import { json, useLoaderData, useNavigate, useParams } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const formatDateTime = (datetime) => {
   const date = new Date(datetime);

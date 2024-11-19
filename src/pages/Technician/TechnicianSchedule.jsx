@@ -1,8 +1,8 @@
-import React from "react";
-import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid"; // for month/day views
-import timeGridPlugin from "@fullcalendar/timegrid"; // for time-based views
 import listPlugin from "@fullcalendar/list"; // for list views
+import FullCalendar from "@fullcalendar/react";
+import timeGridPlugin from "@fullcalendar/timegrid"; // for time-based views
+import React from "react";
 import { useLocation } from "react-router-dom";
 import classes from "./Technician.module.css";
 

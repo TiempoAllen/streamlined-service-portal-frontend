@@ -1,8 +1,11 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import profileImg from "../../assets/profile.jpg";
-import classes from "./Profile.module.css";
 import EditPasswordForm from "../../components/UI/EditPasswordForm";
-import axios from "axios";
+import classes from "./Profile.module.css";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 const Profile = () =>{
     const [profile, setProfile] = useState(null);
@@ -14,7 +17,7 @@ const Profile = () =>{
     useEffect(() => { 
         const fetchUserProfile = async () => {
             try{
-                const response = await axios.get(`http://localhost:8080/user/${userId}`);
+                const response = await axios.get(`${API_URL}/user/${userId}`);
                 setProfile(response.data);
                 setIsLoading(false);
             }catch(err){

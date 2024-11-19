@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import classes from './TechniciansTable.module.css'; 
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Snackbar, Alert, MenuItem, Select, InputLabel, FormControl, Box, Typography, Divider } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, IconButton, InputLabel, MenuItem, Select, Snackbar, TextField, Tooltip, Typography } from '@mui/material';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import classes from './TechniciansTable.module.css';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 const TechniciansTable = () => {
     const [technicians, setTechnicians] = useState([]);
@@ -28,7 +31,7 @@ const TechniciansTable = () => {
     useEffect(() => {
         const fetchTechnicians = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/technician/getAllTechnician');
+                const response = await axios.get(`${API_URL}/technician/getAllTechnician`);
                 setTechnicians(response.data);
             } catch (error) {
                 console.error('Error fetching technicians:', error);
@@ -78,7 +81,7 @@ const TechniciansTable = () => {
         }
     
         try {
-            const response = await axios.post('http://localhost:8080/technician/addTechnician', newTechnician);
+            const response = await axios.post(`${API_URL}/technician/addTechnician`, newTechnician);
             setTechnicians([...technicians, response.data]);
             setOpenForm(false); 
             setNewTechnician({ tech_name: '', tech_phone: '', tech_gender: '', tech_classification: '', is_available: true }); 
@@ -105,7 +108,7 @@ const TechniciansTable = () => {
         }
     
         try {
-            const response = await axios.put(`http://localhost:8080/technician/updateTechnician?tid=${selectedTechnician.tech_id}`, newTechnician);
+            const response = await axios.put(`${API_URL}/technician/updateTechnician?tid=${selectedTechnician.tech_id}`, newTechnician);
             const updatedTechnicians = technicians.map((technician) =>
                 technician.tech_id === selectedTechnician.tech_id ? response.data : technician
             );
@@ -120,7 +123,7 @@ const TechniciansTable = () => {
 
     const handleDeleteTechnician = async (tech_id) => {
         try {
-            await axios.delete(`http://localhost:8080/technician/deleteTechnician/${tech_id}`);
+            await axios.delete(`${API_URL}/technician/deleteTechnician/${tech_id}`);
             setTechnicians(technicians.filter((tech) => tech.tech_id !== tech_id));
             setSnackbarMessage('Technician deleted successfully!');
             setOpenSnackbar(true); 

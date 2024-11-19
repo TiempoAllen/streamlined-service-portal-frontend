@@ -1,5 +1,7 @@
-import { redirect } from "react-router-dom";
 import axios from "axios";
+import { redirect } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export const LOCAL_ENV = "http://localhost:8080";
 export const BACK_ENV =

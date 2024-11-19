@@ -1,10 +1,3 @@
-import React, { useState } from "react";
-import classes from "./Technician.module.css";
-import SelectArea from "../../components/UI/SelectArea";
-import { getAuthToken } from "../../util/auth";
-import axios from "axios";
-import { Outlet, useNavigate, useRouteLoaderData } from "react-router-dom";
-import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { LOCAL_ENV } from "../../util/auth";
