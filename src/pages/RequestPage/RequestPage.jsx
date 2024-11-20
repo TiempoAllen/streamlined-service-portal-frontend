@@ -9,13 +9,8 @@ import {
   useNavigate,
   useNavigation,
 } from "react-router-dom";
-import uploadIcon from "../../assets/upload-icon.svg";
-import deleteIcon from "../../assets/delete-button.svg";
 import axios from "axios";
 import * as Dialog from "@radix-ui/react-dialog";
-import axios from "axios";
-import React, { useRef, useState } from "react";
-import { Form, json, redirect, useRouteLoaderData } from "react-router-dom";
 import deleteIcon from "../../assets/delete-button.svg";
 import uploadIcon from "../../assets/upload-icon.svg";
 import FileModal from "../../components/UI/FileModal";
