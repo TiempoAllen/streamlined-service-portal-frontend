@@ -9,6 +9,7 @@ import RequestDialogPortal from "../../components/UI/RequestDialogPortal";
 import { LOCAL_ENV } from "../../util/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { loadRequestsAndTechnicians } from "../../util/auth";
 
 const Approval = () => {
   const { requests: initialRequests, technicians } = useLoaderData();

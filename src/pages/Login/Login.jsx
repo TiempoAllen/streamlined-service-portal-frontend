@@ -1,7 +1,5 @@
 import axios from "axios";
 import React from "react";
-import loginImage from "../../assets/login-image.png";
-import classes from "./Login.module.css";
 import { LOCAL_ENV } from "../../util/auth";
 import {
   Form,
@@ -9,6 +7,7 @@ import {
   redirect,
   useActionData,
   useNavigation,
+  useNavigate,
 } from "react-router-dom";
 import loginImage from "../../assets/login-image.png";
 import classes from "./Login.module.css";
