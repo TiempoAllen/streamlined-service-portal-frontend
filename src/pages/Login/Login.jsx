@@ -1,5 +1,6 @@
 import axios from "axios";
 import React from "react";
+import loginImage from "../../assets/login-image.png";
 import { LOCAL_ENV } from "../../util/auth";
 import {
   Form,
@@ -9,7 +10,6 @@ import {
   useNavigation,
   useNavigate,
 } from "react-router-dom";
-import loginImage from "../../assets/login-image.png";
 import classes from "./Login.module.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";

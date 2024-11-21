@@ -198,6 +198,14 @@ const RequestDialogPortal = ({
                   {formatDateTime(request.preferredDate)}
                 </p>
               </div>
+              {["Assigned", "In Progress", "Done"].includes(request.status) && (
+                <div className={classes.requestDetailsPortalInputs}>
+                  <p className={classes.first}>Scheduled Date and Time</p>
+                  <p className={classes.second}>
+                    {formatDateTime(request.scheduledDate)}
+                  </p>
+                </div>
+              )}
               {request.status === "Denied" && (
                 <div className={classes.requestDetailsPortalInputs}>
                   <p className={classes.first}>Remarks/Comments</p>
@@ -206,7 +214,7 @@ const RequestDialogPortal = ({
               )}
             </div>
             {/* Displays if a Personnel is assigned, if not assigned then empty. */}
-            {request.status === "Assigned" && (
+            {["Assigned", "In Progress", "Done"].includes(request.status) && (
               <div className={classes.requestDetailsPortalReqInfo}>
                 <p className={classes.requestDetailsPortalSecHeader}>
                   Personnel Information

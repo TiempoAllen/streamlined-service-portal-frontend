@@ -191,6 +191,15 @@ hr {
     height: 35px;
 }
 
+.technicianCalendarParent {
+    margin-top: 1rem;
+    border-radius: 5px;
+    width: 100%;
+    height: auto;
+    background-color: white;
+    padding: 1rem;
+}
+
 .btnApprove {
     background-color: #F0953B;
     padding: 0.5rem;

@@ -37,13 +37,15 @@ const MessagePortal = ({
             Notice
           </Dialog.Title>
           <Dialog.Description className={classes.DialogDescription}>
-            {isAssign && (
+            {/* {isAssign && (
               <>
                 {isTechnicianAssigned
                   ? "Are you sure you want to add this personnel and date to this request?"
                   : "A technician has not yet been assigned to this request. A technician must be assigned before the request can be approved."}
               </>
-            )}
+            )} */}
+            {isAssign &&
+              "Are you sure you want to add this personnel and date to this request?"}
             {isApproveMessage &&
               "Are you sure you want to approve this request?"}
             {isDenyMessage &&
@@ -72,7 +74,7 @@ const MessagePortal = ({
               gap: "1rem",
             }}
           >
-            {isTechnicianAssigned && (
+            {isAssign && (
               <Dialog.Close asChild>
                 <button
                   className={classes.btnApprove}
