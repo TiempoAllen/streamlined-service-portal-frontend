@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { json, useLoaderData, useNavigate, useParams } from "react-router-dom";
-import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
+import { AgGridReact } from "ag-grid-react";
 import axios from "axios";
+import React, { useState } from "react";
+import { json, useLoaderData, useNavigate, useParams } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const formatDateTime = (datetime) => {
   const date = new Date(datetime);
@@ -21,7 +23,6 @@ const History = () => {
   const requests = useLoaderData();
   const navigate = useNavigate();
   const { user_id } = useParams();
-  console.log(requests);
 
   const sortedRequests = requests.sort(
     (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
@@ -93,7 +94,7 @@ export async function loader({ request, params }) {
 
   try {
     const response = await axios.get(
-      `http://localhost:8080/request/getAllRequest`,
+      `https://streamlined-service-portal-backend-cswk.onrender.com/request/getAllRequest`,
       {
         // Uncomment the Authorization header if needed
         // headers: {

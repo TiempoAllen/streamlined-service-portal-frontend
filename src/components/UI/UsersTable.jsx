@@ -1,28 +1,31 @@
-import React, { useState, useEffect } from "react";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
-  IconButton,
-  Tooltip,
+  Alert,
   Button,
   Dialog,
-  DialogTitle,
-  DialogContent,
   DialogActions,
-  TextField,
-  Typography,
-  Snackbar,
-  Select,
-  MenuItem,
+  DialogContent,
+  DialogTitle,
   FormControl,
-  Alert,
+  IconButton,
   InputLabel,
+  MenuItem,
+  Select,
+  Snackbar,
+  TextField,
+  Tooltip,
+  Typography,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import axios from "axios";
-import classes from "./UsersTable.module.css"; 
+import React, { useEffect, useState } from "react";
 import { DEPT_DATA } from "../../pages/Register/department-data";
+import classes from "./UsersTable.module.css";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 
 const UsersTable = () => {
@@ -42,7 +45,7 @@ const UsersTable = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/user/all");
+        const response = await axios.get(`${API_URL}/user/all`);
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -82,7 +85,7 @@ const UsersTable = () => {
 
   const handleDeleteUser = async () => {
     try {
-      await axios.delete(`http://localhost:8080/user/${selectedUser.user_id}`);
+      await axios.delete(`${API_URL}/user/${selectedUser.user_id}`);
       setUsers(users.filter((user) => user.user_id !== selectedUser.user_id));
       setSnackbarSeverity("success");
       setSnackbarMessage("User deleted successfully!");
@@ -143,7 +146,7 @@ const UsersTable = () => {
    }
 
     try {
-      await axios.put(`http://localhost:8080/user/updateUser?uid=${selectedUser.user_id}`, newUser);
+      await axios.put(`${API_URL}/user/updateUser?uid=${selectedUser.user_id}`, newUser);
       const updatedUsers = users.map((user) =>
         user.user_id === selectedUser.user_id ? { ...user, ...newUser } : user
       );
@@ -216,7 +219,7 @@ const UsersTable = () => {
   
     try {
       // Proceed with adding the user if all validations pass
-      const response = await axios.post("http://localhost:8080/user/add", newUser);
+      const response = await axios.post(`${API_URL}/user/add`, newUser);
   
       if (response.data) {
         setUsers([...users, response.data]); // Add the new user to the list

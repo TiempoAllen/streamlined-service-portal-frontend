@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
 import classes from "./Dashboard.module.css";
 import "react-calendar/dist/Calendar.css";
@@ -10,6 +11,15 @@ import closedReq from "../../assets/Closed Req.svg";
 import { LoadingOutlined } from '@ant-design/icons';
 
 const { Column } = Table;
+=======
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import classes from "./Dashboard.module.css";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+>>>>>>> master
 
 const Dashboard = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -35,7 +45,13 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchRequest = async () => {
       try {
+<<<<<<< HEAD
         const response = await axios.get("http://localhost:8080/request/getAllRequest");
+=======
+        const response = await axios.get(
+          "https://streamlined-service-portal-backend-cswk.onrender.com/request/getAllRequest"
+        );
+>>>>>>> master
         setRequest(response.data);
         setIsLoading(false);
       } catch (err) {

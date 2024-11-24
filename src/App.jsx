@@ -14,6 +14,9 @@ import { checkAuthLoader } from "./util/auth";
 import Approval, { loader as approvalLoader } from "./pages/Approval/Approval";
 import Record, { loader as recordLoader } from "./pages/Record/Record";
 import SuperUser from "./pages/SuperUser/SuperUser";
+import ResubmitForm, {
+  action as resubmitAction,
+} from "./pages/HomePage/ResubmitForm";
 import Technician, {
   loader as technicianLoader,
 } from "./pages/Technician/Technician";
@@ -23,13 +26,15 @@ import History, { loader as historyLoader } from "./pages/History/History";
 import Profile, {loader as profileLoader} from "./pages/Profile/Profile";
 import Chat, {loader as chatLoader} from "./pages/Chat/Chat";
 import DetailsModal from "./components/UI/DetailsModal";
+import LandingPage from "./pages/LandingPage/LandingPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <LoginLayout />,
     children: [
-      { index: true, element: <Login />, action: loginAction },
+      { index: true, element: <LandingPage /> },
+      { path: "login", element: <Login />, action: loginAction },
       { path: "register", element: <Register /> },
     ],
   },
@@ -50,6 +55,12 @@ const router = createBrowserRouter([
         element: <RequestPage />,
         loader: checkAuthLoader,
         action: requestAction,
+      },
+      {
+        path: "resubmit/:requestId",
+        element: <ResubmitForm />,
+        loader: checkAuthLoader,
+        action: resubmitAction,
       },
       {
         path: "history",

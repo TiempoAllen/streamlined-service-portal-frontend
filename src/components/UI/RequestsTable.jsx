@@ -1,27 +1,30 @@
-  import React, { useState, useEffect } from "react";
-  import classes from "./RequestsTable.module.css";
-  import {
-    IconButton,
-    Tooltip,
-    Button,
-    TextField,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    MenuItem,
-    Select,
-    InputLabel,
-    FormControl,
-    Typography,
-    Snackbar,
-    Alert,
-  } from "@mui/material";
-  import EditIcon from "@mui/icons-material/Edit";
-  import DeleteIcon from "@mui/icons-material/Delete";
-  import VisibilityIcon from "@mui/icons-material/Visibility";
   import AddCircleIcon from "@mui/icons-material/AddCircle";
-  import axios from "axios";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import {
+  Alert,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  Snackbar,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import classes from "./RequestsTable.module.css";
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 
   const formatDateTime = (datetime) => {
@@ -82,7 +85,7 @@
 
     const fetchRequests = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/request/getAllRequest");
+        const response = await axios.get(`${API_URL}/request/getAllRequest`);
         const validRequests = response.data.filter((request) => request != null);
         setRequests(validRequests);
       } catch (error) {
@@ -181,7 +184,7 @@
           requestBody.append("attachment", formData.attachment);
         }
     
-        const response = await axios.post("http://localhost:8080/request/add", requestBody, {
+        const response = await axios.post(`${API_URL}/request/add`, requestBody, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -229,7 +232,7 @@
       if (!requestToDelete) return;
 
       try {
-        await axios.delete(`http://localhost:8080/request/deleteRequest/${requestToDelete}`);
+        await axios.delete(`${API_URL}/request/deleteRequest/${requestToDelete}`);
         setSnackbarSeverity("success");
         setSnackbarMessage("Request deleted successfully!");
         setSnackbarOpen(true);
@@ -293,7 +296,7 @@
         }
     
         const response = await axios.put(
-          `http://localhost:8080/request/update/${selectedRequest.request_id}`,
+          `${API_URL}/request/update/${selectedRequest.request_id}`,
           requestBody,
           {
             headers: {
@@ -339,7 +342,7 @@
     const openPreview = async (filename) => {
       setFilename(filename); // Store the filename
       try {
-          const response = await fetch(`http://localhost:8080/request/${filename}`, {
+          const response = await fetch(`${API_URL}/request/${filename}`, {
               method: 'GET',
               headers: {
                   'Accept': 'application/pdf, image/*',

@@ -1,5 +1,8 @@
-import { redirect } from "react-router-dom";
 import axios from "axios";
+import { redirect } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 
 export const getAuthToken = () => {
@@ -76,7 +79,7 @@ export const AddSuperUser = async (formData) => {
 
   try {
     const response = await axios.post(
-      "http://localhost:8080/user/add",
+      `${API_URL}/user/add`,
       registerData
     );
 

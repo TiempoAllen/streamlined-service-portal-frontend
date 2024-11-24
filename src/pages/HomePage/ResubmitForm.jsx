@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import classes from "./RequestPage.module.css";
+import classes from "../RequestPage/RequestPage.module.css";
 import {
   Form,
   json,
@@ -8,29 +8,33 @@ import {
   useActionData,
   useNavigate,
   useNavigation,
+  useLocation,
 } from "react-router-dom";
+import uploadIcon from "../../assets/upload-icon.svg";
+import deleteIcon from "../../assets/delete-button.svg";
 import axios from "axios";
 import * as Dialog from "@radix-ui/react-dialog";
-import deleteIcon from "../../assets/delete-button.svg";
-import uploadIcon from "../../assets/upload-icon.svg";
-import FileModal from "../../components/UI/FileModal";
+import Viewer from "react-viewer"; // Import react-viewer
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const RequestPage = () => {
+const ResubmitForm = () => {
   const user = useRouteLoaderData("home");
   const [file, setFile] = useState(null);
+  const [viewerVisible, setViewerVisible] = useState(false); // State to control viewer visibility
 
   const fileInputRef = useRef();
   const formRef = useRef();
   const actionData = useActionData();
   const navigation = useNavigation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const requestDetails = location.state?.request;
 
-  const isSubmitting = navigation.state == "submitting";
+  const isSubmitting = navigation.state === "submitting";
 
   const handleDeleteFile = () => {
-    setFile("");
+    setFile(null);
   };
 
   const handleFileChange = (event) => {
@@ -42,16 +46,60 @@ const RequestPage = () => {
     fileInputRef.current.click();
   };
 
+  const openViewer = () => {
+    setViewerVisible(true); // Show the viewer when the file is clicked
+  };
+
+  const closeViewer = () => {
+    setViewerVisible(false); // Hide the viewer
+  };
+
+  const determineMimeType = (fileName) => {
+    const extension = fileName.split(".").pop().toLowerCase();
+    const mimeTypes = {
+      pdf: "application/pdf",
+      doc: "application/msword",
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      jpeg: "image/jpeg",
+      jpg: "image/jpeg",
+      png: "image/png",
+      gif: "image/gif",
+      // Add more file extensions and their MIME types as needed
+    };
+
+    return mimeTypes[extension] || "application/octet-stream"; // Default MIME type
+  };
+
   useEffect(() => {
+    if (requestDetails) {
+      formRef.current.title.value = requestDetails.title;
+      formRef.current.description.value = requestDetails.description;
+      formRef.current.request_location.value = requestDetails.request_location;
+      formRef.current.request_technician.value =
+        requestDetails.request_technician;
+      formRef.current.urgencyLevel.value = requestDetails.urgencyLevel;
+
+      const preferredDate = new Date(requestDetails.preferredDate);
+      const formattedPreferredDate = preferredDate.toISOString().slice(0, 16);
+
+      formRef.current.preferredDate.value = formattedPreferredDate;
+
+      if (requestDetails.attachment) {
+        const fileName = requestDetails.attachment;
+        const mimeType = determineMimeType(fileName);
+        setFile(new File([""], fileName, { type: mimeType }));
+      }
+    }
+
     if (actionData) {
       if (actionData.status === "success") {
-        toast.success("Request submitted successfully!");
+        toast.success("Request resubmitted successfully!");
         formRef.current.reset();
       } else if (actionData.status === "error") {
         toast.error("There was an error submitting the request.");
       }
     }
-  }, [actionData, user.id]);
+  }, [actionData, user.id, requestDetails]);
 
   return (
     <section className={classes.request}>
@@ -152,12 +200,9 @@ const RequestPage = () => {
               <div className={classes.fileUpload}>
                 <div className={classes.fileArea}>
                   {file ? (
-                    <Dialog.Root>
-                      <Dialog.Trigger asChild>
-                        <p className={classes.file}>{file.name}</p>
-                      </Dialog.Trigger>
-                      <FileModal file={file} />
-                    </Dialog.Root>
+                    <p className={classes.file} onClick={openViewer}>
+                      {file.name}
+                    </p>
                   ) : (
                     "No file selected."
                   )}
@@ -206,15 +251,28 @@ const RequestPage = () => {
       </div>
 
       <ToastContainer />
+
+      {/* Viewer Modal */}
+      {file && (
+        <Viewer
+          visible={viewerVisible}
+          onClose={closeViewer}
+          images={[{ src: URL.createObjectURL(file), alt: file.name }]}
+        />
+      )}
     </section>
   );
 };
 
-export default RequestPage;
+export default ResubmitForm;
 
 export const action = async ({ request, params }) => {
   const user_id = params.user_id;
+  const request_id = params.requestId;
   const data = await request.formData();
+
+  console.log("UserID: ", user_id);
+  console.log("RequestID: ", request_id);
 
   const rawPreferredDate = data.get("preferredDate");
   const formattedPreferredDate = new Date(rawPreferredDate).toISOString();
@@ -233,8 +291,8 @@ export const action = async ({ request, params }) => {
   requestData.append("attachment", data.get("attachment"));
 
   try {
-    const response = await axios.post(
-      "https://streamlined-service-portal-backend-cswk.onrender.com/request/add",
+    const response = await axios.put(
+      `https://streamlined-service-portal-backend-cswk.onrender.com/request/update/${request_id}`,
       requestData,
       {
         headers: {

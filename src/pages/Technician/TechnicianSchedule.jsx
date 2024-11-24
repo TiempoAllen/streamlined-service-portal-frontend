@@ -1,8 +1,8 @@
-import React from "react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import listPlugin from "@fullcalendar/list";
 import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid"; // for month/day views
-import timeGridPlugin from "@fullcalendar/timegrid"; // for time-based views
-import listPlugin from "@fullcalendar/list"; // for list views
+import timeGridPlugin from "@fullcalendar/timegrid";
+import React from "react";
 import { useLocation } from "react-router-dom";
 import classes from "./Technician.module.css";
 
@@ -10,11 +10,15 @@ const TechnicianSchedule = () => {
   const location = useLocation();
   const { requests } = location.state || { requests: [] };
 
-  const events = requests.map((request) => ({
-    title: `${request.title}`,
-    start: request.startTime,
-    end: request.endTime,
-  }));
+  console.log(requests);
+
+  const events = requests.map((request) => {
+    return {
+      title: request.title,
+      start: request.scheduledDate,
+      end: request.scheduledDate,
+    };
+  });
 
   return (
     <div className={classes.calendarParent}>

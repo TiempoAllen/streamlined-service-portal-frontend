@@ -1,4 +1,3 @@
-
 import { NavLink } from "react-router-dom";
 import React, { useState } from "react";
 import classes from "./SideNav.module.css";
@@ -9,18 +8,22 @@ import superUser2 from "../../assets/superuser2.svg";
 import chatIcon from "../../assets/chat.svg";
 import hashtagIcon from "../../assets/hashtag.svg";
 import technicianIcon from "../../assets/technician-icon.svg";
+import maintenanceLogo from "../../assets/maintenance-logo.png";
 
 const SideNav = ({ user_id, isSuperUser }) => {
   const [sideBar, setSideBar] = useState(false);
+  const [isMaintenanceOpen, setIsMaintenanceOpen] = useState(false);
 
-  const toggleSideBar = () =>{
+  const toggleSideBar = () => {
     setSideBar(!sideBar);
   };
 
+  const toggleMaintenance = () => {
+    setIsMaintenanceOpen(!isMaintenanceOpen);
+  };
 
   return (
     <nav className={classes.sideNav}>
-
       <ul className={classes.list}>
         <li>
           <div className={classes.link}>
@@ -36,50 +39,67 @@ const SideNav = ({ user_id, isSuperUser }) => {
             </NavLink>
           </div>
         </li>
+
         <li>
-          <div className={classes.link}>
-            <NavLink
-              to={`/home/${user_id}/approval`}
-              className={({ isActive }) =>
-                isActive ? classes.active : undefined
-              }
-            >
-              <img src={approvalIcon3} alt="approval-icon" className={classes.icon} />
-              Approval
-            </NavLink>
+          <div className={classes.maintenance} onClick={toggleMaintenance}>
+            <img
+              src={maintenanceLogo}
+              alt="maintenance-icon"
+              className={classes.icon}
+            />
+            Maintenance
           </div>
+          {isMaintenanceOpen && (
+            <ul className={classes.subMenu}>
+              <li>
+                <NavLink
+                  to={`/home/${user_id}/approval`}
+                  className={({ isActive }) =>
+                    isActive ? classes.active : undefined
+                  }
+                >
+                  <img
+                    src={approvalIcon3}
+                    alt="approval-icon"
+                    className={classes.icon}
+                  />
+                  Approval
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={`/home/${user_id}/record`}
+                  className={({ isActive }) =>
+                    isActive ? classes.active : undefined
+                  }
+                >
+                  <img
+                    src={recordIcon5}
+                    alt="records-icon"
+                    className={classes.icon}
+                  />
+                  Record
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={`/home/${user_id}/technician`}
+                  className={({ isActive }) =>
+                    isActive ? classes.active : undefined
+                  }
+                >
+                  <img
+                    src={technicianIcon}
+                    alt="technician-icon"
+                    className={classes.icon}
+                  />
+                  Technician
+                </NavLink>
+              </li>
+            </ul>
+          )}
         </li>
-        <li>
-          <div className={classes.link}>
-            <NavLink
-              to={`/home/${user_id}/record`}
-              className={({ isActive }) =>
-                isActive ? classes.active : undefined
-              }
-            >
-              <img src={recordIcon5} alt="records-icon" className={classes.icon} />
-              Record
-            </NavLink>
-          </div>
-        </li>
-        <li>
-          <div className={classes.link}>
-            <NavLink
-              to={`/home/${user_id}/technician`}
-              className={({ isActive }) =>
-                isActive ? classes.active : undefined
-              }
-            >
-              <img
-                src={technicianIcon}
-                alt="technician-icon"
-                className={classes.icon}
-              />
-              Technician
-            </NavLink>
-          </div>
-        </li>
-        {isSuperUser && (
+        {/* {isSuperUser && (
           <li>
             <div className={classes.link}>
               <NavLink
@@ -93,8 +113,8 @@ const SideNav = ({ user_id, isSuperUser }) => {
               </NavLink>
             </div>
           </li>
-        )}
-        <li>
+        )} */}
+        {/* <li>
           <div className={classes.link}>
           <NavLink
             to={`/home/${user_id}/chat`}
@@ -106,7 +126,7 @@ const SideNav = ({ user_id, isSuperUser }) => {
             Chat
           </NavLink>
           </div>
-        </li>
+        </li> */}
         {/* <li>
           <div className={classes.link}>
           <NavLink

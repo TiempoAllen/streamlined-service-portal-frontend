@@ -8,18 +8,28 @@
 .request .main {
     display: flex;
     flex-direction: column;
-    /* border: 1px solid #848484; */
+    gap: 1rem;
     border-radius: 10px;
-    padding: 1.5rem;
+    padding: 2rem;
     background-color: white;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    min-width: 80vw;
+    min-width: 50vw;
     width: auto;
 }
 
-.request .main h1 {
+.request .main header h1 {
     margin-top: 0;
+    margin-bottom: 0.5rem;
     color: #424242;
+}
+
+.request .main header p {
+    font-weight: 300;
+    color: #424242;
+}
+
+.request .main header p span {
+    color: #ff0000;
 }
 
 .request form {
@@ -30,50 +40,85 @@
 
 }
 
-.request .submitBtn {
-    cursor: pointer;
-}
-
 .request form .inputs {
     display: flex;
+    flex-direction: column;
     align-items: start;
     justify-content: center;
     width: 100%;
     gap: 1rem;
 }
 
-.request form .firstHalf {
+.request form span {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    width: 80%;
+    gap: 0.5rem;
+    width: inherit;
 }
 
-.request form .firstHalf div {
+.request form label {
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    font-size: 1rem;
+    color: #424242;
+    font-weight: 400;
+}
+
+.request form .inputText {
+    min-height: 3rem;
+    background-color: #F1F4F8;
+    padding: 1rem;
+    font-size: 1rem;
+    border-radius: 10px;
     width: 100%;
+    box-sizing: border-box;
 }
 
-.request form .firstHalf div span {
+.request select {
+    min-height: 3rem;
+    border: none;
+    background-color: #F1F4F8;
+    border-radius: 10px;
+}
+
+.request select:focus {
+    border: none;
+}
+
+.request textarea {
+    border: none;
+    min-height: 6rem;
+    background-color: #F1F4F8;
+    padding: 1rem;
+    font-size: 1rem;
+    border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.request textarea:focus {
+    outline: none;
+    border: none;
+}
+
+
+.request form .preferredDateTime {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.request form .preferredDateTime div {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-.request form .secondHalf {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
+.request form .preferredDateTime div p {
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: #424242;
 }
 
-.request form .secondHalf span {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
 
 .request .fileUpload {
     display: flex;
@@ -110,7 +155,7 @@
     cursor: pointer;
 }
 
-.request .imageUpload input {
+.request .imageUpload input[type=file] {
     display: none;
 }
 
@@ -122,26 +167,32 @@
     cursor: pointer;
 }
 
-.request form label {
-    font-size: 1rem;
-    color: #848484;
-    font-weight: bold;
-}
-
-.request form input,
-textarea {
-    padding: 0.5rem;
-    border: 1px solid #848484;
-    font-size: 1rem;
-    border-radius: 5px;
-}
 
 .request form input[type=text]:disabled {
     background-color: #dddddd;
 }
 
-.request form button {
-    padding: 1rem;
+.request form .btnArea {
+    display: flex;
+    gap: 1rem;
+}
+
+.request form .btnArea button {
+    cursor: pointer;
+}
+
+.request form .btnArea .clearBtn {
+    padding: 0.5rem 1rem;
+    color: #424242;
+    background-color: #F1F4F8;
+    border-radius: 5px;
+    border: 1px solid #e6e6e6;
+    font-size: 1.2rem;
+    width: auto;
+}
+
+.request form .btnArea .submitBtn {
+    padding: 0.5rem 1rem;
     color: #e6e6e6;
     background-color: rgba(154, 35, 35);
     border-radius: 5px;
@@ -150,6 +201,10 @@ textarea {
     width: auto;
 }
 
-.submitBtn:hover{
+.submitBtn:hover {
     background-color: rgb(183, 45, 45);
+}
+
+.request .required {
+    color: #ff0000;
 }

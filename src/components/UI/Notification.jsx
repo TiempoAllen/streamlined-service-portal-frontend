@@ -6,6 +6,14 @@ import classes from "./Notification.module.css";
 import axios from "axios";
 import EvaluationFormDialog from "./EvaluationFormDialog.jsx"; // Import the evaluation form dialog
 import { formatDateTime } from "../../util/auth";
+import axios from "axios";
+import { React, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import bellIcon from "../../assets/bell.svg";
+import { formatDateTime } from "../../util/auth";
+import classes from "./Notification.module.css";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const timeDifference = (timestamp) => {
   const now = new Date();
@@ -44,7 +52,7 @@ const Notification = ({ user_id }) => {
   const fetchNotifications = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/notifications/${user_id}`
+        `https://streamlined-service-portal-backend-cswk.onrender.com/notifications/${user_id}`
       );
       const sortedNotifications = response.data.sort(
         (a, b) => new Date(b.timestamp) - new Date(a.timestamp)

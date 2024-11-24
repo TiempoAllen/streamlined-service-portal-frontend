@@ -1,7 +1,10 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import classes from "./DetailsModal.module.css";
-import { useEffect, useState } from "react";
-import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 
 export default function DetailsModal() {
   const { requestId } = useParams();
@@ -13,7 +16,7 @@ export default function DetailsModal() {
   const getTechnicianById = async (technicianId) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/technician/getTechnician/${technicianId}`
+        `${API_URL}/technician/getTechnician/${technicianId}`
       );
       setTechnician(response.data);
     } catch (error) {
@@ -24,7 +27,7 @@ export default function DetailsModal() {
   const getRequestById = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/request/${requestId}`
+        `${API_URL}/request/${requestId}`
       );
       setRequest(response.data);
       if (response.data.technicianId) {

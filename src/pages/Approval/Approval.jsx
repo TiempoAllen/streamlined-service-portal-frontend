@@ -1,20 +1,21 @@
-import React, { useState } from "react";
-import classes from "./Approval.module.css";
-import { loadRequestsAndTechnicians } from "../../util/auth";
-import axios from "axios";
-import { useLoaderData } from "react-router-dom";
-import SelectArea from "../../components/UI/SelectArea";
-import { AgGridReact } from "ag-grid-react";
+import * as Dialog from "@radix-ui/react-dialog";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import * as Dialog from "@radix-ui/react-dialog";
+import { AgGridReact } from "ag-grid-react";
+import axios from "axios";
+import React, { useState } from "react";
+import { useLoaderData } from "react-router-dom";
 import RequestDialogPortal from "../../components/UI/RequestDialogPortal";
+import { LOCAL_ENV } from "../../util/auth";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { loadRequestsAndTechnicians } from "../../util/auth";
+import classes from "./Approval.module.css";
+import SelectArea from "../../components/UI/SelectArea";
 
 const Approval = () => {
   const { requests: initialRequests, technicians } = useLoaderData();
-  console.log("Requests", initialRequests);
 
-  // Manage the `requests` state, not just `rowData`
   const [requests, setRequests] = useState(initialRequests);
   const [filter, setFilter] = useState("Pending");
   const [rowData, setRowData] = useState(
@@ -36,7 +37,7 @@ const Approval = () => {
   const approveRequest = async (request_id) => {
     try {
       await axios.put(
-        `http://localhost:8080/request/updateStatus?request_id=${request_id}`,
+        `${LOCAL_ENV}/request/updateStatus?request_id=${request_id}`,
         {
           status: "Approved",
           denialReason: null,
@@ -60,15 +61,17 @@ const Approval = () => {
           return request.status === filter;
         })
       );
+      toast.success("Request saved successfully.");
     } catch (error) {
       console.error(error);
+      toast.error("There was an error.");
     }
   };
 
   const denyRequest = async (request_id, denialReason) => {
     try {
       await axios.put(
-        `http://localhost:8080/request/updateStatus?request_id=${request_id}`,
+        `${LOCAL_ENV}/request/updateStatus?request_id=${request_id}`,
         {
           status: "Denied",
           denialReason: denialReason,
@@ -92,15 +95,17 @@ const Approval = () => {
           return request.status === filter;
         })
       );
+      toast.success("Request saved successfully.");
     } catch (error) {
       console.error(error);
+      toast.error("There was an error.");
     }
   };
 
   const handleRequestDone = async (request_id) => {
     try {
       await axios.put(
-        `http://localhost:8080/request/updateStatus?request_id=${request_id}`,
+        `${LOCAL_ENV}/request/updateStatus?request_id=${request_id}`,
         { status: "Done" }
       );
 
@@ -119,8 +124,42 @@ const Approval = () => {
           return request.status === filter;
         })
       );
+      toast.success("Request saved successfully.");
     } catch (error) {
       console.error(error);
+      toast.error("There was an error.");
+    }
+  };
+
+  const handleStartRequest = async (request_id) => {
+    try {
+      await axios.put(
+        `${LOCAL_ENV}/request/updateStatus?request_id=${request_id}`,
+        { status: "In Progress" }
+      );
+
+      const updatedRequests = requests.map((request) =>
+        request.request_id === request_id
+          ? { ...request, status: "In Progress" }
+          : request
+      );
+
+      setRequests(updatedRequests);
+      setRowData(
+        updatedRequests.filter((request) => {
+          if (filter === "All") {
+            return true;
+          }
+          return request.status === filter;
+        })
+      );
+      toast.success("Request saved successfully.");
+      setTimeout(() => {
+        toast.dismiss();
+      }, 5000);
+    } catch (error) {
+      console.error(error);
+      toast.error("There was an error.");
     }
   };
 
@@ -133,17 +172,15 @@ const Approval = () => {
         `${params.data.user_firstname} ${params.data.user_lastname}`,
       flex: 1,
     },
-    { headerName: "Technician", field: "request_technician", flex: 1 },
     { headerName: "Title", field: "title", flex: 1 },
     { headerName: "Description", field: "description", flex: 1 },
+    { headerName: "Technician", field: "request_technician", flex: 1 },
     {
       headerName: "Date/Time",
       field: "datetime",
       flex: 1,
       valueFormatter: (params) => new Date(params.value).toLocaleString(),
     },
-    { headerName: "Location", field: "request_location", flex: 1 },
-    { headerName: "Department", field: "department", flex: 1 },
     {
       headerName: "Attachment",
       field: "attachment",
@@ -167,6 +204,7 @@ const Approval = () => {
               onApproveRequest={approveRequest}
               onRequestDone={handleRequestDone}
               onDenyRequest={denyRequest}
+              onRequestStart={handleStartRequest}
             />
           </Dialog.Root>
         </div>
@@ -187,8 +225,10 @@ const Approval = () => {
           domLayout="autoHeight"
           pagination={true}
           paginationPageSize={10}
+          rowHeight={80}
         />
       </div>
+      <ToastContainer />
     </section>
   );
 };

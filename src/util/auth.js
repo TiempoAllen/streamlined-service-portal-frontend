@@ -1,5 +1,11 @@
-import { redirect } from "react-router-dom";
 import axios from "axios";
+import { redirect } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
+export const LOCAL_ENV = "http://localhost:8080";
+export const BACK_ENV =
+  "https://streamlined-service-portal-backend-cswk.onrender.com";
 
 export const getAuthToken = () => {
   const token = localStorage.getItem("token");
@@ -20,6 +26,7 @@ export const formatDateTime = (datetime) => {
 
 export const checkAuthLoader = () => {
   const token = getAuthToken();
+  const local = LOCAL_ENV;
 
   if (!token) {
     // throw json(
@@ -31,8 +38,6 @@ export const checkAuthLoader = () => {
 
   return null;
 };
-
-
 
 export const submitRegistration = async (formData) => {
   const {
@@ -93,10 +98,7 @@ export const submitRegistration = async (formData) => {
   };
 
   try {
-    const response = await axios.post(
-      "http://localhost:8080/user/add",
-      registerData
-    );
+    const response = await axios.post(`${LOCAL_ENV}/user/add`, registerData);
 
     if (response.status !== 200) {
       throw new Error("Could not register user.");
@@ -105,15 +107,49 @@ export const submitRegistration = async (formData) => {
     return { success: true };
   } catch (error) {
     console.error("Error: ", error.response?.data || error.message);
-    
+
     if (error.response && error.response.data === "Email already exists") {
       return { success: false, message: "Email already exists" };
     }
-    if (error.response && error.response.data === "Employee ID already exists") {
+    if (
+      error.response &&
+      error.response.data === "Employee ID already exists"
+    ) {
       return { success: false, message: "Employee ID already exists" };
     }
-    
+
     return { success: false, message: "Could not register user." };
+  }
+};
+
+export const loadUserAndRequests = async (user_id) => {
+  try {
+    const token = getAuthToken();
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const [userResponse, requestsResponse] = await Promise.all([
+      axios.get(`${LOCAL_ENV}/user/${user_id}`, {
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
+      }),
+      axios.get(`${LOCAL_ENV}/request/getAllRequest`, {
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
+      }),
+    ]);
+
+    return {
+      user: userResponse.data,
+      requests: requestsResponse.data,
+    };
+  } catch (error) {
+    console.error("Error occurred while fetching data:", error);
+    throw error;
   }
 };
 
@@ -126,12 +162,12 @@ export const loadRequestsAndTechnicians = async () => {
     }
 
     const [requestsResponse, techniciansResponse] = await Promise.all([
-      axios.get("http://localhost:8080/request/getAllRequest", {
+      axios.get(`${LOCAL_ENV}/request/getAllRequest`, {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },
       }),
-      axios.get("http://localhost:8080/technician/getAllTechnician", {
+      axios.get(`${LOCAL_ENV}/technician/getAllTechnician`, {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },
