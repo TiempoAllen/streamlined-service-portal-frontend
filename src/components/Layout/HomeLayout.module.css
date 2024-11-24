@@ -29,6 +29,7 @@
     min-height: 100vh;
     width: calc(100% - 235px);
     overflow-y: auto;
+    background-color: #E6E6E6;
   }
 
   .footerAdmin {

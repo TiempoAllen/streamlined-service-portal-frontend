@@ -11,21 +11,16 @@
 }
 
 tr td:first-child {
-    /* border-left: 1px solid #424242; */
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
 }
 
 tr td:last-child {
-    /* border-right: 1px solid #424242; */
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
 }
 
 td {
-    /* border-top: 0.25px solid #424242;
-    border-bottom: 0.25px solid #424242; */
-    /* width: 100%; */
     font-size: 1rem;
     padding: 1rem 1rem;
     background-color: white;

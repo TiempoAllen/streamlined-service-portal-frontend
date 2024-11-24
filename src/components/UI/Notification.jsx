@@ -1,10 +1,11 @@
-import { React, useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import bellIcon from "../../assets/bell.svg";
-import { formatDateTime } from "../../util/auth";
 import profileImg from "../../assets/profile.jpg";
 import classes from "./Notification.module.css";
 import axios from "axios";
+import EvaluationFormDialog from "./EvaluationFormDialog.jsx"; // Import the evaluation form dialog
+import { formatDateTime } from "../../util/auth";
 
 const timeDifference = (timestamp) => {
   const now = new Date();
@@ -29,10 +30,11 @@ const timeDifference = (timestamp) => {
 
 const Notification = ({ user_id }) => {
   const [showNotification, setShowNotification] = useState(false);
-  const [notificationCount, setNotificationCount] = useState(1);
+  const [notificationCount, setNotificationCount] = useState(0);
   const [notifications, setNotifications] = useState([]);
+  const [selectedNotification, setSelectedNotification] = useState(null); // Track the notification for evaluation
   const dropdownRef = useRef(null);
-  const navigate = useNavigate(); // Use useNavigate for navigation
+  const navigate = useNavigate();
 
   const handleNotificationClick = () => {
     setShowNotification(!showNotification);
@@ -41,12 +43,9 @@ const Notification = ({ user_id }) => {
 
   const fetchNotifications = async () => {
     try {
-      // Fetch the user's notifications from the backend using the user_id
       const response = await axios.get(
         `http://localhost:8080/notifications/${user_id}`
       );
-      console.log(response.data);
-
       const sortedNotifications = response.data.sort(
         (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
       );
@@ -60,9 +59,15 @@ const Notification = ({ user_id }) => {
   };
 
   const handleRowClick = (notification) => {
-    if (notification.recipientRole === "User") {
-      navigate(`/home/${user_id}/history`); // Navigate to user history
+    if (notification.type === "EVALUATION") {
+      setSelectedNotification(notification); // Open evaluation dialog
+    } else if (notification.recipientRole === "User") {
+      navigate(`/home/${user_id}/history`);
     }
+  };
+
+  const handleCloseDialog = () => {
+    setSelectedNotification(null); // Close the dialog
   };
 
   useEffect(() => {
@@ -97,9 +102,9 @@ const Notification = ({ user_id }) => {
             <ul className={classes.notificationItems}>
               {notifications.map((notification) => (
                 <li
-                  key={notification.id} // Add a key for each item
+                  key={notification.id}
                   className={classes.notificationsRow}
-                  onClick={() => handleRowClick(notification)} // Attach the click handler
+                  onClick={() => handleRowClick(notification)}
                 >
                   <div className={classes.parentRow}>
                     <p>{notification.message}</p>
@@ -115,6 +120,13 @@ const Notification = ({ user_id }) => {
             <p>No notifications</p>
           )}
         </div>
+      )}
+      {selectedNotification && (
+        <EvaluationFormDialog
+          open={!!selectedNotification}
+          onClose={handleCloseDialog}
+          requestId={selectedNotification.requestId} // Pass the relevant request ID
+        />
       )}
     </div>
   );

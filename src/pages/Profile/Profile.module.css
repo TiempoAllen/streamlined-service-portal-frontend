@@ -10,6 +10,7 @@
     gap: 20px;
 }
 
+
 .columnSection{
     display: flex;
     flex-direction: column;
@@ -48,6 +49,38 @@
     object-fit: cover;
 }
 
+.profileImgWrapper {
+    position: relative; 
+    display: inline-block;
+  }
+
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.5); 
+    opacity: 0;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    border-radius: 50%; 
+    transition: opacity 0.3s ease; 
+  }
+  
+  .profileImgWrapper:hover .overlay {
+    opacity: 1; 
+    cursor: pointer;
+  }
+  
+  .editIcon {
+    color: #000000;
+    font-size: 24px; 
+  }
+  
+
 .profileDetails {
     display: flex;
     align-items: flex-start;
@@ -58,6 +91,31 @@
     width: 100%;
     padding: 1rem;
     flex: 1 1;
+}
+
+.buttonGroup{
+    display: flex;
+    gap: 20px;
+    align-items: end;
+    margin-left: 470px;
+}
+
+.uploadPicture{
+    display: flex;
+    background-color: #631C21;
+    color: white;
+    justify-content: flex-end;
+    align-self: flex-end;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 10px;
+    margin-top: -55px;
+
+}
+
+.uploadPicture:hover{
+    background-color: #953a40;
+    cursor: pointer;
 }
 
 .editPassword{

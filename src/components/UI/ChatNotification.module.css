@@ -34,6 +34,9 @@
   align-items: center;
   flex-direction: row;
   height: fit-content;
+  flex: 0 1;
+  max-width: 318px;
+  width: 100%;
 }
 
 .notificationItems{
@@ -42,6 +45,7 @@
   max-height: 400px;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 10px;
 }
 
@@ -77,6 +81,8 @@
   align-items: flex-start;
   position: relative;
   padding: 10px;
+  max-width: 318px;
+  width: 100%;
 }
 
 .childRow{
@@ -84,12 +90,15 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 100px;
   margin-top: 5px;
+  max-width: 318px;
+  width: 100%;
 }
 
 .childRow .message{
-  flex-grow: 1;
+  flex: none;
+  max-width: 100px;
+  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -97,6 +106,7 @@
 
 .childRow .chatDuration{
   flex-shrink: 0;
+  align-self: flex-end;
 }
 
 
@@ -140,6 +150,18 @@
   font-size: 0.8em;
   color: white;
 }
+
+.unreadIndicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 1000px;
+  background-color: #fa3e3e;
+  display: flex;
+  position: absolute;
+  right: 10px;
+  bottom: 40px;
+}
+
 
 .allMessages{
   display: flex;

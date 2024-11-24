@@ -7,6 +7,7 @@
   align-items: center;
   justify-content: center;
   padding: 2rem 2rem;
+  margin-top: -50px;
 }
 
   .cardBox{
@@ -21,14 +22,21 @@
   
   .cardBox .card {
     position: relative;
-    background-color: #FFFAF1;
+    background-color: #ffffff;
     padding: 25px;
     border-radius: 8px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+
+  .cardBox .card img{
+    width: 50px;
+    height: auto;
+  }
+
   
   .cardBox .card .requestsNumber{
     position: relative;
@@ -53,9 +61,12 @@
   }
   
   .cardBox .card:hover .name,
-  .cardBox .card:hover .icon,
   .cardBox .card:hover .requestsNumber{
-    color:white
+    color:white;
+  }
+
+  .cardBox .card:hover .icon{
+    filter: invert(100%);
   }
   
   
@@ -65,15 +76,16 @@
     padding: 10px;
     margin-left: 10px;
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr;
     gap: 25px;
+    right: 4px;
   }
   
   .details .tableDashboard{
     position: relative;
     display:grid;
     min-height: 200px;
-    background:#FFFAF1;
+    background:#ffffff;
     padding: 20px;
     box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
     border-radius: 8px;
@@ -105,196 +117,67 @@
     cursor: pointer;
   }
   
-  .details table{
-    width: 100%;
-    border-collapse: separate;
-    margin-top: 1px;
-    
-  }
-  
-  .details table thead td{
-    font-weight: 600;
-  }
-  
-  .details .tableDashboard table tr{
-    color: black;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  }
-  
-  .details .tableDashboard table tr:last-child{
-    border-bottom: none;
-  }
-  
-  .details .tableDashboard table tbody tr:hover{
-    background-color: #a7a1bd;
-    color:#BC4A4D;
-  }
-  
-  .details .tableDashboard table tr td{
-    padding: 20px;
-  }
-.cardBox {
-  position: relative;
-  width: 1150px;
-  padding: 20px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
+
+
+  .modalSection {
+  margin-bottom: 20px;
 }
 
-
-.cardBox .card {
-  position: relative;
-  background-color: #FFFAF1;
-  padding: 25px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.modalSection h4 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
-.cardBox .card .requestsNumber {
-  position: relative;
-  font-weight: 600;
-  font-size: 1.5rem;
-  color: rgb(42, 38, 38);
-}
-
-.cardBox .card .name {
-  color: #667085;
-  font-weight: medium;
+.modalSection p {
+  margin: 5px 0;
   font-size: 14px;
 }
 
-.cardBox .card .icon {
-  font-size: 3.5rem;
-  color: black;
-}
-
-.cardBox .card:hover {
-  background: #BC4A4D;
-}
-
-.cardBox .card:hover .name,
-.cardBox .card:hover .icon,
-.cardBox .card:hover .requestsNumber {
-  color: white
-}
-
-
-.details {
-  position: relative;
-  width: 96%;
-  padding: 10px;
-  margin-left: 10px;
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 25px;
-}
-
-.details .tableDashboard {
-  position: relative;
-  display: grid;
-  min-height: 200px;
-  background: #FFFAF1;
-  padding: 20px;
-  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
-}
-
-.details .cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.cardHeader h2 {
-  font-weight: 500;
-}
-
-.cardHeader .btn {
-  position: relative;
+.statusTag {
+  display: inline-block;
   padding: 5px 10px;
-  text-decoration-line: none;
-  color: rgb(255, 255, 255);
-  background-color: #BC4A4D;
-  border-radius: 4px;
-  top: 20px;
+  border-radius: 5px;
+  color: #fff;
 }
 
-.cardHeader .btn:hover {
-  color: rgb(255, 255, 255);
-  background-color: rgb(218, 101, 101);
+.statusTag.rejected {
+  background-color: #f5222d;
 }
 
-.details table {
-  width: 100%;
-  border-collapse: separate;
-  margin-top: 1px;
-
+.statusTag.approved {
+  background-color: #52c41a;
 }
 
-.details table thead td {
-  font-weight: 600;
+.statusTag.lowUrgency {
+  background-color: #bae637;
+  color: #000;
 }
 
-.details .tableDashboard table tr {
-  color: black;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+.modalTable{
+  width: 100%; /* Ensure table takes full width of the modal */
+  border-collapse: collapse; /* Remove gaps between cells */
+  text-align: left; /* Align text for readability */
 }
 
-.details .tableDashboard table tr:last-child {
-  border-bottom: none;
+.modalTable th,
+.modalTable td {
+  padding: 8px 12px; /* Add padding for spacing */
+  border-bottom: 1px solid #ddd; /* Add border for clarity */
 }
 
-.details .tableDashboard table tbody tr:hover {
-  background-color: #a7a1bd;
-  color: #BC4A4D;
+.modalTable th {
+  background-color: #f5f5f5; /* Add a background to headers */
+  font-weight: bold; /* Make headers bold */
+  text-align: center; /* Align headers to center */
 }
 
-.details .tableDashboard table tr td {
-  padding: 20px;
+.modalTable td {
+  vertical-align: top; /* Align cell content properly */
 }
 
-.calendarContainer {
-  position: relative;
-  display: grid;
-  padding: 20px;
-  width: 350px;
-  background: #FFFAF1;
-  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
-}
-
-
-.react-calendar {
-  background: rgb(122, 23, 23);
-  border: 1px solid #a0a096;
-  font-family: Arial, Helvetica, sans-serif;
-  line-height: 1.125em;
-}
-
-.react-calendar__navigation button {
-  color: #000000;
-  border-radius: 20px;
-}
-
-.react-calendar__navigation button:disabled {
-  background-color: #f0f0f0;
-}
-
-.react-calendar__month-view__days__day--weekend {
-  color: #e00000;
-}
-
-.react-calendar__tile {
-  border-radius: 12px;
-  padding: 10px;
-}
-
-.react-calendar__tile--active {
-  background: #6f48eb;
-  color: rgb(214, 50, 50);
-  border-radius: 20px;
+.pagination {
+  display: flex;
+  justify-content: center; /* Center the pagination controls */
+  padding: 10px 0;
 }

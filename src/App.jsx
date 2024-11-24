@@ -12,8 +12,6 @@ import Error from "./pages/Error/Error";
 import { action as logoutAction } from "./pages/Login/Logout";
 import { checkAuthLoader } from "./util/auth";
 import Approval, { loader as approvalLoader } from "./pages/Approval/Approval";
-import Chat from "./pages/Chat/Chat";
-import Profile from "./pages/Profile/Profile";
 import Record, { loader as recordLoader } from "./pages/Record/Record";
 import SuperUser from "./pages/SuperUser/SuperUser";
 import Technician, {
@@ -22,6 +20,8 @@ import Technician, {
 import TechnicianSchedule from "./pages/Technician/TechnicianSchedule";
 import RecordDetails from "./pages/Record/RecordDetails";
 import History, { loader as historyLoader } from "./pages/History/History";
+import Profile, {loader as profileLoader} from "./pages/Profile/Profile";
+import Chat, {loader as chatLoader} from "./pages/Chat/Chat";
 import DetailsModal from "./components/UI/DetailsModal";
 
 const router = createBrowserRouter([
@@ -83,11 +83,15 @@ const router = createBrowserRouter([
       },
       {
         path: "profile",
+        id: "profile",
         element: <Profile />,
+        loader: profileLoader,
       },
       {
         path: "chat",
+        id:"chat",
         element: <Chat />,
+        loader: chatLoader,
       },
       {
         path: "technician",
