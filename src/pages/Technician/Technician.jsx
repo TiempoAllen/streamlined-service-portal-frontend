@@ -46,7 +46,8 @@ const Technician = () => {
               <p className={classes.viewBtn}>View</p>
             </Dialog.Trigger>
             <PersonnelProfile
-              requests={technician.requests} // Pass the requests correctly
+              // requests={technician.requests}
+              tech_id={technician.tech_id}
             />
           </Dialog.Root>
         );

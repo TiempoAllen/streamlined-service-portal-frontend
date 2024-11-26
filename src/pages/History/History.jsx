@@ -4,6 +4,7 @@ import { AgGridReact } from "ag-grid-react";
 import axios from "axios";
 import React, { useState } from "react";
 import { json, useLoaderData, useNavigate, useParams } from "react-router-dom";
+import { LOCAL_ENV } from "../../util/auth";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
@@ -93,15 +94,12 @@ export async function loader({ request, params }) {
   }
 
   try {
-    const response = await axios.get(
-      `https://streamlined-service-portal-backend-cswk.onrender.com/request/getAllRequest`,
-      {
-        // Uncomment the Authorization header if needed
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
-      }
-    );
+    const response = await axios.get(`${LOCAL_ENV}/request/user/${user_id}`, {
+      // Uncomment the Authorization header if needed
+      // headers: {
+      //   Authorization: `Bearer ${token}`,
+      // },
+    });
 
     const requests = response.data;
 
