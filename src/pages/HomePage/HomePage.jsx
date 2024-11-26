@@ -27,9 +27,6 @@ const HomePage = () => {
   const [activeTab, setActiveTab] = useState("all");
   const themeClass = "ag-theme-quartz";
   const [searchTerm, setSearchTerm] = useState("");
-
-  console.log("Requests: ", requests);
-
   // const sortedRequests = requests.sort(
   //   (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
   // );
@@ -64,24 +61,29 @@ const HomePage = () => {
     setSearchTerm(event.target.value.toLowerCase());
   };
 
-  const transformedRequests = requests
-    .filter((request) => activeTab === "all" || request.status === activeTab)
-    .filter(
-      (request) =>
-        request.title.toLowerCase().includes(searchTerm) ||
-        request.description.toLowerCase().includes(searchTerm) ||
-        (request.request_technician &&
-          request.request_technician.toLowerCase().includes(searchTerm))
-    )
-    .map((request) => {
-      return {
-        RequestID: request.request_id,
-        Title: request.title,
-        Description: request.description,
-        "Technician Requested": request.request_technician,
-        Status: request.status,
-      };
-    });
+  const transformedRequests =
+    !isAdmin && Array.isArray(requests)
+      ? requests
+          .filter(
+            (request) => activeTab === "all" || request.status === activeTab
+          )
+          .filter(
+            (request) =>
+              request.title.toLowerCase().includes(searchTerm) ||
+              request.description.toLowerCase().includes(searchTerm) ||
+              (request.request_technician &&
+                request.request_technician.toLowerCase().includes(searchTerm))
+          )
+          .map((request) => {
+            return {
+              RequestID: request.request_id,
+              Title: request.title,
+              Description: request.description,
+              "Technician Requested": request.request_technician,
+              Status: request.status,
+            };
+          })
+      : [];
 
   const statuses = {
     all: "All",
