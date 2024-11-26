@@ -95,14 +95,14 @@ const RequestDetailsPortal = ({ request_id }) => {
               <p className={classes.first}>Urgency Level</p>
               <p
                 className={`${classes.second} ${
-                  request.urgencyLevel === "Low"
+                  request.urgency_level === "Low"
                     ? classes.lowLevel
-                    : request.urgencyLevel === "Medium"
+                    : request.urgency_level === "Medium"
                     ? classes.mediumLevel
                     : classes.highLevel
                 }`}
               >
-                {request.urgencyLevel}
+                {request.urgency_level}
               </p>
             </div>
           </div>
