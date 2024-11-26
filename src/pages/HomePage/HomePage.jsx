@@ -28,9 +28,11 @@ const HomePage = () => {
   const themeClass = "ag-theme-quartz";
   const [searchTerm, setSearchTerm] = useState("");
 
-  const sortedRequests = requests.sort(
-    (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-  );
+  console.log("Requests: ", requests);
+
+  // const sortedRequests = requests.sort(
+  //   (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+  // );
 
   const [colDefs] = useState([
     { field: "RequestID", flex: 1 },
@@ -62,7 +64,7 @@ const HomePage = () => {
     setSearchTerm(event.target.value.toLowerCase());
   };
 
-  const transformedRequests = sortedRequests
+  const transformedRequests = requests
     .filter((request) => activeTab === "all" || request.status === activeTab)
     .filter(
       (request) =>

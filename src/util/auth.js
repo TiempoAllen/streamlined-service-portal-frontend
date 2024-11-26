@@ -136,7 +136,7 @@ export const loadUserAndRequests = async (user_id) => {
         //   Authorization: `Bearer ${token}`,
         // },
       }),
-      axios.get(`${LOCAL_ENV}/request/getAllRequest`, {
+      axios.get(`${LOCAL_ENV}/request/user/${user_id}`, {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },

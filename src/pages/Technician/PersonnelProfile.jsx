@@ -2,18 +2,37 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import listPlugin from "@fullcalendar/list";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import classes from "../../components/UI/RequestDialogPortal.module.css";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import axios from "axios";
+import { LOCAL_ENV } from "../../util/auth";
 
-const PersonnelProfile = ({ requests }) => {
-  const events = requests.map((request) => {
+const PersonnelProfile = ({ tech_id }) => {
+  const [schedules, setSchedule] = useState([]);
+
+  const getScheduleByPersonnel = async () => {
+    try {
+      const response = await axios.get(
+        `${LOCAL_ENV}/technician/${tech_id}/schedule`
+      );
+      setSchedule(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getScheduleByPersonnel();
+  }, [schedules]);
+
+  const events = schedules.map((schedule) => {
     return {
-      title: request.title,
-      start: request.scheduledDate,
-      end: request.scheduledDate,
+      title: schedule.request.title,
+      start: schedule.request.scheduledStartDate,
+      end: schedule.request.scheduledEndDate,
     };
   });
 

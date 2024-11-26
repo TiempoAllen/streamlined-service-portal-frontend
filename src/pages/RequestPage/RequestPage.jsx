@@ -16,6 +16,7 @@ import uploadIcon from "../../assets/upload-icon.svg";
 import FileModal from "../../components/UI/FileModal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { LOCAL_ENV } from "../../util/auth";
 
 const RequestPage = () => {
   const user = useRouteLoaderData("home");
@@ -119,7 +120,7 @@ const RequestPage = () => {
             <span className={classes.preferredDateTime}>
               <div>
                 <label id="preferredDateTimeLabel">
-                  Preferred Date and Time{" "}
+                  Preferred Start Date and Time{" "}
                   <span className={classes.required}>*</span>
                 </label>
                 <p>
@@ -128,7 +129,24 @@ const RequestPage = () => {
               </div>
               <input
                 type="datetime-local"
-                name="preferredDate"
+                name="preferredStartDate"
+                className={classes.inputText}
+                required
+              />
+            </span>
+            <span className={classes.preferredDateTime}>
+              <div>
+                <label id="preferredDateTimeLabel">
+                  Preferred End Date and Time{" "}
+                  <span className={classes.required}>*</span>
+                </label>
+                <p>
+                  This may be subject to approval and scheduling by the admin.
+                </p>
+              </div>
+              <input
+                type="datetime-local"
+                name="preferredEndDate"
                 className={classes.inputText}
                 required
               />
@@ -216,32 +234,35 @@ export const action = async ({ request, params }) => {
   const user_id = params.user_id;
   const data = await request.formData();
 
-  const rawPreferredDate = data.get("preferredDate");
-  const formattedPreferredDate = new Date(rawPreferredDate).toISOString();
+  const rawPreferredStartDate = data.get("preferredStartDate");
+  const formattedPreferredStartDate = new Date(
+    rawPreferredStartDate
+  ).toISOString();
+  const rawPreferredEndDate = data.get("preferredEndDate");
+  const formattedPreferredEndDate = new Date(rawPreferredEndDate).toISOString();
 
   const currentDateTime = new Date().toISOString();
 
   const requestData = new FormData();
   requestData.append("request_location", data.get("request_location"));
   requestData.append("datetime", currentDateTime);
-  requestData.append("preferredDate", formattedPreferredDate);
+  requestData.append("preferredStartDate", formattedPreferredStartDate);
+  requestData.append("preferredEndDate", formattedPreferredEndDate);
   requestData.append("title", data.get("title"));
   requestData.append("description", data.get("description"));
   requestData.append("user_id", user_id);
   requestData.append("request_technician", data.get("request_technician"));
   requestData.append("urgency_level", data.get("urgencyLevel"));
   requestData.append("attachment", data.get("attachment"));
+  requestData.append("is_opened", false);
 
   try {
-    const response = await axios.post(
-      "https://streamlined-service-portal-backend-cswk.onrender.com/request/add",
-      requestData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await axios.post(`${LOCAL_ENV}/request/add`, requestData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log(response.data);
 
     if (response.status !== 200) {
       throw json({ message: "Could not create request." }, { status: 500 });

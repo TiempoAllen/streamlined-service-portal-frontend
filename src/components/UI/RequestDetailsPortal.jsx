@@ -130,7 +130,13 @@ const RequestDetailsPortal = ({ request_id }) => {
             <div className={classes.requestDetailsPortalInputs}>
               <p className={classes.first}>Preferred Date and Time</p>
               <p className={classes.second}>
-                {formatDateTime(request.preferredDate)}
+                {formatDateTime(request.preferredStartDate)}
+              </p>
+            </div>
+            <div className={classes.requestDetailsPortalInputs}>
+              <p className={classes.first}>Preferred Date and Time</p>
+              <p className={classes.second}>
+                {formatDateTime(request.preferredEndDate)}
               </p>
             </div>
             {request.status === "Denied" && (

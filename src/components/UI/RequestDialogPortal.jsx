@@ -87,14 +87,20 @@ const RequestDialogPortal = ({
   const handleAssignTechnicianToRequest = async (
     request_id,
     tech_id,
-    scheduledDate,
+    scheduledStartDate,
+    scheduledEndDate,
     closeDialog
   ) => {
     try {
-      const formattedScheduledDate = new Date(scheduledDate).toISOString();
+      const formattedScheduledStartDate = new Date(
+        scheduledStartDate
+      ).toISOString();
+      const formattedScheduledEndDate = new Date(
+        scheduledEndDate
+      ).toISOString();
 
       await axios.post(
-        `${LOCAL_ENV}/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&scheduledDate=${formattedScheduledDate}`
+        `${LOCAL_ENV}/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&startTime=${formattedScheduledStartDate}&endTime=${formattedScheduledEndDate}`
       );
       setTechAssigned(tech_id);
 
@@ -195,14 +201,20 @@ const RequestDialogPortal = ({
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Preferred Date and Time</p>
                 <p className={classes.second}>
-                  {formatDateTime(request.preferredDate)}
+                  {formatDateTime(request.preferredStartDate)}
+                </p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Preferred Date and Time</p>
+                <p className={classes.second}>
+                  {formatDateTime(request.preferredEndDate)}
                 </p>
               </div>
               {["Assigned", "In Progress", "Done"].includes(request.status) && (
                 <div className={classes.requestDetailsPortalInputs}>
                   <p className={classes.first}>Scheduled Date and Time</p>
                   <p className={classes.second}>
-                    {formatDateTime(request.scheduledDate)}
+                    {formatDateTime(request.scheduledStartDate)}
                   </p>
                 </div>
               )}
