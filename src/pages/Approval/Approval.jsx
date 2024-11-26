@@ -3,7 +3,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 import RequestDialogPortal from "../../components/UI/RequestDialogPortal";
 import { LOCAL_ENV } from "../../util/auth";
@@ -15,24 +15,51 @@ import SelectArea from "../../components/UI/SelectArea";
 
 const Approval = () => {
   const { requests: initialRequests, technicians } = useLoaderData();
-
+  const [statusMessage, setStatusMessage] = useState(null);
   const [requests, setRequests] = useState(initialRequests);
   const [filter, setFilter] = useState("Pending");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const [rowData, setRowData] = useState(
     initialRequests.filter((request) => request.status === "Pending")
   );
 
+  useEffect(() => {
+   
+    if (statusMessage) {
+      toast.success(statusMessage, { autoClose: 5000 });
+      setStatusMessage(null); 
+    }
+  }, [statusMessage]);
+
+
   const handleFilterChange = (selectedFilter) => {
     setFilter(selectedFilter);
     setRowData(
-      requests.filter((request) => {
-        if (selectedFilter === "All") {
-          return true;
-        }
-        return request.status === selectedFilter;
-      })
+        requests.filter((request) => {
+            // If "All" is selected, show all requests
+            if (selectedFilter === "All") {
+                return true;
+            }
+
+            // Include "Pending" requests regardless of isOpened state
+            if (selectedFilter === "Pending") {
+                return request.status === "Pending";
+            }
+
+            // Filter by status and check if the request is opened (viewed)
+            if (selectedFilter === "Viewed") {
+                return request.isOpened === true;
+            }
+
+            // Filter by other statuses (Approved, Denied, etc.)
+            return request.status === selectedFilter;
+        })
     );
-  };
+};
+
+  
+
 
   const approveRequest = async (request_id) => {
     try {
@@ -137,13 +164,13 @@ const Approval = () => {
         `${LOCAL_ENV}/request/updateStatus?request_id=${request_id}`,
         { status: "In Progress" }
       );
-
+  
       const updatedRequests = requests.map((request) =>
         request.request_id === request_id
           ? { ...request, status: "In Progress" }
           : request
       );
-
+  
       setRequests(updatedRequests);
       setRowData(
         updatedRequests.filter((request) => {
@@ -154,14 +181,33 @@ const Approval = () => {
         })
       );
       toast.success("Request saved successfully.");
-      setTimeout(() => {
-        toast.dismiss();
-      }, 5000);
     } catch (error) {
       console.error(error);
       toast.error("There was an error.");
     }
   };
+
+  const markRequestAsOpened = async (request_id) => {
+      console.log("Mark request as viewed triggered for request ID:", request_id);
+    try {
+        await axios.put(`${LOCAL_ENV}/request/markViewed/${request_id}`);
+
+        const updatedRequests = requests.map((request) =>
+            request.request_id === request_id
+                ? { ...request, isOpened: true }
+                : request
+        );
+        
+    } catch (error) {
+        console.error("Error marking request as opened:", error);
+        toast.error("An error occurred while processing the request.");
+    }
+};
+
+  
+
+
+
 
   const columns = [
     { headerName: "Request ID", field: "request_id", flex: 1 },
@@ -194,10 +240,19 @@ const Approval = () => {
       flex: 1,
       cellRenderer: (params) => (
         <div>
-          <Dialog.Root>
-            <Dialog.Trigger asChild>
-              <p className={classes.viewBtn}>View</p>
-            </Dialog.Trigger>
+        <Dialog.Root>
+  <Dialog.Trigger asChild>
+    <p
+      className={classes.viewBtn}
+      onClick={() => {
+        setIsDialogOpen(true); // Open the dialog
+        markRequestAsOpened(params.data.request_id);
+        setSelectedRequest(params.data);
+      }}
+    >
+      View
+    </p>
+  </Dialog.Trigger>
             <RequestDialogPortal
               request={params.data}
               technicians={technicians}
@@ -205,6 +260,7 @@ const Approval = () => {
               onRequestDone={handleRequestDone}
               onDenyRequest={denyRequest}
               onRequestStart={handleStartRequest}
+              //={markRequestAsOpened}
             />
           </Dialog.Root>
         </div>
@@ -228,7 +284,9 @@ const Approval = () => {
           rowHeight={80}
         />
       </div>
-      <ToastContainer />
+     
+<ToastContainer/>
+
     </section>
   );
 };

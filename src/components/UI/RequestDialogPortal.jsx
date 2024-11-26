@@ -9,6 +9,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { LOCAL_ENV } from "../../util/auth";
 
 const formatDateTime = (datetime) => {
+  if (!datetime || isNaN(new Date(datetime).getTime())) {
+    console.warn("Invalid datetime value:", datetime);
+    return "Invalid Date";
+  }
   const date = new Date(datetime);
   const options = {
     month: "2-digit",
@@ -19,6 +23,7 @@ const formatDateTime = (datetime) => {
   };
   return new Intl.DateTimeFormat("en-US", options).format(date);
 };
+
 
 const RequestDialogPortal = ({
   request,
