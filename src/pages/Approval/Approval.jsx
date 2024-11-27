@@ -14,7 +14,6 @@ import SelectArea from "../../components/UI/SelectArea";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
-
 const Approval = () => {
   const { requests: initialRequests, technicians } = useLoaderData();
   const [statusMessage, setStatusMessage] = useState(null);
@@ -27,43 +26,36 @@ const Approval = () => {
   );
 
   useEffect(() => {
-   
     if (statusMessage) {
       toast.success(statusMessage, { autoClose: 1000 });
-      setStatusMessage(null); 
+      setStatusMessage(null);
     }
-  }, [statusMessage]);  
-   
-  
-  
+  }, [statusMessage]);
 
   const handleFilterChange = (selectedFilter) => {
     setFilter(selectedFilter);
     setRowData(
-        requests.filter((request) => {
-            // If "All" is selected, show all requests
-            if (selectedFilter === "All") {
-                return true;
-            }
+      requests.filter((request) => {
+        // If "All" is selected, show all requests
+        if (selectedFilter === "All") {
+          return true;
+        }
 
-            // Include "Pending" requests regardless of isOpened state
-            if (selectedFilter === "Pending") {
-                return request.status === "Pending";
-            }
+        // Include "Pending" requests regardless of isOpened state
+        if (selectedFilter === "Pending") {
+          return request.status === "Pending";
+        }
 
-            // Filter by status and check if the request is opened (viewed)
-            if (selectedFilter === "Viewed") {
-                return request.isOpened === true;
-            }
+        // Filter by status and check if the request is opened (viewed)
+        if (selectedFilter === "Viewed") {
+          return request.isOpened === true;
+        }
 
-            // Filter by other statuses (Approved, Denied, etc.)
-            return request.status === selectedFilter;
-        })
+        // Filter by other statuses (Approved, Denied, etc.)
+        return request.status === selectedFilter;
+      })
     );
-};
-
-  
-
+  };
 
   const approveRequest = async (request_id) => {
     try {
@@ -168,13 +160,13 @@ const Approval = () => {
         `${API_URL}/request/updateStatus?request_id=${request_id}`,
         { status: "In Progress" }
       );
-  
+
       const updatedRequests = requests.map((request) =>
         request.request_id === request_id
           ? { ...request, status: "In Progress" }
           : request
       );
-  
+
       setRequests(updatedRequests);
       setRowData(
         updatedRequests.filter((request) => {
@@ -192,26 +184,20 @@ const Approval = () => {
   };
 
   const markRequestAsOpened = async (request_id) => {
-      console.log("Mark request as viewed triggered for request ID:", request_id);
+    console.log("Mark request as viewed triggered for request ID:", request_id);
     try {
-        await axios.put(`${LOCAL_ENV}/request/markViewed/${request_id}`);
+      await axios.put(`${API_URL}/request/markViewed/${request_id}`);
 
-        const updatedRequests = requests.map((request) =>
-            request.request_id === request_id
-                ? { ...request, isOpened: true }
-                : request
-        );
-        
+      const updatedRequests = requests.map((request) =>
+        request.request_id === request_id
+          ? { ...request, isOpened: true }
+          : request
+      );
     } catch (error) {
-        console.error("Error marking request as opened:", error);
-        toast.error("An error occurred while processing the request.");
+      console.error("Error marking request as opened:", error);
+      toast.error("An error occurred while processing the request.");
     }
-};
-
-  
-
-
-
+  };
 
   const columns = [
     { headerName: "Request ID", field: "request_id", flex: 1 },
@@ -244,20 +230,20 @@ const Approval = () => {
       flex: 1,
       cellRenderer: (params) => (
         <div>
-     <Dialog.Root
-          open={selectedRequest?.request_id === params.data.request_id}
-          onOpenChange={(open) => {
-            if (open) {
-              setSelectedRequest(params.data);
-              markRequestAsOpened(params.data.request_id);
-            } else {
-              setSelectedRequest(null);
-            }
-          }}
-        >
-          <Dialog.Trigger asChild>
-            <button className={classes.viewBtn}>View</button>
-          </Dialog.Trigger>
+          <Dialog.Root
+            open={selectedRequest?.request_id === params.data.request_id}
+            onOpenChange={(open) => {
+              if (open) {
+                setSelectedRequest(params.data);
+                markRequestAsOpened(params.data.request_id);
+              } else {
+                setSelectedRequest(null);
+              }
+            }}
+          >
+            <Dialog.Trigger asChild>
+              <button className={classes.viewBtn}>View</button>
+            </Dialog.Trigger>
             <RequestDialogPortal
               request={params.data}
               technicians={technicians}
@@ -290,11 +276,8 @@ const Approval = () => {
           rowHeight={80}
         />
       </div>
-     
-<ToastContainer
-/>
- 
 
+      <ToastContainer />
     </section>
   );
 };
