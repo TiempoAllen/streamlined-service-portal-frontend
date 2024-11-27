@@ -6,8 +6,10 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import classes from "./RequestDialogPortal.module.css";
 import MessagePortal from "./MessagePortal";
-import { LOCAL_ENV } from "../../util/auth";
 import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 
 const TechnicianPortal = ({
   technicians,
@@ -81,7 +83,7 @@ const TechnicianPortal = ({
     if (startDate && endDate) {
       try {
         const response = await axios.get(
-          `${LOCAL_ENV}/technician/getAvailablePersonnel`,
+          `${API_URL}/technician/getAvailablePersonnel`,
           {
             params: {
               requestedStartTime: startDate,

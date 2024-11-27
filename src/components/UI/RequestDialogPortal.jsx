@@ -6,7 +6,8 @@ import axios from "axios";
 import MessagePortal from "./MessagePortal";
 import TechnicianPortal from "./TechnicianPortal";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { LOCAL_ENV } from "../../util/auth";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const formatDateTime = (datetime) => {
   if (!datetime) {
@@ -40,7 +41,7 @@ const RequestDialogPortal = ({
 
   const getUserById = async (user_id) => {
     try {
-      const response = await axios.get(`${LOCAL_ENV}/user/${user_id}`);
+      const response = await axios.get(`${API_URL}/user/${user_id}`);
       setUser(response.data);
     } catch (error) {
       console.error(error);
@@ -49,7 +50,7 @@ const RequestDialogPortal = ({
 
   const fetchRequestById = async (id) => {
     try {
-      const response = await axios.get(`${LOCAL_ENV}/request/${id}`);
+      const response = await axios.get(`${API_URL}/request/${id}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching request by ID:", error);
@@ -77,7 +78,7 @@ const RequestDialogPortal = ({
   const removeTechnician = async (request_id) => {
     try {
       await axios.post(
-        `${LOCAL_ENV}/request/removeTechnician?request_id=${request_id}`
+        `${API_URL}/request/removeTechnician?request_id=${request_id}`
       );
       const updatedRequest = await fetchRequestById(request_id);
       setTechAssigned(updatedRequest.technician); // Update technician info
@@ -103,7 +104,7 @@ const RequestDialogPortal = ({
       ).toISOString();
 
       await axios.post(
-        `${LOCAL_ENV}/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&startTime=${formattedScheduledStartDate}&endTime=${formattedScheduledEndDate}`
+        `${API_URL}/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&startTime=${formattedScheduledStartDate}&endTime=${formattedScheduledEndDate}`
       );
       setTechAssigned(tech_id);
 

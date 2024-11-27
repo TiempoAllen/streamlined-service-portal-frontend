@@ -4,7 +4,7 @@ import classes from "./RequestDetailsPortal.module.css";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { LOCAL_ENV } from "../../util/auth";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const RequestDetailsPortal = ({ request_id }) => {
   const [request, setRequest] = useState({});
@@ -19,7 +19,7 @@ const RequestDetailsPortal = ({ request_id }) => {
 
   const getUserById = async (user_id) => {
     try {
-      const response = await axios.get(`${LOCAL_ENV}/user/${user_id}`);
+      const response = await axios.get(`${API_URL}/user/${user_id}`);
       setUser(response.data);
     } catch (error) {
       console.error(error);
@@ -28,7 +28,7 @@ const RequestDetailsPortal = ({ request_id }) => {
 
   const getRequestById = async () => {
     try {
-      const response = await axios.get(`${LOCAL_ENV}/request/${request_id}`);
+      const response = await axios.get(`${API_URL}/request/${request_id}`);
       setRequest(response.data);
       if (response.data.user_id) {
         getUserById(response.data.user_id);

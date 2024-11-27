@@ -17,7 +17,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import Viewer from "react-viewer"; // Import react-viewer
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { LOCAL_ENV } from "../../util/auth";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const ResubmitForm = () => {
   const user = useRouteLoaderData("home");
@@ -341,7 +341,7 @@ export const action = async ({ request, params }) => {
 
   try {
     const response = await axios.put(
-      `${LOCAL_ENV}/request/update/${request_id}`,
+      `${API_URL}/request/update/${request_id}`,
       requestData,
       {
         headers: {

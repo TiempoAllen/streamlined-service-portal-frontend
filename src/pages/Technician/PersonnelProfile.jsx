@@ -8,7 +8,8 @@ import classes from "../../components/UI/RequestDialogPortal.module.css";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import axios from "axios";
-import { LOCAL_ENV } from "../../util/auth";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 
 const PersonnelProfile = ({ tech_id }) => {
   const [schedules, setSchedule] = useState([]);
@@ -16,7 +17,7 @@ const PersonnelProfile = ({ tech_id }) => {
   const getScheduleByPersonnel = async () => {
     try {
       const response = await axios.get(
-        `${LOCAL_ENV}/technician/${tech_id}/schedule`
+        `${API_URL}/technician/${tech_id}/schedule`
       );
       setSchedule(response.data);
     } catch (error) {

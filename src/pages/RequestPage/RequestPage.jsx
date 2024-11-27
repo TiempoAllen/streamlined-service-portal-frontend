@@ -16,7 +16,7 @@ import uploadIcon from "../../assets/upload-icon.svg";
 import FileModal from "../../components/UI/FileModal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { LOCAL_ENV } from "../../util/auth";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const RequestPage = () => {
   const user = useRouteLoaderData("home");
@@ -257,7 +257,7 @@ export const action = async ({ request, params }) => {
   requestData.append("is_opened", false);
 
   try {
-    const response = await axios.post(`${LOCAL_ENV}/request/add`, requestData, {
+    const response = await axios.post(`${API_URL}/request/add`, requestData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

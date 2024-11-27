@@ -6,12 +6,14 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 import RequestDialogPortal from "../../components/UI/RequestDialogPortal";
-import { LOCAL_ENV } from "../../util/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { loadRequestsAndTechnicians } from "../../util/auth";
 import classes from "./Approval.module.css";
 import SelectArea from "../../components/UI/SelectArea";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 
 const Approval = () => {
   const { requests: initialRequests, technicians } = useLoaderData();
@@ -66,7 +68,7 @@ const Approval = () => {
   const approveRequest = async (request_id) => {
     try {
       await axios.put(
-        `${LOCAL_ENV}/request/updateStatus?request_id=${request_id}`,
+        `${API_URL}/request/updateStatus?request_id=${request_id}`,
         {
           status: "Approved",
           denialReason: null,
@@ -100,7 +102,7 @@ const Approval = () => {
   const denyRequest = async (request_id, denialReason) => {
     try {
       await axios.put(
-        `${LOCAL_ENV}/request/updateStatus?request_id=${request_id}`,
+        `${API_URL}/request/updateStatus?request_id=${request_id}`,
         {
           status: "Denied",
           denialReason: denialReason,
@@ -134,7 +136,7 @@ const Approval = () => {
   const handleRequestDone = async (request_id) => {
     try {
       await axios.put(
-        `${LOCAL_ENV}/request/updateStatus?request_id=${request_id}`,
+        `${API_URL}/request/updateStatus?request_id=${request_id}`,
         { status: "Done" }
       );
 
@@ -163,7 +165,7 @@ const Approval = () => {
   const handleStartRequest = async (request_id) => {
     try {
       await axios.put(
-        `${LOCAL_ENV}/request/updateStatus?request_id=${request_id}`,
+        `${API_URL}/request/updateStatus?request_id=${request_id}`,
         { status: "In Progress" }
       );
   
