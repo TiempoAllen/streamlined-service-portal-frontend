@@ -101,15 +101,32 @@ const ResubmitForm = () => {
       }
     }
 
+   
+    
+  }, [ user.id, requestDetails]);
+
+  useEffect(() => {
     if (actionData) {
       if (actionData.status === "success") {
-        toast.success("Request resubmitted successfully!");
-        formRef.current.reset();
+       
+        if (!actionData.shownToast) {
+          toast.success("Request resubmitted successfully!");
+          formRef.current.reset();
+        }
       } else if (actionData.status === "error") {
-        toast.error("There was an error submitting the request.");
+       
+        if (!actionData.shownToast) {
+          toast.error("There was an error submitting the request.");
+        }
+      }
+  
+      
+      if (actionData.status === "success" || actionData.status === "error") {
+        actionData.shownToast = true;
       }
     }
-  }, [actionData, user.id, requestDetails]);
+  }, [actionData]);  
+  
 
   return (
     <section className={classes.request}>

@@ -27,11 +27,13 @@ const Approval = () => {
   useEffect(() => {
    
     if (statusMessage) {
-      toast.success(statusMessage, { autoClose: 5000 });
+      toast.success(statusMessage, { autoClose: 1000 });
       setStatusMessage(null); 
     }
-  }, [statusMessage]);
-
+  }, [statusMessage]);  
+   
+  
+  
 
   const handleFilterChange = (selectedFilter) => {
     setFilter(selectedFilter);
@@ -88,7 +90,7 @@ const Approval = () => {
           return request.status === filter;
         })
       );
-      toast.success("Request saved successfully.");
+      toast.success("Request saved successfully.", { autoClose: 2000 });
     } catch (error) {
       console.error(error);
       toast.error("There was an error.");
@@ -122,7 +124,7 @@ const Approval = () => {
           return request.status === filter;
         })
       );
-      toast.success("Request saved successfully.");
+      toast.success("Request saved successfully.", { autoClose: 5000 });
     } catch (error) {
       console.error(error);
       toast.error("There was an error.");
@@ -151,7 +153,7 @@ const Approval = () => {
           return request.status === filter;
         })
       );
-      toast.success("Request saved successfully.");
+      toast.success("Request saved successfully.", { autoClose: 2000 });
     } catch (error) {
       console.error(error);
       toast.error("There was an error.");
@@ -180,7 +182,7 @@ const Approval = () => {
           return request.status === filter;
         })
       );
-      toast.success("Request saved successfully.");
+      toast.success("Request saved successfully.", { autoClose: 2000 });
     } catch (error) {
       console.error(error);
       toast.error("There was an error.");
@@ -240,19 +242,20 @@ const Approval = () => {
       flex: 1,
       cellRenderer: (params) => (
         <div>
-        <Dialog.Root>
-  <Dialog.Trigger asChild>
-    <p
-      className={classes.viewBtn}
-      onClick={() => {
-        setIsDialogOpen(true); // Open the dialog
-        markRequestAsOpened(params.data.request_id);
-        setSelectedRequest(params.data);
-      }}
-    >
-      View
-    </p>
-  </Dialog.Trigger>
+     <Dialog.Root
+          open={selectedRequest?.request_id === params.data.request_id}
+          onOpenChange={(open) => {
+            if (open) {
+              setSelectedRequest(params.data);
+              markRequestAsOpened(params.data.request_id);
+            } else {
+              setSelectedRequest(null);
+            }
+          }}
+        >
+          <Dialog.Trigger asChild>
+            <button className={classes.viewBtn}>View</button>
+          </Dialog.Trigger>
             <RequestDialogPortal
               request={params.data}
               technicians={technicians}
@@ -260,6 +263,7 @@ const Approval = () => {
               onRequestDone={handleRequestDone}
               onDenyRequest={denyRequest}
               onRequestStart={handleStartRequest}
+              onClose={() => setSelectedRequest(null)}
               //={markRequestAsOpened}
             />
           </Dialog.Root>
@@ -285,7 +289,9 @@ const Approval = () => {
         />
       </div>
      
-<ToastContainer/>
+<ToastContainer
+/>
+ 
 
     </section>
   );
