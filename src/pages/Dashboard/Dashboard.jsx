@@ -1,25 +1,20 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
 import classes from "./Dashboard.module.css";
 import "react-calendar/dist/Calendar.css";
 import { Table, Tag, Modal, Button, Spin } from 'antd';
-import axios from "axios";
 import totalReq from "../../assets/Total Req.svg";
 import newReq from "../../assets/New Req.svg";
 import openReq from "../../assets/Open Req.svg";
 import closedReq from "../../assets/Closed Req.svg";
+import { json, redirect, useNavigate, useRouteLoaderData } from "react-router-dom";
 import { LoadingOutlined } from '@ant-design/icons';
+import axios from "axios";
+import Calendar from "react-calendar";
+
 
 const { Column } = Table;
-=======
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
-import classes from "./Dashboard.module.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
->>>>>>> master
 
 const Dashboard = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -45,13 +40,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchRequest = async () => {
       try {
-<<<<<<< HEAD
-        const response = await axios.get("http://localhost:8080/request/getAllRequest");
-=======
-        const response = await axios.get(
-          "https://streamlined-service-portal-backend-cswk.onrender.com/request/getAllRequest"
-        );
->>>>>>> master
+        const response = await axios.get('http://localhost:8080/request/getAllRequest');
         setRequest(response.data);
         setIsLoading(false);
       } catch (err) {
@@ -63,25 +52,36 @@ const Dashboard = () => {
   }, []);
   
   // Calculate the counts for new, open, and closed requests
-  const newRequestsCount = request.filter(req => req.status === 'NEW').length;
-  const openRequestsCount = request.filter(req => req.status === 'OPEN').length;
-  const closedRequestsCount = request.filter(req => req.status === 'CLOSED').length;
+  const newRequestsCount = request.filter(req => req.status === 'Pending').length;
+
+  const openRequestsCount = request.filter(
+    req => ['Approved', 'Assigned', 'In Progress'].includes(req.status)
+  ).length;
+
+  const closedRequestsCount = request.filter(
+    req => ['Completed', 'Rejected'].includes(req.status)
+  ).length;
+
 
   const handleCardClick = (type) => {
     let filtered;
     let title;
-
+  
     switch (type) {
       case "NEW":
-        filtered = request.filter((req) => req.status === "NEW");
+        filtered = request.filter(req => req.status === "Pending");
         title = "New Requests";
         break;
       case "OPEN":
-        filtered = request.filter((req) => req.status === "OPEN");
+        filtered = request.filter(req => 
+          ["Approved", "Assigned", "In Progress"].includes(req.status)
+        );
         title = "Open Requests";
         break;
       case "CLOSED":
-        filtered = request.filter((req) => req.status === "CLOSED");
+        filtered = request.filter(req => 
+          ["Completed", "Rejected"].includes(req.status)
+        );
         title = "Closed Requests";
         break;
       default:
@@ -89,8 +89,7 @@ const Dashboard = () => {
         title = "All Requests";
         break;
     }
-
-    
+  
     setFilteredRequests(filtered);
     setModalTitle(title);
     setIsFilteredRequestsModalVisible(true);
@@ -102,10 +101,14 @@ const Dashboard = () => {
         return "green";
       case "Pending":
         return "orange";
-      case "Denied":
+      case "Rejected":
         return "red";
       case "Done":
         return "blue";
+      case "In Progress":
+        return "purple";
+      case "On Hold":
+        return "yellow";
       default:
         return "gray";
     }
@@ -260,33 +263,16 @@ const Dashboard = () => {
                 { text: 'Denied', value: 'Denied' },
                 { text: 'Approved', value: 'Approved' },
                 { text: 'Done', value: 'Done' },
-                { text: 'Pending', value: 'Pending' }
+                { text: 'Pending', value: 'Pending' },
+                { text: 'In Progress', value: 'In Progress' },
+                { text: 'On Hold', value: 'On Hold' }
               ]}
               onFilter={(value, record) => record.status === value}
-              render={(status) => {
-                let color;
-                switch (status) {
-                  case 'Denied':
-                    color = 'volcano';
-                    break;
-                  case 'Approved':
-                    color = 'green';
-                    break;
-                  case 'Done':
-                    color = 'geekblue';
-                    break;
-                  case 'Pending':
-                    color = 'purple';
-                    break;
-                  default:
-                    color = 'default';
-                }
-                return (
-                  <Tag color={color} key={status}>
-                    {status.toUpperCase()}
-                  </Tag>
-                );
-              }}
+              render={(status) => (
+                <Tag color={getStatusColor(status)} key={status}>
+                  {status.toUpperCase()}
+                </Tag>
+              )}
             />
           </Table>
         </div>

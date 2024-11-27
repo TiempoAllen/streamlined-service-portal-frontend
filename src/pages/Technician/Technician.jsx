@@ -86,6 +86,7 @@ const Technician = () => {
   );
 };
 
+
 export default Technician;
 
 export const loader = async ({ params }) => {

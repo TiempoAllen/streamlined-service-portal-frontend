@@ -105,16 +105,21 @@ const Approval = () => {
   const handleRequestDone = async (request_id) => {
     try {
       await axios.put(
-        `${LOCAL_ENV}/request/updateStatus?request_id=${request_id}`,
-        { status: "Done" }
+        `${LOCAL_ENV}/notifications/update-status/${request_id}`,
+        null, // No request body since status is sent as a query parameter
+        {
+          params: { status: "Completed" }, // Pass the status as a query parameter
+        }
       );
-
+  
+      // Update the requests array
       const updatedRequests = requests.map((request) =>
         request.request_id === request_id
-          ? { ...request, status: "Done" }
+          ? { ...request, status: "Completed" }
           : request
       );
-
+  
+      // Update both requests and rowData states
       setRequests(updatedRequests);
       setRowData(
         updatedRequests.filter((request) => {
@@ -124,12 +129,13 @@ const Approval = () => {
           return request.status === filter;
         })
       );
-      toast.success("Request saved successfully.");
+      toast.success("Request marked as done successfully.");
     } catch (error) {
       console.error(error);
-      toast.error("There was an error.");
+      toast.error("There was an error marking the request as done.");
     }
   };
+  
 
   const handleStartRequest = async (request_id) => {
     try {

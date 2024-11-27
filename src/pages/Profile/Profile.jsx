@@ -7,10 +7,8 @@ import classes from "./Profile.module.css";
 import { Snackbar, Alert} from "@mui/material";
 import Edit from '@mui/icons-material/Edit';
 import { getAuthToken } from "../../util/auth";
-import React, { useEffect, useState } from "react";
-import profileImg from "../../assets/profile.jpg";
-import EditPasswordForm from "../../components/UI/EditPasswordForm";
-import classes from "./Profile.module.css";
+
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -21,7 +19,7 @@ const Profile = () => {
     useEffect(() => { 
         const fetchUserProfile = async () => {
             try{
-                const response = await axios.get(`${API_URL}/user/${userId}`);
+                const response = await axios.get(`${API_URL}/user/${profile.user_id}`);
                 setProfile(response.data);
                 setIsLoading(false);
             }catch(err){
@@ -30,7 +28,7 @@ const Profile = () => {
             }
         };
         fetchUserProfile();
-    }, [userId]);
+    }, [profile.user_id]);
 
   const [showForm, setShowForm] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);

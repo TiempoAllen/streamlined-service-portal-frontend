@@ -94,7 +94,7 @@ export async function loader({ request, params }) {
 
   try {
     const response = await axios.get(
-      `https://streamlined-service-portal-backend-cswk.onrender.com/request/getAllRequest`,
+      `http://localhost:8080/request/getAllRequest`,
       {
         // Uncomment the Authorization header if needed
         // headers: {
