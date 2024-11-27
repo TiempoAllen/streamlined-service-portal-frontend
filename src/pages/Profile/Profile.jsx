@@ -47,11 +47,11 @@ const Profile = () => {
   const fetchProfilePicture = async () => {
     try {
       // Use the URL directly from the backend if it serves the image as a static resource
-      const response = await axios.get(`http://localhost:8080/user/${profile.user_id}/profile-picture`);
+      const response = await axios.get(`${API_URL}/user/${profile.user_id}/profile-picture`);
       if (response.data) {
         // Assuming the backend returns the file path (e.g., "uploads/profile_1.jpg")
         const filePath = response.data; 
-        const imageUrl = `http://localhost:8080/${filePath}`; // Construct the URL for serving the image
+        const imageUrl = `${API_URL}/${filePath}`; // Construct the URL for serving the image
         setProfilePicture(imageUrl);
       } else {
         console.warn("No profile picture available. Using fallback.");
@@ -114,7 +114,7 @@ const Profile = () => {
   
     try {
       const response = await axios.post(
-        `http://localhost:8080/user/uploadProfilePicture/${profile.user_id}`,
+        `${API_URL}/user/uploadProfilePicture/${profile.user_id}`,
         formData,
         {
           headers: {
@@ -241,7 +241,7 @@ export async function loader({ params }) {
   }
 
   try {
-    const response = await axios.get(`http://localhost:8080/user/${user_id}`, {
+    const response = await axios.get(`${API_URL}/user/${user_id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

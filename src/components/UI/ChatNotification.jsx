@@ -17,10 +17,13 @@ const ChatNotification = () => {
   const [users, setUsers] = useState([]);
   const [newMessages, setNewMessages] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/user/all');
+        const response = await axios.get(`${API_URL}/user/all`);
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -109,7 +112,7 @@ const ChatNotification = () => {
   }, []);
 
   const connectToWebSocket = () => {
-    const socket = new SockJS("http://localhost:8080/chat");
+    const socket = new SockJS(`${API_URL}/chat`);
     const client = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
@@ -168,7 +171,7 @@ const ChatNotification = () => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/messages/unread-recent/${user.user_id}`);
+      const response = await axios.get(`${API_URL}/messages/unread-recent/${user.user_id}`);
       const sortedNotifications = response.data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
       
       // Update notification count only with unread messages (status !== 'READ')
@@ -184,7 +187,7 @@ const ChatNotification = () => {
 
   const markMessagesAsRead = async (messageId) => {
     try {
-      await axios.put("http://localhost:8080/messages/markAsRead", messageId, {
+      await axios.put(`${API_URL}/messages/markAsRead`, messageId, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -323,7 +326,7 @@ export async function loader({ params }) {
     }
   
     try {
-      const response = await axios.get(`http://localhost:8080/user/${user_id}`, {
+      const response = await axios.get(`${API_URL}/user/${user_id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

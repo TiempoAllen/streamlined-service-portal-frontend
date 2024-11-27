@@ -8,6 +8,7 @@ import profilePic from '../../assets/profile.svg';
 import sendImage from '../../assets/send.svg';
 import classes from './Chat.module.css';
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const Chat = () => {
     const [users, setUsers] = useState([]);
@@ -53,7 +54,7 @@ const Chat = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/user/all');
+                const response = await axios.get(`${API_URL}/user/all`);
                 setUsers(response.data);
                 setFilteredUsers(response.data);
                 fetchLastMessages(response.data);
@@ -69,7 +70,7 @@ const Chat = () => {
         for (const user of users) {
             const channelName = getChannelName(userId.user_id, user.user_id);
             try {
-                const response = await axios.post('http://localhost:8080/chat/getMessages', channelName, {
+                const response = await axios.post(`${API_URL}/chat/getMessages`, channelName, {
                     headers: {
                         'Content-Type': 'text/plain',
                     },
@@ -86,7 +87,7 @@ const Chat = () => {
     };
 
     useEffect(() => {
-        const socket = new SockJS('http://localhost:8080/chat');
+        const socket = new SockJS(`${API_URL}/chat`);
         const stompClient = new Client({
             webSocketFactory: () => socket,
             connectHeaders: {},
@@ -147,7 +148,7 @@ const Chat = () => {
         }
     
         try {
-            const response = await axios.post('http://localhost:8080/chat/getMessages', channelName, {
+            const response = await axios.post(`${API_URL}/chat/getMessages`, channelName, {
                 headers: {
                     'Content-Type': 'text/plain',
                 },
@@ -235,7 +236,7 @@ const Chat = () => {
 
     const markMessagesAsRead = async (messageIds) => {
         try {
-            await axios.put('http://localhost:8080/messages/markAsRead', messageIds);
+            await axios.put(`${API_URL}/messages/markAsRead`, messageIds);
             console.log("Messages marked as read:", messageIds);
         } catch (error) {
             console.error('Error marking messages as read:', error);
@@ -425,7 +426,7 @@ export async function loader({ params }) {
     }
   
     try {
-      const response = await axios.get(`http://localhost:8080/user/${user_id}`, {
+      const response = await axios.get(`${API_URL}/user/${user_id}`, {
         headers: {
           Authorization: `Bearer ${token}`, 
         },
