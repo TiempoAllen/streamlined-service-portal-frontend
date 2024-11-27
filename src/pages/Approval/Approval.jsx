@@ -194,7 +194,7 @@ const Approval = () => {
   const markRequestAsOpened = async (request_id) => {
       console.log("Mark request as viewed triggered for request ID:", request_id);
     try {
-        await axios.put(`${LOCAL_ENV}/request/markViewed/${request_id}`);
+        await axios.put(`${API_URL}/request/markViewed/${request_id}`);
 
         const updatedRequests = requests.map((request) =>
             request.request_id === request_id
