@@ -9,6 +9,9 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import classes from "../../components/UI/RequestDialogPortal.module.css";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
+
 const PersonnelProfile = ({ tech_id, requests }) => {
   const [averageRating, setAverageRating] = useState(0);
   const [feedbackHighlights, setFeedbackHighlights] = useState({
@@ -52,7 +55,7 @@ const PersonnelProfile = ({ tech_id, requests }) => {
 
   const fetchTechnicianId = async (request_id) => {
     try {
-      const response = await axios.get(`https://streamlined-service-portal-backend-cswk.onrender.com/request/technician/${request_id}`);
+      const response = await axios.get(`${API_URL}/request/technician/${request_id}`);
       console.log('Technician ID Response:', response.data);  // Log the response
       const technicianId = response.data;
       setPersonnelDetails((prevState) => ({
@@ -75,7 +78,7 @@ const PersonnelProfile = ({ tech_id, requests }) => {
 
     try {
       const response = await axios.get(
-        `https://streamlined-service-portal-backend-cswk.onrender.com/technician/getTechnician/${technicianId}` // Assuming there's an endpoint for fetching technician details by ID
+        `${API_URL}/technician/getTechnician/${technicianId}` // Assuming there's an endpoint for fetching technician details by ID
       );
       setPersonnelDetails((prevState) => ({
         ...prevState,
@@ -92,7 +95,7 @@ const PersonnelProfile = ({ tech_id, requests }) => {
   const fetchAverageRating = async (technicianId) => {
     try {
       const response = await axios.get(
-        `https://streamlined-service-portal-backend-cswk.onrender.com/request/average/${technicianId}`
+        `${API_URL}/request/average/${technicianId}`
       );
       setAverageRating(response.data); // Set average rating
     } catch (error) {
@@ -103,7 +106,7 @@ const PersonnelProfile = ({ tech_id, requests }) => {
   const fetchUserFeedbackHighlights = async (technicianId) => {
     try {
       const response = await axios.get(
-        `https://streamlined-service-portal-backend-cswk.onrender.com/request/highlights/${technicianId}`
+        `${API_URL}/request/highlights/${technicianId}`
       );
       setFeedbackHighlights(response.data); // Set feedback highlights
     } catch (error) {
