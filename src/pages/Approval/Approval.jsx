@@ -131,14 +131,14 @@ const Approval = () => {
         `${API_URL}/request/updateStatus?request_id=${request_id}`,
         { status: "Done" }
       );
-  
+
       // Update the requests array
       const updatedRequests = requests.map((request) =>
         request.request_id === request_id
           ? { ...request, status: "Completed" }
           : request
       );
-  
+
       // Update both requests and rowData states
       setRequests(updatedRequests);
       setRowData(
@@ -155,7 +155,6 @@ const Approval = () => {
       toast.error("There was an error marking the request as done.");
     }
   };
-  
 
   const handleStartRequest = async (request_id) => {
     try {
@@ -189,11 +188,7 @@ const Approval = () => {
   const markRequestAsOpened = async (request_id) => {
     console.log("Mark request as viewed triggered for request ID:", request_id);
     try {
-<<<<<<< HEAD
       await axios.put(`${API_URL}/request/markViewed/${request_id}`);
-=======
-        await axios.put(`${API_URL}/request/markViewed/${request_id}`);
->>>>>>> a9a55a792ec540624e8154f9d2f4bb859351107d
 
       const updatedRequests = requests.map((request) =>
         request.request_id === request_id
