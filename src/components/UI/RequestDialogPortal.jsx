@@ -9,9 +9,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { LOCAL_ENV } from "../../util/auth";
 
 const formatDateTime = (datetime) => {
-  if (!datetime || isNaN(new Date(datetime).getTime())) {
-    console.warn("Invalid datetime value:", datetime);
-    return "Invalid Date";
+  if (!datetime) {
+    return "No Date Provided";
   }
   const date = new Date(datetime);
   const options = {
@@ -23,7 +22,6 @@ const formatDateTime = (datetime) => {
   };
   return new Intl.DateTimeFormat("en-US", options).format(date);
 };
-
 
 const RequestDialogPortal = ({
   request,
@@ -164,21 +162,23 @@ const RequestDialogPortal = ({
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Created Date and Time</p>
                 <p className={classes.second}>
-                  {formatDateTime(request.datetime)}
+                  {request.datetime
+                    ? formatDateTime(request.datetime)
+                    : "No Date Provided"}
                 </p>
               </div>
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Urgency Level</p>
                 <p
                   className={`${classes.second} ${
-                    request.urgencyLevel === "Low"
+                    request.urgency_level === "Low"
                       ? classes.lowLevel
-                      : request.urgencyLevel === "Medium"
+                      : request.urgency_level === "Medium"
                       ? classes.mediumLevel
                       : classes.highLevel
                   }`}
                 >
-                  {request.urgencyLevel}
+                  {request.urgency_level}
                 </p>
               </div>
             </div>
@@ -206,20 +206,26 @@ const RequestDialogPortal = ({
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Preferred Date and Time</p>
                 <p className={classes.second}>
-                  {formatDateTime(request.preferredStartDate)}
+                  {request.preferredStartDate
+                    ? formatDateTime(request.preferredStartDate)
+                    : "No Start Date"}
                 </p>
               </div>
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Preferred Date and Time</p>
                 <p className={classes.second}>
-                  {formatDateTime(request.preferredEndDate)}
+                  {request.preferredEndDate
+                    ? formatDateTime(request.preferredEndDate)
+                    : "No End Date"}
                 </p>
               </div>
               {["Assigned", "In Progress", "Done"].includes(request.status) && (
                 <div className={classes.requestDetailsPortalInputs}>
                   <p className={classes.first}>Scheduled Date and Time</p>
                   <p className={classes.second}>
-                    {formatDateTime(request.scheduledStartDate)}
+                    {request.scheduledStartDate
+                      ? formatDateTime(request.scheduledStartDate)
+                      : "No Scheduled Date"}
                   </p>
                 </div>
               )}
