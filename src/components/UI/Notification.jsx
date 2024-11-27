@@ -1,9 +1,10 @@
-import axios from "axios";
-import { React, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import bellIcon from "../../assets/bell.svg";
-import { formatDateTime } from "../../util/auth";
 import classes from "./Notification.module.css";
+import axios from "axios";
+import EvaluationFormDialog from "./EvaluationFormDialog.jsx"; // Import the evaluation form dialog
+import { formatDateTime } from "../../util/auth";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
@@ -30,11 +31,12 @@ const timeDifference = (timestamp) => {
 
 const Notification = ({ user_id }) => {
   const [showNotification, setShowNotification] = useState(false);
-  const [notificationCount, setNotificationCount] = useState(1);
+  const [notificationCount, setNotificationCount] = useState(0);
   const [notifications, setNotifications] = useState([]);
+  const [selectedNotification, setSelectedNotification] = useState(null); // For dialog control
   const dropdownRef = useRef(null);
-  const navigate = useNavigate(); // Use useNavigate for navigation
-
+  const navigate = useNavigate();
+  
   const handleNotificationClick = () => {
     setShowNotification(!showNotification);
     setNotificationCount(0);
@@ -61,9 +63,15 @@ const Notification = ({ user_id }) => {
   };
 
   const handleRowClick = (notification) => {
-    if (notification.recipientRole === "User") {
-      navigate(`/home/${user_id}/history`); // Navigate to user history
+    if (notification.notificationType === "Evaluation") {
+      setSelectedNotification(notification); // Open evaluation dialog
+    } else if (notification.recipientRole === "User") {
+      navigate(`/home/${user_id}/history`);
     }
+  };
+
+  const handleCloseDialog = () => {
+    setSelectedNotification(null); // Close the dialog
   };
 
   useEffect(() => {
@@ -98,9 +106,9 @@ const Notification = ({ user_id }) => {
             <ul className={classes.notificationItems}>
               {notifications.map((notification) => (
                 <li
-                  key={notification.id} // Add a key for each item
+                  key={notification.id}
                   className={classes.notificationsRow}
-                  onClick={() => handleRowClick(notification)} // Attach the click handler
+                  onClick={() => handleRowClick(notification)}
                 >
                   <div className={classes.parentRow}>
                     <p>{notification.message}</p>
@@ -116,6 +124,13 @@ const Notification = ({ user_id }) => {
             <p>No notifications</p>
           )}
         </div>
+      )}
+      {selectedNotification && (
+        <EvaluationFormDialog
+          open={!!selectedNotification}
+          onClose={handleCloseDialog}
+          requestId={selectedNotification.request_id}
+        />
       )}
     </div>
   );

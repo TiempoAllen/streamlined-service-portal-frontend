@@ -156,7 +156,7 @@ export const loadRequestsAndTechnicians = async () => {
     const token = getAuthToken();
 
     if (!token) {
-      throw new Error("No token found");
+      return redirect("/");
     }
 
     const [requestsResponse, techniciansResponse] = await Promise.all([

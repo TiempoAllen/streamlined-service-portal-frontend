@@ -48,7 +48,7 @@ const Technician = () => {
               <p className={classes.viewBtn}>View</p>
             </Dialog.Trigger>
             <PersonnelProfile
-              // requests={technician.requests}
+              requests={technician.requests}
               tech_id={technician.tech_id}
             />
           </Dialog.Root>
@@ -88,6 +88,7 @@ const Technician = () => {
     </section>
   );
 };
+
 
 export default Technician;
 
