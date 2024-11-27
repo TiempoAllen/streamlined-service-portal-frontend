@@ -1,7 +1,6 @@
 import axios from "axios";
 import React from "react";
 import loginImage from "../../assets/login-image.png";
-import { LOCAL_ENV } from "../../util/auth";
 import {
   Form,
   json,
@@ -73,7 +72,7 @@ export async function action({ request }) {
   };
 
   try {
-    const response = await axios.post(`${LOCAL_ENV}/user/login`, authData);
+    const response = await axios.post(`${API_URL}/user/login`, authData);
 
     // Check if response exists and has the required data
     if (!response || !response.data) {

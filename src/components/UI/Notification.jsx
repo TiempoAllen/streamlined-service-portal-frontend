@@ -44,7 +44,12 @@ const Notification = ({ user_id }) => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await axios.get(`${API_URL}/notifications/${user_id}`);
+      // Fetch the user's notifications from the backend using the user_id
+      const response = await axios.get(
+        `${API_URL}/notifications/${user_id}`
+      );
+      console.log(response.data);
+
       const sortedNotifications = response.data.sort(
         (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
       );

@@ -6,6 +6,10 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import classes from "./RequestDialogPortal.module.css";
 import MessagePortal from "./MessagePortal";
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 
 const TechnicianPortal = ({
   technicians,
@@ -17,22 +21,32 @@ const TechnicianPortal = ({
 }) => {
   const [showError, setShowError] = useState(false);
   const [assignedTechnician, setAssignedTechnician] = useState(null);
-  const [scheduledDate, setScheduledDate] = useState("");
+  const [scheduledStartDate, setScheduledStartDate] = useState("");
+  const [scheduledEndDate, setScheduledEndDate] = useState("");
+  const [availableTechnicians, setAvailableTechnicians] = useState([]);
+  const [activeTab, setActiveTab] = useState("all");
 
   // const availableTechnicians = technicians.filter(
   //   (technician) => technician.isavailable === true
   // );
 
+  // useEffect(() => {
+  //   if (isTimeConflict) {
+  //     setShowError(true);
+  //     const timer = setTimeout(() => {
+  //       setShowError(false);
+  //     }, 3000);
+  //     return () => clearTimeout(timer); // Cleanup the timer
+  //   }
+  //   console.log("Updated assignedTechnician:", assignedTechnician);
+  // }, [isTimeConflict, assignedTechnician]);
+
   useEffect(() => {
-    if (isTimeConflict) {
-      setShowError(true);
-      const timer = setTimeout(() => {
-        setShowError(false);
-      }, 3000);
-      return () => clearTimeout(timer); // Cleanup the timer
-    }
-    console.log("Updated assignedTechnician:", assignedTechnician);
-  }, [isTimeConflict, assignedTechnician]);
+    fetchAvailableTechnicians(
+      request.preferredStartDate,
+      request.preferredEndDate
+    );
+  }, [request.preferredStartDate, request.preferredEndDate]);
 
   const handleAssignClick = (technician) => {
     setAssignedTechnician(technician.PersonnelID);
@@ -40,20 +54,12 @@ const TechnicianPortal = ({
       technician.Name;
   };
 
-  const handleScheduleDateChange = (event) => {
-    setScheduledDate(event.target.value);
+  const handleStartDateChange = (event) => {
+    setScheduledStartDate(event.target.value);
   };
 
-  const handleAssignTechnician = () => {
-    if (assignedTechnician && scheduledDate) {
-      onAssignTechnicianToRequest(
-        request.request_id,
-        assignedTechnician,
-        scheduledDate
-      );
-    } else {
-      alert("Please select a technician and schedule a date.");
-    }
+  const handleEndDateChange = (event) => {
+    setScheduledEndDate(event.target.value);
   };
 
   const [colDefs, setColDefs] = useState([
@@ -62,6 +68,7 @@ const TechnicianPortal = ({
     { field: "Phone Number", flex: 1 },
     { field: "Gender", flex: 1 },
     { field: "Classification", flex: 1 },
+    { field: "Department", flex: 1 },
     { field: "Availability", flex: 1 },
     {
       field: "Action",
@@ -72,16 +79,52 @@ const TechnicianPortal = ({
     },
   ]);
 
-  const transformedTechnicians = technicians.map((technician) => {
-    return {
-      PersonnelID: technician.tech_id,
-      Name: technician.tech_name,
-      "Phone Number": technician.tech_phone,
-      Gender: technician.tech_gender,
-      Classification: technician.tech_classification,
-      Availability: technician.isavailable,
-    };
-  });
+  const fetchAvailableTechnicians = async (startDate, endDate) => {
+    if (startDate && endDate) {
+      try {
+        const response = await axios.get(
+          `${API_URL}/technician/getAvailablePersonnel`,
+          {
+            params: {
+              requestedStartTime: startDate,
+              requestedEndTime: endDate,
+            },
+          }
+        );
+        const techniciansData = response.data.map((technician) => ({
+          PersonnelID: technician.tech_id,
+          Name: technician.tech_name,
+          "Phone Number": technician.tech_phone,
+          Gender: technician.tech_gender,
+          Classification: technician.tech_classification,
+          Department: technician.tech_department,
+          Availability: technician.isavailable,
+        }));
+        setAvailableTechnicians(techniciansData);
+      } catch (error) {
+        console.error("Error fetching available technicians:", error);
+      }
+    }
+  };
+
+  const filters = {
+    all: "All",
+    Available: "Available",
+  };
+
+  const handleTabClick = (status) => {
+    setActiveTab(status);
+  };
+
+  const allTechnicians = technicians.map((technician) => ({
+    PersonnelID: technician.tech_id,
+    Name: technician.tech_name,
+    "Phone Number": technician.tech_phone,
+    Gender: technician.tech_gender,
+    Classification: technician.tech_classification,
+    Department: technician.tech_department,
+    Availability: technician.isavailable,
+  }));
 
   return (
     <>
@@ -103,25 +146,53 @@ const TechnicianPortal = ({
                 required
               />
             </div>
+            <div className={classes.exampleHeader}>
+              <div className={classes.tabs}>
+                {Object.entries(filters).map(([key, displayValue]) => (
+                  <button
+                    className={`${classes.tabButton} ${
+                      activeTab === key ? classes.active : ""
+                    }`}
+                    onClick={() => handleTabClick(key)}
+                    key={key}
+                  >
+                    {displayValue}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div
               className="ag-theme-quartz"
               style={{ height: "100%", width: "100%", marginTop: "1rem" }}
             >
               <AgGridReact
-                rowData={transformedTechnicians}
+                rowData={
+                  activeTab === "all" ? allTechnicians : availableTechnicians
+                }
                 columnDefs={colDefs}
                 domLayout="autoHeight"
               />
             </div>
           </div>
           <div className={classes.personnelSection}>
-            <h4>2. Schedule Date and Time</h4>
+            <h4>2. Start Date and Time</h4>
             <input
               type="datetime-local"
-              name="scheduleDate"
+              name="scheduledStartDate"
               className={classes.scheduledDate}
-              value={scheduledDate}
-              onChange={handleScheduleDateChange}
+              value={scheduledStartDate}
+              onChange={handleStartDateChange}
+              required
+            />
+          </div>
+          <div className={classes.personnelSection}>
+            <h4>3. End Date and Time</h4>
+            <input
+              type="datetime-local"
+              name="scheduleEndDate"
+              className={classes.scheduledDate}
+              value={scheduledEndDate}
+              onChange={handleEndDateChange}
               required
             />
           </div>
@@ -146,7 +217,8 @@ const TechnicianPortal = ({
                 onAssignTechnicianToRequest={onAssignTechnicianToRequest}
                 request_id={request.request_id}
                 assignedTechnician={assignedTechnician}
-                scheduledDate={scheduledDate}
+                scheduledStartDate={scheduledStartDate}
+                scheduledEndDate={scheduledEndDate}
                 isTechnicianAssigned={isTechnicianAssigned}
               />
             </Dialog.Root>

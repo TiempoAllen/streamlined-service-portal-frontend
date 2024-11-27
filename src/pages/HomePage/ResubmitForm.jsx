@@ -17,6 +17,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import Viewer from "react-viewer"; // Import react-viewer
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const ResubmitForm = () => {
   const user = useRouteLoaderData("home");
@@ -79,10 +80,19 @@ const ResubmitForm = () => {
         requestDetails.request_technician;
       formRef.current.urgencyLevel.value = requestDetails.urgencyLevel;
 
-      const preferredDate = new Date(requestDetails.preferredDate);
-      const formattedPreferredDate = preferredDate.toISOString().slice(0, 16);
+      const preferredStartDate = new Date(requestDetails.preferredStartDate);
+      const formattedPreferredStartDate = preferredStartDate
+        .toISOString()
+        .slice(0, 16);
 
-      formRef.current.preferredDate.value = formattedPreferredDate;
+      formRef.current.preferredStartDate.value = formattedPreferredStartDate;
+
+      const preferredEndDate = new Date(requestDetails.preferredEndDate);
+      const formattedPreferredEndDate = preferredEndDate
+        .toISOString()
+        .slice(0, 16);
+
+      formRef.current.preferredEndDate.value = formattedPreferredEndDate;
 
       if (requestDetails.attachment) {
         const fileName = requestDetails.attachment;
@@ -91,15 +101,32 @@ const ResubmitForm = () => {
       }
     }
 
+   
+    
+  }, [ user.id, requestDetails]);
+
+  useEffect(() => {
     if (actionData) {
       if (actionData.status === "success") {
-        toast.success("Request resubmitted successfully!");
-        formRef.current.reset();
+       
+        if (!actionData.shownToast) {
+          toast.success("Request resubmitted successfully!");
+          formRef.current.reset();
+        }
       } else if (actionData.status === "error") {
-        toast.error("There was an error submitting the request.");
+       
+        if (!actionData.shownToast) {
+          toast.error("There was an error submitting the request.");
+        }
+      }
+  
+      
+      if (actionData.status === "success" || actionData.status === "error") {
+        actionData.shownToast = true;
       }
     }
-  }, [actionData, user.id, requestDetails]);
+  }, [actionData]);  
+  
 
   return (
     <section className={classes.request}>
@@ -167,7 +194,7 @@ const ResubmitForm = () => {
             <span className={classes.preferredDateTime}>
               <div>
                 <label id="preferredDateTimeLabel">
-                  Preferred Date and Time{" "}
+                  Preferred Start Date and Time{" "}
                   <span className={classes.required}>*</span>
                 </label>
                 <p>
@@ -176,7 +203,24 @@ const ResubmitForm = () => {
               </div>
               <input
                 type="datetime-local"
-                name="preferredDate"
+                name="preferredStartDate"
+                className={classes.inputText}
+                required
+              />
+            </span>
+            <span className={classes.preferredDateTime}>
+              <div>
+                <label id="preferredDateTimeLabel">
+                  Preferred End Date and Time{" "}
+                  <span className={classes.required}>*</span>
+                </label>
+                <p>
+                  This may be subject to approval and scheduling by the admin.
+                </p>
+              </div>
+              <input
+                type="datetime-local"
+                name="preferredEndDate"
                 className={classes.inputText}
                 required
               />
@@ -274,15 +318,20 @@ export const action = async ({ request, params }) => {
   console.log("UserID: ", user_id);
   console.log("RequestID: ", request_id);
 
-  const rawPreferredDate = data.get("preferredDate");
-  const formattedPreferredDate = new Date(rawPreferredDate).toISOString();
+  const rawPreferredStartDate = data.get("preferredStartDate");
+  const formattedPreferredStartDate = new Date(
+    rawPreferredStartDate
+  ).toISOString();
+  const rawPreferredEndDate = data.get("preferredEndDate");
+  const formattedPreferredEndDate = new Date(rawPreferredEndDate).toISOString();
 
   const currentDateTime = new Date().toISOString();
 
   const requestData = new FormData();
   requestData.append("request_location", data.get("request_location"));
   requestData.append("datetime", currentDateTime);
-  requestData.append("preferredDate", formattedPreferredDate);
+  requestData.append("preferredStartDate", formattedPreferredStartDate);
+  requestData.append("preferredEndDate", formattedPreferredEndDate);
   requestData.append("title", data.get("title"));
   requestData.append("description", data.get("description"));
   requestData.append("user_id", user_id);
@@ -292,7 +341,7 @@ export const action = async ({ request, params }) => {
 
   try {
     const response = await axios.put(
-      `https://streamlined-service-portal-backend-cswk.onrender.com/request/update/${request_id}`,
+      `${API_URL}/request/update/${request_id}`,
       requestData,
       {
         headers: {

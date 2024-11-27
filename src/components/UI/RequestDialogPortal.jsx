@@ -6,9 +6,13 @@ import axios from "axios";
 import MessagePortal from "./MessagePortal";
 import TechnicianPortal from "./TechnicianPortal";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { LOCAL_ENV } from "../../util/auth";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const formatDateTime = (datetime) => {
+  if (!datetime) {
+    return "No Date Provided";
+  }
   const date = new Date(datetime);
   const options = {
     month: "2-digit",
@@ -37,7 +41,7 @@ const RequestDialogPortal = ({
 
   const getUserById = async (user_id) => {
     try {
-      const response = await axios.get(`${LOCAL_ENV}/user/${user_id}`);
+      const response = await axios.get(`${API_URL}/user/${user_id}`);
       setUser(response.data);
     } catch (error) {
       console.error(error);
@@ -46,7 +50,7 @@ const RequestDialogPortal = ({
 
   const fetchRequestById = async (id) => {
     try {
-      const response = await axios.get(`${LOCAL_ENV}/request/${id}`);
+      const response = await axios.get(`${API_URL}/request/${id}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching request by ID:", error);
@@ -74,7 +78,7 @@ const RequestDialogPortal = ({
   const removeTechnician = async (request_id) => {
     try {
       await axios.post(
-        `${LOCAL_ENV}/request/removeTechnician?request_id=${request_id}`
+        `${API_URL}/request/removeTechnician?request_id=${request_id}`
       );
       const updatedRequest = await fetchRequestById(request_id);
       setTechAssigned(updatedRequest.technician); // Update technician info
@@ -87,14 +91,20 @@ const RequestDialogPortal = ({
   const handleAssignTechnicianToRequest = async (
     request_id,
     tech_id,
-    scheduledDate,
+    scheduledStartDate,
+    scheduledEndDate,
     closeDialog
   ) => {
     try {
-      const formattedScheduledDate = new Date(scheduledDate).toISOString();
+      const formattedScheduledStartDate = new Date(
+        scheduledStartDate
+      ).toISOString();
+      const formattedScheduledEndDate = new Date(
+        scheduledEndDate
+      ).toISOString();
 
       await axios.post(
-        `${LOCAL_ENV}/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&scheduledDate=${formattedScheduledDate}`
+        `${API_URL}/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&startTime=${formattedScheduledStartDate}&endTime=${formattedScheduledEndDate}`
       );
       setTechAssigned(tech_id);
 
@@ -153,21 +163,23 @@ const RequestDialogPortal = ({
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Created Date and Time</p>
                 <p className={classes.second}>
-                  {formatDateTime(request.datetime)}
+                  {request.datetime
+                    ? formatDateTime(request.datetime)
+                    : "No Date Provided"}
                 </p>
               </div>
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Urgency Level</p>
                 <p
                   className={`${classes.second} ${
-                    request.urgencyLevel === "Low"
+                    request.urgency_level === "Low"
                       ? classes.lowLevel
-                      : request.urgencyLevel === "Medium"
+                      : request.urgency_level === "Medium"
                       ? classes.mediumLevel
                       : classes.highLevel
                   }`}
                 >
-                  {request.urgencyLevel}
+                  {request.urgency_level}
                 </p>
               </div>
             </div>
@@ -195,14 +207,26 @@ const RequestDialogPortal = ({
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Preferred Date and Time</p>
                 <p className={classes.second}>
-                  {formatDateTime(request.preferredDate)}
+                  {request.preferredStartDate
+                    ? formatDateTime(request.preferredStartDate)
+                    : "No Start Date"}
+                </p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Preferred Date and Time</p>
+                <p className={classes.second}>
+                  {request.preferredEndDate
+                    ? formatDateTime(request.preferredEndDate)
+                    : "No End Date"}
                 </p>
               </div>
               {["Assigned", "In Progress", "Done"].includes(request.status) && (
                 <div className={classes.requestDetailsPortalInputs}>
                   <p className={classes.first}>Scheduled Date and Time</p>
                   <p className={classes.second}>
-                    {formatDateTime(request.scheduledDate)}
+                    {request.scheduledStartDate
+                      ? formatDateTime(request.scheduledStartDate)
+                      : "No Scheduled Date"}
                   </p>
                 </div>
               )}

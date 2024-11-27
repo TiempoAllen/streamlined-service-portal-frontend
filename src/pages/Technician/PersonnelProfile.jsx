@@ -9,12 +9,31 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import classes from "../../components/UI/RequestDialogPortal.module.css";
 
-const PersonnelProfile = ({ requests }) => {
+const PersonnelProfile = ({ tech_id, requests }) => {
   const [averageRating, setAverageRating] = useState(0);
   const [feedbackHighlights, setFeedbackHighlights] = useState({
     positive: [],
     negative: [],
   });
+
+  const [schedules, setSchedule] = useState([]);
+
+  const getScheduleByPersonnel = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/technician/${tech_id}/schedule`
+      );
+      setSchedule(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getScheduleByPersonnel();
+  }, [schedules]);
+
+
   const [personnelDetails, setPersonnelDetails] = useState({
     name: "",
     email: "",

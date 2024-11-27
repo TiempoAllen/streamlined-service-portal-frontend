@@ -93,15 +93,12 @@ export async function loader({ request, params }) {
   }
 
   try {
-    const response = await axios.get(
-      `http://localhost:8080/request/getAllRequest`,
-      {
-        // Uncomment the Authorization header if needed
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
-      }
-    );
+    const response = await axios.get(`${API_URL}/request/user/${user_id}`, {
+      // Uncomment the Authorization header if needed
+      // headers: {
+      //   Authorization: `Bearer ${token}`,
+      // },
+    });
 
     const requests = response.data;
 

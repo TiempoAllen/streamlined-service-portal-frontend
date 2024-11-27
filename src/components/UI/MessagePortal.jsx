@@ -12,7 +12,8 @@ const MessagePortal = ({
   onApproveRequest,
   onRequestDone,
   onDenyRequest,
-  scheduledDate,
+  scheduledStartDate,
+  scheduledEndDate,
   assignedTechnician,
   onAssignTechnicianToRequest,
   onRequestStart,
@@ -82,7 +83,8 @@ const MessagePortal = ({
                     onAssignTechnicianToRequest(
                       request_id,
                       assignedTechnician,
-                      scheduledDate
+                      scheduledStartDate,
+                      scheduledEndDate
                     )
                   }
                 >

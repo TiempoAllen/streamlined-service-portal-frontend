@@ -7,9 +7,11 @@ import { Outlet, useNavigate, useRouteLoaderData } from "react-router-dom";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { LOCAL_ENV } from "../../util/auth";
 import PersonnelProfile from "./PersonnelProfile";
 import * as Dialog from "@radix-ui/react-dialog";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 
 const Technician = () => {
   const data = useRouteLoaderData("technician");
@@ -46,7 +48,8 @@ const Technician = () => {
               <p className={classes.viewBtn}>View</p>
             </Dialog.Trigger>
             <PersonnelProfile
-              requests={technician.requests} // Pass the requests correctly
+              requests={technician.requests}
+              tech_id={technician.tech_id}
             />
           </Dialog.Root>
         );
@@ -98,7 +101,7 @@ export const loader = async ({ params }) => {
 
   try {
     const response = await axios.get(
-      `${LOCAL_ENV}/technician/getAllTechnician`,
+      `${API_URL}/technician/getAllTechnician`,
       {
         // headers: {
         //   Authorization: `Bearer ${token}`,

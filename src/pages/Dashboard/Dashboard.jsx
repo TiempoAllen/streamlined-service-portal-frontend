@@ -40,7 +40,9 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchRequest = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/request/getAllRequest');
+        const response = await axios.get(
+          `${API_URL}/request/getAllRequest`
+        );
         setRequest(response.data);
         setIsLoading(false);
       } catch (err) {
