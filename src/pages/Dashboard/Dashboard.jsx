@@ -40,16 +40,18 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchRequest = async () => {
       try {
-        const response = await axios.get(
-          `${API_URL}/request/getAllRequest`
-        );
-        setRequest(response.data);
+        const response = await axios.get(`${API_URL}/request/getAllRequest`);
+        const data = response.data.map((req) => ({
+          ...req,
+          status: req.status || "Unknown",
+        }));
+        setRequest(data);
         setIsLoading(false);
       } catch (err) {
         setError("Failed to load requests");
         setIsLoading(false);
       }
-    };
+    };    
     fetchRequest();
   }, []);
   
@@ -98,7 +100,9 @@ const Dashboard = () => {
   };
 
   const getStatusColor = (status) => {
-    switch (status) {
+    if (!status) return "gray"; // Default color for invalid statuses
+    const uppercasedStatus = status?.toUpperCase() || "UNKNOWN";
+    switch (uppercasedStatus) {
       case "Approved":
         return "green";
       case "Pending":
@@ -227,22 +231,26 @@ const Dashboard = () => {
               key="requestor"
               render={(_, record) => `${record.user_firstname} ${record.user_lastname}`}
             />
-            <Column
-              title="Department"
-              dataIndex="department"
-              key="department"
-              filters={[
-                { text: 'College of Engineering and Architecture', value: 'College of Engineering and Architecture' },
-                { text: 'College of Computer Studies', value: 'College of Computer Studies' },
-                { text: 'College of Arts, Sciences, and Education', value: 'College of Arts, Sciences, and Education' },
-                { text: 'College of Management, Business and Accountancy', value: 'College of Management, Business and Accountancy' },
-                { text: 'College of Criminal Justice', value: 'College of Criminal Justice' },
-                { text: 'Elementary', value: 'Elementary' },
-                { text: 'Junior High School', value: 'Junior High School' },
-                { text: 'Senior High School', value: 'Senior High School' },
-              ]}
-              onFilter={(value, record) => record.department === value}
-            />
+           <Column
+  title="Status"
+  dataIndex="status"
+  key="status"
+  filters={[
+    { text: 'Denied', value: 'Denied' },
+    { text: 'Approved', value: 'Approved' },
+    { text: 'Done', value: 'Done' },
+    { text: 'Pending', value: 'Pending' },
+    { text: 'In Progress', value: 'In Progress' },
+    { text: 'On Hold', value: 'On Hold' },
+  ]}
+  onFilter={(value, record) => record.status === value}
+  render={(status) => (
+    <Tag color={getStatusColor(status)} key={status}>
+      {(status || "Unknown").toUpperCase()}
+    </Tag>
+  )}
+/>
+
             <Column
               title="Date & Time"
               dataIndex="datetime"
