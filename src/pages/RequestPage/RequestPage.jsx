@@ -65,17 +65,19 @@ const RequestPage = () => {
         </header>
         <Form method="post" encType="multipart/form-data" ref={formRef}>
           <div className={classes.inputs}>
-            <span>
-              <label id="titleLabel">
-                Title <span className={classes.required}>*</span>
+          <span>
+              <label id="technicianLabel">
+                Request Type <span className={classes.required}>*</span>
               </label>
-              <input
-                type="text"
-                name="title"
+              <select
+                name="request_technician"
                 className={classes.inputText}
-                placeholder="e.g. Fix something."
                 required
-              />
+              >
+                <option value="Buiding Maintenance">Building Maintenance</option>
+                <option value="Electrical Maintenance">Electrical Maintenance</option>
+                <option value="General Services">General Services</option>
+              </select>
             </span>
             <span>
               <label id="descriptionLabel">
@@ -89,23 +91,6 @@ const RequestPage = () => {
               ></textarea>
             </span>
             <span>
-              <label id="technicianLabel">
-                Request Type <span className={classes.required}>*</span>
-              </label>
-              <select
-                name="request_technician"
-                className={classes.inputText}
-                required
-              >
-                <option value="Janitor">Janitor</option>
-                <option value="Electrician">Electrician</option>
-                <option value="Plumber">Plumber</option>
-                <option value="Carpentry">Carpentry</option>
-                <option value="Masonry">Masonry</option>
-                <option value="Maintenance">Maintenance</option>
-              </select>
-            </span>
-            <span>
               <label id="locationLabel">
                 Location <span className={classes.required}>*</span>
               </label>
@@ -116,54 +101,6 @@ const RequestPage = () => {
                 placeholder="e.g. CCS Faculty Room"
                 required
               />
-            </span>
-            <span className={classes.preferredDateTime}>
-              <div>
-                <label id="preferredDateTimeLabel">
-                  Preferred Start Date and Time{" "}
-                  <span className={classes.required}>*</span>
-                </label>
-                <p>
-                  This may be subject to approval and scheduling by the admin.
-                </p>
-              </div>
-              <input
-                type="datetime-local"
-                name="preferredStartDate"
-                className={classes.inputText}
-                required
-              />
-            </span>
-            <span className={classes.preferredDateTime}>
-              <div>
-                <label id="preferredDateTimeLabel">
-                  Preferred End Date and Time{" "}
-                  <span className={classes.required}>*</span>
-                </label>
-                <p>
-                  This may be subject to approval and scheduling by the admin.
-                </p>
-              </div>
-              <input
-                type="datetime-local"
-                name="preferredEndDate"
-                className={classes.inputText}
-                required
-              />
-            </span>
-            <span>
-              <label id="urgencyLabel">
-                Urgency Level <span className={classes.required}>*</span>
-              </label>
-              <select
-                name="urgencyLevel"
-                className={classes.inputText}
-                required
-              >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-              </select>
             </span>
             <span>
               <label id="attachFileLabel">Attachment</label>

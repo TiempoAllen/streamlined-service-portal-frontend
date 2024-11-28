@@ -54,24 +54,10 @@ const MainNavigation = ({ user = {} }) => {
                     alt="request-icon"
                     className={classes.icon}
                   />
-                  Request
+                  New Request
                 </NavLink>
               </li>
-              <li>
-                <NavLink
-                  to={`/home/${user_id}/history`}
-                  className={({ isActive }) =>
-                    isActive ? classes.active : undefined
-                  }
-                >
-                  <img
-                    src={historyIcon}
-                    alt="request-icon"
-                    className={classes.icon}
-                  />
-                  History
-                </NavLink>
-              </li>
+              
             </>
           ) : (
             <></>
@@ -79,7 +65,6 @@ const MainNavigation = ({ user = {} }) => {
         </ul>
         <div className={classes.buttons}>
           <Notification user_id={user_id} />
-          <ChatNotification />
           <DropdownPortal />
         </div>
       </header>
