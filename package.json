@@ -36,7 +36,8 @@
     "react-toastify": "^10.0.6",
     "react-viewer": "^3.2.2",
     "sockjs-client": "^1.6.1",
-    "ssp-frontend": "file:"
+    "ssp-frontend": "file:",
+    "vite-plugin-imp": "^2.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
