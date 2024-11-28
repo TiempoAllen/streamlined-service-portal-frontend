@@ -214,9 +214,8 @@ const Approval = () => {
         `${params.data.user_firstname} ${params.data.user_lastname}`,
       flex: 1,
     },
-    { headerName: "Title", field: "title", flex: 1 },
+    { headerName: "Request Type", field: "request_technician", flex: 1 },
     { headerName: "Description", field: "description", flex: 1 },
-    { headerName: "Technician", field: "request_technician", flex: 1 },
     {
       headerName: "Date/Time",
       field: "datetime",
