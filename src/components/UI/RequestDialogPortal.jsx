@@ -92,19 +92,15 @@ const RequestDialogPortal = ({
     request_id,
     tech_id,
     scheduledStartDate,
-    scheduledEndDate,
     closeDialog
   ) => {
     try {
       const formattedScheduledStartDate = new Date(
         scheduledStartDate
       ).toISOString();
-      const formattedScheduledEndDate = new Date(
-        scheduledEndDate
-      ).toISOString();
 
       await axios.post(
-        `${API_URL}/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&startTime=${formattedScheduledStartDate}&endTime=${formattedScheduledEndDate}`
+        `${API_URL}/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&startTime=${formattedScheduledStartDate}`
       );
       setTechAssigned(tech_id);
 

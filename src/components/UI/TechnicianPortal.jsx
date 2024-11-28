@@ -10,7 +10,6 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
-
 const TechnicianPortal = ({
   technicians,
   request,
@@ -26,27 +25,12 @@ const TechnicianPortal = ({
   const [availableTechnicians, setAvailableTechnicians] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
 
-  // const availableTechnicians = technicians.filter(
-  //   (technician) => technician.isavailable === true
-  // );
-
   // useEffect(() => {
-  //   if (isTimeConflict) {
-  //     setShowError(true);
-  //     const timer = setTimeout(() => {
-  //       setShowError(false);
-  //     }, 3000);
-  //     return () => clearTimeout(timer); // Cleanup the timer
-  //   }
-  //   console.log("Updated assignedTechnician:", assignedTechnician);
-  // }, [isTimeConflict, assignedTechnician]);
-
-  useEffect(() => {
-    fetchAvailableTechnicians(
-      request.preferredStartDate,
-      request.preferredEndDate
-    );
-  }, [request.preferredStartDate, request.preferredEndDate]);
+  //   fetchAvailableTechnicians(
+  //     request.preferredStartDate,
+  //     request.preferredEndDate
+  //   );
+  // }, [request.preferredStartDate, request.preferredEndDate]);
 
   const handleAssignClick = (technician) => {
     setAssignedTechnician(technician.PersonnelID);
@@ -109,7 +93,6 @@ const TechnicianPortal = ({
 
   const filters = {
     all: "All",
-    Available: "Available",
   };
 
   const handleTabClick = (status) => {
@@ -185,7 +168,7 @@ const TechnicianPortal = ({
               required
             />
           </div>
-          <div className={classes.personnelSection}>
+          {/* <div className={classes.personnelSection}>
             <h4>3. End Date and Time</h4>
             <input
               type="datetime-local"
@@ -195,7 +178,7 @@ const TechnicianPortal = ({
               onChange={handleEndDateChange}
               required
             />
-          </div>
+          </div> */}
 
           {showError && (
             <p className={classes.timeConflictError}>{timeConflictError}</p>
@@ -218,7 +201,6 @@ const TechnicianPortal = ({
                 request_id={request.request_id}
                 assignedTechnician={assignedTechnician}
                 scheduledStartDate={scheduledStartDate}
-                scheduledEndDate={scheduledEndDate}
                 isTechnicianAssigned={isTechnicianAssigned}
               />
             </Dialog.Root>

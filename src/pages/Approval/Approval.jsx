@@ -21,6 +21,7 @@ const Approval = () => {
   const [filter, setFilter] = useState("Pending");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [activeTab, setActiveTab] = useState("all");
   const [rowData, setRowData] = useState(
     initialRequests.filter((request) => request.status === "Pending")
   );
@@ -262,9 +263,47 @@ const Approval = () => {
     },
   ];
 
+  const handleTabClick = (status) => {
+    setActiveTab(status);
+
+    if (status === "all") {
+      setRowData(requests);
+    } else {
+      setRowData(requests.filter((request) => request.status === status));
+    }
+  };
+
+  const statuses = {
+    all: "All",
+    Pending: "Pending",
+    Approved: "Approved",
+    "In Progress": "In Progress",
+    Completed: "Completed",
+    Denied: "Rejected",
+  };
+
   return (
     <section className={classes.approval}>
-      <SelectArea onFilterChange={handleFilterChange} header="Requests" />
+      <SelectArea
+        onFilterChange={handleFilterChange}
+        header="Requests"
+        isRecords={true}
+      />
+      <div className={classes.exampleHeader}>
+        <div className={classes.tabs}>
+          {Object.entries(statuses).map(([key, displayValue]) => (
+            <button
+              className={`${classes.tabButton} ${
+                activeTab === key ? classes.active : ""
+              }`}
+              onClick={() => handleTabClick(key)}
+              key={key}
+            >
+              {displayValue}
+            </button>
+          ))}
+        </div>
+      </div>
       <div
         className="ag-theme-quartz"
         style={{ height: "100%", width: "100%", marginTop: "1rem" }}
