@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
 import classes from "./Dashboard.module.css";
 import "react-calendar/dist/Calendar.css";
-import { Table, Tag, Modal, Button, Spin } from 'antd';
+import { Table, Tag, Modal, Button, Spin } from "antd";
 import totalReq from "../../assets/Total Req.svg";
 import newReq from "../../assets/New Req.svg";
 import openReq from "../../assets/Open Req.svg";
 import closedReq from "../../assets/Closed Req.svg";
-import { json, redirect, useNavigate, useRouteLoaderData } from "react-router-dom";
-import { LoadingOutlined } from '@ant-design/icons';
+import {
+  json,
+  redirect,
+  useNavigate,
+  useRouteLoaderData,
+} from "react-router-dom";
+import { LoadingOutlined } from "@ant-design/icons";
 import axios from "axios";
 import Calendar from "react-calendar";
-
 
 const { Column } = Table;
 
@@ -25,17 +29,16 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [isRequestDetailsModalVisible, setIsRequestDetailsModalVisible] = useState(false);
-  const [isFilteredRequestsModalVisible, setIsFilteredRequestsModalVisible] = useState(false);
+  const [isRequestDetailsModalVisible, setIsRequestDetailsModalVisible] =
+    useState(false);
+  const [isFilteredRequestsModalVisible, setIsFilteredRequestsModalVisible] =
+    useState(false);
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [modalTitle, setModalTitle] = useState("");
-
-
 
   const onChange = (newDate) => {
     setDate(newDate);
   };
-
 
   useEffect(() => {
     const fetchRequest = async () => {
@@ -51,39 +54,40 @@ const Dashboard = () => {
         setError("Failed to load requests");
         setIsLoading(false);
       }
-    };    
+    };
     fetchRequest();
   }, []);
-  
+
   // Calculate the counts for new, open, and closed requests
-  const newRequestsCount = request.filter(req => req.status === 'Pending').length;
-
-  const openRequestsCount = request.filter(
-    req => ['Approved', 'Assigned', 'In Progress'].includes(req.status)
+  const newRequestsCount = request.filter(
+    (req) => req.status === "Pending"
   ).length;
 
-  const closedRequestsCount = request.filter(
-    req => ['Completed', 'Rejected'].includes(req.status)
+  const openRequestsCount = request.filter((req) =>
+    ["Approved", "Assigned", "In Progress"].includes(req.status)
   ).length;
 
+  const closedRequestsCount = request.filter((req) =>
+    ["Completed", "Rejected"].includes(req.status)
+  ).length;
 
   const handleCardClick = (type) => {
     let filtered;
     let title;
-  
+
     switch (type) {
       case "NEW":
-        filtered = request.filter(req => req.status === "Pending");
+        filtered = request.filter((req) => req.status === "Pending");
         title = "New Requests";
         break;
       case "OPEN":
-        filtered = request.filter(req => 
+        filtered = request.filter((req) =>
           ["Approved", "Assigned", "In Progress"].includes(req.status)
         );
         title = "Open Requests";
         break;
       case "CLOSED":
-        filtered = request.filter(req => 
+        filtered = request.filter((req) =>
           ["Completed", "Rejected"].includes(req.status)
         );
         title = "Closed Requests";
@@ -93,7 +97,7 @@ const Dashboard = () => {
         title = "All Requests";
         break;
     }
-  
+
     setFilteredRequests(filtered);
     setModalTitle(title);
     setIsFilteredRequestsModalVisible(true);
@@ -119,13 +123,11 @@ const Dashboard = () => {
         return "gray";
     }
   };
-  
 
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
-
 
   const handleTableChange = (pagination) => {
     setCurrentPage(pagination.current);
@@ -137,20 +139,20 @@ const Dashboard = () => {
     setIsRequestDetailsModalVisible(true);
   };
 
-  const handleRequestDetailsModalClose  = () => {
+  const handleRequestDetailsModalClose = () => {
     setIsRequestDetailsModalVisible(false);
   };
 
   const handleFilteredRequestsModalClose = () => {
     setIsFilteredRequestsModalVisible(false);
-  }
+  };
 
   if (isLoading) {
     return <Spin indicator={<LoadingOutlined spin />} size="large" />;
   }
 
   if (error) {
-    return <p>{error}</p>; 
+    return <p>{error}</p>;
   }
 
   return (
@@ -158,7 +160,7 @@ const Dashboard = () => {
       {/* CardBox for statistics */}
       <section className={classes.cardBox}>
         {/* Total Requests Card */}
-        <div className={classes.card}  onClick={() => handleCardClick("ALL")}>
+        <div className={classes.card} onClick={() => handleCardClick("ALL")}>
           <div>
             <div className={classes.requestsNumber}>{request.length}</div>
             <div className={classes.name}>Total Requests</div>
@@ -169,7 +171,7 @@ const Dashboard = () => {
         </div>
 
         {/* New Requests Card */}
-        <div className={classes.card}  onClick={() => handleCardClick("NEW")}>
+        <div className={classes.card} onClick={() => handleCardClick("NEW")}>
           <div>
             <div className={classes.requestsNumber}>{newRequestsCount}</div>
             <div className={classes.name}>New Requests</div>
@@ -216,11 +218,11 @@ const Dashboard = () => {
               pageSize: pageSize,
               total: request.length,
               showSizeChanger: true,
-              pageSizeOptions: ['5', '10', '20'],
+              pageSizeOptions: ["5", "10", "20"],
             }}
             onChange={handleTableChange}
             showSorterTooltip={{
-              target: 'sorter-icon',
+              target: "sorter-icon",
             }}
             onRow={(record) => ({
               onClick: () => showRequestDetails(record),
@@ -229,27 +231,29 @@ const Dashboard = () => {
             <Column
               title="Requestor"
               key="requestor"
-              render={(_, record) => `${record.user_firstname} ${record.user_lastname}`}
+              render={(_, record) =>
+                `${record.user_firstname} ${record.user_lastname}`
+              }
             />
-           <Column
-  title="Status"
-  dataIndex="status"
-  key="status"
-  filters={[
-    { text: 'Denied', value: 'Denied' },
-    { text: 'Approved', value: 'Approved' },
-    { text: 'Done', value: 'Done' },
-    { text: 'Pending', value: 'Pending' },
-    { text: 'In Progress', value: 'In Progress' },
-    { text: 'On Hold', value: 'On Hold' },
-  ]}
-  onFilter={(value, record) => record.status === value}
-  render={(status) => (
-    <Tag color={getStatusColor(status)} key={status}>
-      {(status || "Unknown").toUpperCase()}
-    </Tag>
-  )}
-/>
+            <Column
+              title="Status"
+              dataIndex="status"
+              key="status"
+              filters={[
+                { text: "Denied", value: "Denied" },
+                { text: "Approved", value: "Approved" },
+                { text: "Done", value: "Done" },
+                { text: "Pending", value: "Pending" },
+                { text: "In Progress", value: "In Progress" },
+                { text: "On Hold", value: "On Hold" },
+              ]}
+              onFilter={(value, record) => record.status === value}
+              render={(status) => (
+                <Tag color={getStatusColor(status)} key={status}>
+                  {(status || "Unknown").toUpperCase()}
+                </Tag>
+              )}
+            />
 
             <Column
               title="Date & Time"
@@ -257,25 +261,31 @@ const Dashboard = () => {
               key="datetime"
               render={(datetime) => {
                 const date = new Date(datetime);
-                const formattedDate = date.toLocaleDateString('en-US');
-                const formattedTime = date.toLocaleTimeString('en-US', { hour12: true }); 
+                const formattedDate = date.toLocaleDateString("en-US");
+                const formattedTime = date.toLocaleTimeString("en-US", {
+                  hour12: true,
+                });
                 return `${formattedDate} ${formattedTime}`;
               }}
               sorter={(a, b) => new Date(a.datetime) - new Date(b.datetime)}
             />
-            <Column title="Location" dataIndex="request_location" key="request_location" />
+            <Column
+              title="Location"
+              dataIndex="request_location"
+              key="request_location"
+            />
             <Column title="Reason" dataIndex="description" key="description" />
             <Column
               title="Status"
               dataIndex="status"
               key="status"
               filters={[
-                { text: 'Denied', value: 'Denied' },
-                { text: 'Approved', value: 'Approved' },
-                { text: 'Done', value: 'Done' },
-                { text: 'Pending', value: 'Pending' },
-                { text: 'In Progress', value: 'In Progress' },
-                { text: 'On Hold', value: 'On Hold' }
+                { text: "Denied", value: "Denied" },
+                { text: "Approved", value: "Approved" },
+                { text: "Done", value: "Done" },
+                { text: "Pending", value: "Pending" },
+                { text: "In Progress", value: "In Progress" },
+                { text: "On Hold", value: "On Hold" },
               ]}
               onFilter={(value, record) => record.status === value}
               render={(status) => (
@@ -287,154 +297,190 @@ const Dashboard = () => {
           </Table>
         </div>
       </section>
-      
+
       {/* Modal for Request Details */}
       {selectedRequest && (
-  <Modal
-    title={
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px", width: "200px" , marginBottom: "-40px"}}>
-        <h3>Request Details</h3>
-        <span style={{ fontSize: "12px", color: "#888" }}>
-          ID #{selectedRequest.id}
-        </span>
-      </div>
-    }
-    open={isRequestDetailsModalVisible}
-    onCancel={handleRequestDetailsModalClose  }
-    footer={[
-      <Button key="close" onClick={handleRequestDetailsModalClose}>
-        Close
-      </Button>
-    ]}
-  >
-    <div style={{ padding: "10px" }}>
-      {/* Detailed Request Information */}
-      <section style={{ marginBottom: "20px" }}>
-        <h4>Detailed Request Information</h4>
-        <div style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: "10px" }}>
-          <p style={{fontWeight: "400"}}>Title:</p>
-          <p>{selectedRequest.title}</p>
+        <Modal
+          title={
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "10px",
+                width: "200px",
+                marginBottom: "-40px",
+              }}
+            >
+              <h3>Request Details</h3>
+              <span style={{ fontSize: "12px", color: "#888" }}>
+                ID #{selectedRequest.id}
+              </span>
+            </div>
+          }
+          open={isRequestDetailsModalVisible}
+          onCancel={handleRequestDetailsModalClose}
+          footer={[
+            <Button key="close" onClick={handleRequestDetailsModalClose}>
+              Close
+            </Button>,
+          ]}
+        >
+          <div style={{ padding: "10px" }}>
+            {/* Detailed Request Information */}
+            <section style={{ marginBottom: "20px" }}>
+              <h4>Detailed Request Information</h4>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "150px 1fr",
+                  gap: "10px",
+                }}
+              >
+                <p style={{ fontWeight: "400" }}>Title:</p>
+                <p>{selectedRequest.title}</p>
 
-          <p style={{fontWeight: "400"}}>Description:</p>
-          <p>{selectedRequest.description}</p>
+                <p style={{ fontWeight: "400" }}>Description:</p>
+                <p>{selectedRequest.description}</p>
 
-          <p style={{fontWeight: "400"}}>Date:</p>
-          <p>{new Date(selectedRequest.datetime).toLocaleString()}</p>
+                <p style={{ fontWeight: "400" }}>Date:</p>
+                <p>{new Date(selectedRequest.datetime).toLocaleString()}</p>
 
-          <p style={{fontWeight: "400"}}>Request Type:</p>
-          <p>{selectedRequest.technician}</p>
+                <p style={{ fontWeight: "400" }}>Request Type:</p>
+                <p>{selectedRequest.technician}</p>
 
-          <p style={{fontWeight: "400"}}>Location:</p>
-          <p>{selectedRequest.request_location}</p>
+                <p style={{ fontWeight: "400" }}>Location:</p>
+                <p>{selectedRequest.request_location}</p>
 
-          <p style={{fontWeight: "400"}}>Urgency Level:</p>
-          <p><Tag color="green">Low</Tag></p>
-        </div>
-      </section>
+                <p style={{ fontWeight: "400" }}>Urgency Level:</p>
+                <p>
+                  <Tag color="green">Low</Tag>
+                </p>
+              </div>
+            </section>
 
-      {/* Requester Information */}
-      <section style={{ marginBottom: "20px" }}>
-        <h4>Requester Information</h4>
-        <div style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: "10px" }}>
-          <p style={{fontWeight: "400"}}>Name:</p>
-          <p>{selectedRequest.user_firstname} {selectedRequest.user_lastname}</p>
+            {/* Requester Information */}
+            <section style={{ marginBottom: "20px" }}>
+              <h4>Requester Information</h4>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "150px 1fr",
+                  gap: "10px",
+                }}
+              >
+                <p style={{ fontWeight: "400" }}>Name:</p>
+                <p>
+                  {selectedRequest.user_firstname}{" "}
+                  {selectedRequest.user_lastname}
+                </p>
 
-          <p style={{fontWeight: "400"}}>Department:</p>
-          <p>{selectedRequest.department}</p>
-        </div>
-      </section>
+                <p style={{ fontWeight: "400" }}>Department:</p>
+                <p>{selectedRequest.department}</p>
+              </div>
+            </section>
 
-      {/* Status Information */}
-      <section style={{ marginBottom: "20px" }}>
-        <h4>Status Information</h4>
-        <div style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: "10px" }}>
-          <p style={{fontWeight: "400"}}>Current Status:</p>
-          <p>
-            <Tag color={selectedRequest.status === "Rejected" ? "red" : "green"}>
-              {selectedRequest.status}
-            </Tag>
-          </p>
+            {/* Status Information */}
+            <section style={{ marginBottom: "20px" }}>
+              <h4>Status Information</h4>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "150px 1fr",
+                  gap: "10px",
+                }}
+              >
+                <p style={{ fontWeight: "400" }}>Current Status:</p>
+                <p>
+                  <Tag
+                    color={
+                      selectedRequest.status === "Rejected" ? "red" : "green"
+                    }
+                  >
+                    {selectedRequest.status}
+                  </Tag>
+                </p>
 
-          <p style={{fontWeight: "400"}}>Scheduled Date and Time:</p>
-          <p>{new Date(selectedRequest.datetime).toLocaleString()}</p>
+                <p style={{ fontWeight: "400" }}>Scheduled Date and Time:</p>
+                <p>{new Date(selectedRequest.datetime).toLocaleString()}</p>
 
-          <p style={{fontWeight: "400"}}>Remarks/Comments:</p>
-          <p>{selectedRequest.remarks}</p>
-        </div>
-      </section>
+                <p style={{ fontWeight: "400" }}>Remarks/Comments:</p>
+                <p>{selectedRequest.remarks}</p>
+              </div>
+            </section>
 
-      {/* Personnel Information */}
-      <section>
-        <h4>Personnel Information</h4>
-        <div style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: "10px" }}>
-          <p style={{fontWeight: "400"}}>Assigned Personnel:</p>
-          <p>{selectedRequest.assigned_personnel}</p>
+            {/* Personnel Information */}
+            <section>
+              <h4>Personnel Information</h4>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "150px 1fr",
+                  gap: "10px",
+                }}
+              >
+                <p style={{ fontWeight: "400" }}>Assigned Personnel:</p>
+                <p>{selectedRequest.assigned_personnel}</p>
 
-          <p style={{fontWeight: "400"}}>Personnel Type:</p>
-          <p>{selectedRequest.personnel_type}</p>
-        </div>
-      </section>
-    </div>
-  </Modal>
-)}
+                <p style={{ fontWeight: "400" }}>Personnel Type:</p>
+                <p>{selectedRequest.personnel_type}</p>
+              </div>
+            </section>
+          </div>
+        </Modal>
+      )}
 
-
- {/* Modal for Filtered Requests */}
-<Modal
-  title={modalTitle}
-  open={isFilteredRequestsModalVisible}
-  onCancel={handleFilteredRequestsModalClose}
-  footer={[
-    <Button key="close" onClick={handleFilteredRequestsModalClose}>
-      Close
-    </Button>,
-  ]}
-  width="80%" // Adjust width dynamically (e.g., 80% of the viewport)
-  bodyStyle={{
-    maxHeight: "70vh", // Restrict height for scrolling
-    overflowY: "auto", // Enable vertical scroll for overflowing content
-  }}
->
-  <Table 
-    dataSource={filteredRequests} 
-    rowKey="id" 
-    className={classes.modalTable} 
-    pagination={false} // Remove pagination if you handle it separately
-    onRow={(record) => ({
-      onClick: () => showRequestDetails(record),
-    })}
-  >
-    <Column 
-      title="Requestor" 
-      key="requestor" 
-      render={(_, record) => `${record.user_firstname} ${record.user_lastname}`} 
-    />
-    <Column 
-      title="Department" 
-      dataIndex="department" 
-      key="department" 
-    />
-    <Column 
-      title="Date & Time" 
-      dataIndex="datetime" 
-      key="datetime" 
-      render={(datetime) => new Date(datetime).toLocaleString()} 
-    />
-    <Column 
-      title="Location" 
-      dataIndex="request_location" 
-      key="request_location" 
-    />
-    <Column 
-      title="Status" 
-      dataIndex="status" 
-      key="status" 
-      render={(status) => (
-        <Tag color={getStatusColor(status)}>{status}</Tag>
-      )} 
-    />
-  </Table>
-</Modal>
+      {/* Modal for Filtered Requests */}
+      <Modal
+        title={modalTitle}
+        open={isFilteredRequestsModalVisible}
+        onCancel={handleFilteredRequestsModalClose}
+        footer={[
+          <Button key="close" onClick={handleFilteredRequestsModalClose}>
+            Close
+          </Button>,
+        ]}
+        width="80%" // Adjust width dynamically (e.g., 80% of the viewport)
+        style={{ maxHeight: "70vh", overflowY: "auto" }}
+      >
+        <Table
+          dataSource={filteredRequests}
+          rowKey="id"
+          className={classes.modalTable}
+          pagination={false} // Remove pagination if you handle it separately
+          onRow={(record) => ({
+            onClick: () => showRequestDetails(record),
+          })}
+        >
+          <Column
+            title="Requestor"
+            key="requestor"
+            render={(_, record) =>
+              `${record.user_firstname} ${record.user_lastname}`
+            }
+          />
+          <Column title="Department" dataIndex="department" key="department" />
+          <Column
+            title="Date & Time"
+            dataIndex="datetime"
+            key="datetime"
+            render={(datetime) => new Date(datetime).toLocaleString()}
+          />
+          <Column
+            title="Location"
+            dataIndex="request_location"
+            key="request_location"
+          />
+          <Column
+            title="Status"
+            dataIndex="status"
+            key="status"
+            render={(status) => (
+              <Tag color={getStatusColor(status)}>{status}</Tag>
+            )}
+          />
+        </Table>
+      </Modal>
     </section>
   );
 };
