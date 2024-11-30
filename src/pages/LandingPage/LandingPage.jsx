@@ -6,11 +6,10 @@ const LandingPage = () => {
   return (
     <section className={classes.landingPage}>
       <div>
-        <h1>Streamlined Service Portal</h1>
+        <h1>Service Request Portal</h1>
         <p>
-          Enjoy effortless campus maintenance with our streamlined service,
-          offering swift and professional janitorial, plumbing, and electrical
-          support via an intuitive online portal.
+          Streamline campus maintenance with ease.
+          Submit building, electrical, and general service requests effortlessly through our user-friendly online portal.
         </p>
       </div>
       <img src={homepageImage} alt="homepage" />

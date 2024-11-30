@@ -14,56 +14,48 @@ import SelectArea from "../../components/UI/SelectArea";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
-
 const Approval = () => {
   const { requests: initialRequests, technicians } = useLoaderData();
   const [statusMessage, setStatusMessage] = useState(null);
-  const [requests, setRequests] = useState(initialRequests);
+  const [requests, setRequests] = useState(
+    initialRequests.sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
+  );
   const [filter, setFilter] = useState("Pending");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [activeTab, setActiveTab] = useState("all");
   const [rowData, setRowData] = useState(
-    initialRequests.filter((request) => request.status === "Pending")
+    initialRequests
+      .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
+      .filter((request) => request.status === "Pending")
   );
 
   useEffect(() => {
-   
     if (statusMessage) {
       toast.success(statusMessage, { autoClose: 1000 });
-      setStatusMessage(null); 
+      setStatusMessage(null);
     }
-  }, [statusMessage]);  
-   
-  
-  
+  }, [statusMessage]);
 
   const handleFilterChange = (selectedFilter) => {
     setFilter(selectedFilter);
     setRowData(
-        requests.filter((request) => {
-            // If "All" is selected, show all requests
-            if (selectedFilter === "All") {
-                return true;
-            }
-
-            // Include "Pending" requests regardless of isOpened state
-            if (selectedFilter === "Pending") {
-                return request.status === "Pending";
-            }
-
-            // Filter by status and check if the request is opened (viewed)
-            if (selectedFilter === "Viewed") {
-                return request.isOpened === true;
-            }
-
-            // Filter by other statuses (Approved, Denied, etc.)
-            return request.status === selectedFilter;
+      requests
+        .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
+        .filter((request) => {
+          if (selectedFilter === "All") {
+            return true;
+          }
+          if (selectedFilter === "Pending") {
+            return request.status === "Pending";
+          }
+          if (selectedFilter === "Viewed") {
+            return request.isOpened === true;
+          }
+          return request.status === selectedFilter;
         })
     );
-};
-
-  
-
+  };
 
   const approveRequest = async (request_id) => {
     try {
@@ -75,14 +67,14 @@ const Approval = () => {
         }
       );
 
-      // Update the requests array
-      const updatedRequests = requests.map((request) =>
-        request.request_id === request_id
-          ? { ...request, status: "Approved" }
-          : request
-      );
+      const updatedRequests = requests
+        .map((request) =>
+          request.request_id === request_id
+            ? { ...request, status: "Approved" }
+            : request
+        )
+        .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
 
-      // Update both requests and rowData states
       setRequests(updatedRequests);
       setRowData(
         updatedRequests.filter((request) => {
@@ -109,12 +101,13 @@ const Approval = () => {
         }
       );
 
-      // Update the requests array
-      const updatedRequests = requests.map((request) =>
-        request.request_id === request_id
-          ? { ...request, status: "Denied" }
-          : request
-      );
+      const updatedRequests = requests
+        .map((request) =>
+          request.request_id === request_id
+            ? { ...request, status: "Denied" }
+            : request
+        )
+        .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
 
       // Update both requests and rowData states
       setRequests(updatedRequests);
@@ -139,14 +132,15 @@ const Approval = () => {
         `${API_URL}/request/updateStatus?request_id=${request_id}`,
         { status: "Done" }
       );
-  
-      // Update the requests array
-      const updatedRequests = requests.map((request) =>
-        request.request_id === request_id
-          ? { ...request, status: "Completed" }
-          : request
-      );
-  
+
+      const updatedRequests = requests
+        .map((request) =>
+          request.request_id === request_id
+            ? { ...request, status: "Completed" }
+            : request
+        )
+        .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
+
       // Update both requests and rowData states
       setRequests(updatedRequests);
       setRowData(
@@ -163,7 +157,6 @@ const Approval = () => {
       toast.error("There was an error marking the request as done.");
     }
   };
-  
 
   const handleStartRequest = async (request_id) => {
     try {
@@ -171,13 +164,15 @@ const Approval = () => {
         `${API_URL}/request/updateStatus?request_id=${request_id}`,
         { status: "In Progress" }
       );
-  
-      const updatedRequests = requests.map((request) =>
-        request.request_id === request_id
-          ? { ...request, status: "In Progress" }
-          : request
-      );
-  
+
+      const updatedRequests = requests
+        .map((request) =>
+          request.request_id === request_id
+            ? { ...request, status: "In Progress" }
+            : request
+        )
+        .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
+
       setRequests(updatedRequests);
       setRowData(
         updatedRequests.filter((request) => {
@@ -195,26 +190,20 @@ const Approval = () => {
   };
 
   const markRequestAsOpened = async (request_id) => {
-      console.log("Mark request as viewed triggered for request ID:", request_id);
+    console.log("Mark request as viewed triggered for request ID:", request_id);
     try {
-        await axios.put(`${API_URL}/request/markViewed/${request_id}`);
+      await axios.put(`${API_URL}/request/markViewed/${request_id}`);
 
-        const updatedRequests = requests.map((request) =>
-            request.request_id === request_id
-                ? { ...request, isOpened: true }
-                : request
-        );
-        
+      const updatedRequests = requests.map((request) =>
+        request.request_id === request_id
+          ? { ...request, isOpened: true }
+          : request
+      );
     } catch (error) {
-        console.error("Error marking request as opened:", error);
-        toast.error("An error occurred while processing the request.");
+      console.error("Error marking request as opened:", error);
+      toast.error("An error occurred while processing the request.");
     }
-};
-
-  
-
-
-
+  };
 
   const columns = [
     { headerName: "Request ID", field: "request_id", flex: 1 },
@@ -225,9 +214,8 @@ const Approval = () => {
         `${params.data.user_firstname} ${params.data.user_lastname}`,
       flex: 1,
     },
-    { headerName: "Title", field: "title", flex: 1 },
+    { headerName: "Request Type", field: "request_technician", flex: 1 },
     { headerName: "Description", field: "description", flex: 1 },
-    { headerName: "Technician", field: "request_technician", flex: 1 },
     {
       headerName: "Date/Time",
       field: "datetime",
@@ -247,20 +235,20 @@ const Approval = () => {
       flex: 1,
       cellRenderer: (params) => (
         <div>
-     <Dialog.Root
-          open={selectedRequest?.request_id === params.data.request_id}
-          onOpenChange={(open) => {
-            if (open) {
-              setSelectedRequest(params.data);
-              markRequestAsOpened(params.data.request_id);
-            } else {
-              setSelectedRequest(null);
-            }
-          }}
-        >
-          <Dialog.Trigger asChild>
-            <button className={classes.viewBtn}>View</button>
-          </Dialog.Trigger>
+          <Dialog.Root
+            open={selectedRequest?.request_id === params.data.request_id}
+            onOpenChange={(open) => {
+              if (open) {
+                setSelectedRequest(params.data);
+                markRequestAsOpened(params.data.request_id);
+              } else {
+                setSelectedRequest(null);
+              }
+            }}
+          >
+            <Dialog.Trigger asChild>
+              <button className={classes.viewBtn}>View</button>
+            </Dialog.Trigger>
             <RequestDialogPortal
               request={params.data}
               technicians={technicians}
@@ -277,9 +265,47 @@ const Approval = () => {
     },
   ];
 
+  const handleTabClick = (status) => {
+    setActiveTab(status);
+
+    if (status === "all") {
+      setRowData(requests);
+    } else {
+      setRowData(requests.filter((request) => request.status === status));
+    }
+  };
+
+  const statuses = {
+    all: "All",
+    Pending: "Pending",
+    Approved: "Approved",
+    "In Progress": "In Progress",
+    Completed: "Completed",
+    Denied: "Rejected",
+  };
+
   return (
     <section className={classes.approval}>
-      <SelectArea onFilterChange={handleFilterChange} header="Requests" />
+      <SelectArea
+        onFilterChange={handleFilterChange}
+        header="Requests"
+        isRecords={true}
+      />
+      <div className={classes.exampleHeader}>
+        <div className={classes.tabs}>
+          {Object.entries(statuses).map(([key, displayValue]) => (
+            <button
+              className={`${classes.tabButton} ${
+                activeTab === key ? classes.active : ""
+              }`}
+              onClick={() => handleTabClick(key)}
+              key={key}
+            >
+              {displayValue}
+            </button>
+          ))}
+        </div>
+      </div>
       <div
         className="ag-theme-quartz"
         style={{ height: "100%", width: "100%", marginTop: "1rem" }}
@@ -293,11 +319,8 @@ const Approval = () => {
           rowHeight={80}
         />
       </div>
-     
-<ToastContainer
-/>
- 
 
+      <ToastContainer />
     </section>
   );
 };

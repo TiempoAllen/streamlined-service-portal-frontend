@@ -32,11 +32,11 @@ const HomePage = () => {
   // );
 
   const [colDefs] = useState([
-    { field: "RequestID", flex: 1 },
-    { field: "Title", headerName: "Title" },
+    { field: "Request Type", headerName: "Request Type" },
     { field: "Description", headerName: "Description" },
-    { field: "Technician Requested", headerName: "Technician Requested" },
+    {field: "Location", headerName: "Location"},
     { field: "Status", headerName: "Status" },
+    {field: "Date Requested", headerName: "Date Requested"},
     {
       headerName: "Actions",
       flex: 1,
@@ -64,6 +64,7 @@ const HomePage = () => {
   const transformedRequests =
     !isAdmin && Array.isArray(requests)
       ? requests
+          .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
           .filter(
             (request) => activeTab === "all" || request.status === activeTab
           )
@@ -77,10 +78,11 @@ const HomePage = () => {
           .map((request) => {
             return {
               RequestID: request.request_id,
-              Title: request.title,
+              "Request Type": request.request_technician,
               Description: request.description,
-              "Technician Requested": request.request_technician,
+              Location: request.request_location,
               Status: request.status,
+              "Date Requested": formatDateTime(request.datetime)
             };
           })
       : [];
@@ -104,7 +106,6 @@ const HomePage = () => {
           <div className={classes.homeMain}>
             <div className={classes.header}>
               <h1>My Requests</h1>
-              <button>See all</button>
             </div>
             <div className={classes.exampleHeader}>
               <div className={classes.tabs}>
