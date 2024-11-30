@@ -100,7 +100,7 @@ const Dashboard = () => {
   };
 
   const getStatusColor = (status) => {
-    if (!status) return "gray"; // Default color for invalid statuses
+    if (!status) return "gray"; 
     const uppercasedStatus = status?.toUpperCase() || "UNKNOWN";
     switch (uppercasedStatus) {
       case "Approved":
@@ -280,9 +280,10 @@ const Dashboard = () => {
               onFilter={(value, record) => record.status === value}
               render={(status) => (
                 <Tag color={getStatusColor(status)} key={status}>
-                  {status.toUpperCase()}
+                  {(status || "Unknown").toUpperCase()}
                 </Tag>
               )}
+              
             />
           </Table>
         </div>
