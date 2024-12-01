@@ -17,13 +17,17 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 const Approval = () => {
   const { requests: initialRequests, technicians } = useLoaderData();
   const [statusMessage, setStatusMessage] = useState(null);
-  const [requests, setRequests] = useState(initialRequests);
+  const [requests, setRequests] = useState(
+    initialRequests.sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
+  );
   const [filter, setFilter] = useState("Pending");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [activeTab, setActiveTab] = useState("all");
   const [rowData, setRowData] = useState(
-    initialRequests.filter((request) => request.status === "Pending")
+    initialRequests
+      .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
+      .filter((request) => request.status === "Pending")
   );
 
   useEffect(() => {
@@ -36,25 +40,20 @@ const Approval = () => {
   const handleFilterChange = (selectedFilter) => {
     setFilter(selectedFilter);
     setRowData(
-      requests.filter((request) => {
-        // If "All" is selected, show all requests
-        if (selectedFilter === "All") {
-          return true;
-        }
-
-        // Include "Pending" requests regardless of isOpened state
-        if (selectedFilter === "Pending") {
-          return request.status === "Pending";
-        }
-
-        // Filter by status and check if the request is opened (viewed)
-        if (selectedFilter === "Viewed") {
-          return request.isOpened === true;
-        }
-
-        // Filter by other statuses (Approved, Denied, etc.)
-        return request.status === selectedFilter;
-      })
+      requests
+        .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
+        .filter((request) => {
+          if (selectedFilter === "All") {
+            return true;
+          }
+          if (selectedFilter === "Pending") {
+            return request.status === "Pending";
+          }
+          if (selectedFilter === "Viewed") {
+            return request.isOpened === true;
+          }
+          return request.status === selectedFilter;
+        })
     );
   };
 
@@ -68,14 +67,14 @@ const Approval = () => {
         }
       );
 
-      // Update the requests array
-      const updatedRequests = requests.map((request) =>
-        request.request_id === request_id
-          ? { ...request, status: "Approved" }
-          : request
-      );
+      const updatedRequests = requests
+        .map((request) =>
+          request.request_id === request_id
+            ? { ...request, status: "Approved" }
+            : request
+        )
+        .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
 
-      // Update both requests and rowData states
       setRequests(updatedRequests);
       setRowData(
         updatedRequests.filter((request) => {
@@ -102,12 +101,13 @@ const Approval = () => {
         }
       );
 
-      // Update the requests array
-      const updatedRequests = requests.map((request) =>
-        request.request_id === request_id
-          ? { ...request, status: "Denied" }
-          : request
-      );
+      const updatedRequests = requests
+        .map((request) =>
+          request.request_id === request_id
+            ? { ...request, status: "Denied" }
+            : request
+        )
+        .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
 
       // Update both requests and rowData states
       setRequests(updatedRequests);
@@ -133,12 +133,13 @@ const Approval = () => {
         { status: "Done" }
       );
 
-      // Update the requests array
-      const updatedRequests = requests.map((request) =>
-        request.request_id === request_id
-          ? { ...request, status: "Completed" }
-          : request
-      );
+      const updatedRequests = requests
+        .map((request) =>
+          request.request_id === request_id
+            ? { ...request, status: "Completed" }
+            : request
+        )
+        .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
 
       // Update both requests and rowData states
       setRequests(updatedRequests);
@@ -164,11 +165,13 @@ const Approval = () => {
         { status: "In Progress" }
       );
 
-      const updatedRequests = requests.map((request) =>
-        request.request_id === request_id
-          ? { ...request, status: "In Progress" }
-          : request
-      );
+      const updatedRequests = requests
+        .map((request) =>
+          request.request_id === request_id
+            ? { ...request, status: "In Progress" }
+            : request
+        )
+        .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
 
       setRequests(updatedRequests);
       setRowData(
@@ -211,9 +214,8 @@ const Approval = () => {
         `${params.data.user_firstname} ${params.data.user_lastname}`,
       flex: 1,
     },
-    { headerName: "Title", field: "title", flex: 1 },
+    { headerName: "Request Type", field: "request_technician", flex: 1 },
     { headerName: "Description", field: "description", flex: 1 },
-    { headerName: "Technician", field: "request_technician", flex: 1 },
     {
       headerName: "Date/Time",
       field: "datetime",

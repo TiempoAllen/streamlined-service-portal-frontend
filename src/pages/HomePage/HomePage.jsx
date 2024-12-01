@@ -109,6 +109,7 @@ const HomePage = () => {
   const transformedRequests =
     !isAdmin && Array.isArray(rowData)
       ? rowData
+          .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
           .filter(
             (request) => activeTab === "all" || request.status === activeTab
           )
@@ -149,7 +150,6 @@ const HomePage = () => {
           <div className={classes.homeMain}>
             <div className={classes.header}>
               <h1>My Requests</h1>
-              <button>See all</button>
             </div>
             <div className={classes.exampleHeader}>
               <div className={classes.tabs}>
