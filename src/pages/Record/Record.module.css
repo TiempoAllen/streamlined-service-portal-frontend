@@ -32,6 +32,18 @@
 .record .filters {
     margin-top: 1rem;
     width: 100%;
+    display: flex;
+    justify-content: start;
+    gap: 1rem;
+}
+
+.record .filters input {
+    min-height: 3rem;
+    background-color: #F1F4F8;
+    padding: 1rem;
+    font-size: 1rem;
+    border-radius: 10px;
+    box-sizing: border-box;
 }
 
 .tableRecords {
