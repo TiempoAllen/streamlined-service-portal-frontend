@@ -47,7 +47,7 @@ const SideNav = ({ user_id, isSuperUser }) => {
               alt="maintenance-icon"
               className={classes.icon}
             />
-            Maintenance
+            Requests
           </div>
           {isMaintenanceOpen && (
             <ul className={classes.subMenu}>

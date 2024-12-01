@@ -125,7 +125,7 @@ const ResubmitForm = () => {
                 className={classes.inputText}
                 required
               >
-                <option value="Buiding Maintenance">
+                <option value="Building Maintenance">
                   Building Maintenance
                 </option>
                 <option value="Electrical Maintenance">

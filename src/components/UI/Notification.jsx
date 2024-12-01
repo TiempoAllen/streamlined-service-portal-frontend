@@ -29,32 +29,51 @@ const timeDifference = (timestamp) => {
   }
 };
 
-const Notification = ({ user_id }) => {
+const Notification = ({ user_id, userType }) => {
   const [showNotification, setShowNotification] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
   const [notifications, setNotifications] = useState([]);
-  const [selectedNotification, setSelectedNotification] = useState(null); // For dialog control
+  const [selectedNotification, setSelectedNotification] = useState(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  
+
   const handleNotificationClick = () => {
     setShowNotification(!showNotification);
-    setNotificationCount(0);
   };
 
   const fetchNotifications = async () => {
     try {
-      // Fetch the user's notifications from the backend using the user_id
-      const response = await axios.get(
-        `${API_URL}/notifications/${user_id}`
-      );
-      console.log(response.data);
+      const response = await axios.get(`${API_URL}/notifications/${user_id}`);
+      console.log("Fetched Notifications:", response.data);
 
-      const sortedNotifications = response.data.sort(
+      const mappedNotifications = response.data.map((n) => ({
+        ...n,
+        notificationId: n.notification_id,
+      }));
+
+      const readStatusKey =
+        userType === "admin"
+          ? "readNotificationsAdmin"
+          : "readNotificationsUser";
+      console.log("Using LocalStorage key:", readStatusKey);
+
+      const storedReadStatus =
+        JSON.parse(localStorage.getItem(readStatusKey)) || [];
+      console.log("Stored Read Status:", storedReadStatus);
+
+      const notificationsWithReadStatus = mappedNotifications.map((n) => {
+        return {
+          ...n,
+          isRead: storedReadStatus.includes(n.notificationId) || n.isRead,
+        };
+      });
+
+      const sortedNotifications = notificationsWithReadStatus.sort(
         (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
       );
 
       setNotifications(sortedNotifications);
+
       const unreadCount = sortedNotifications.filter((n) => !n.isRead).length;
       setNotificationCount(unreadCount);
     } catch (error) {
@@ -62,16 +81,49 @@ const Notification = ({ user_id }) => {
     }
   };
 
-  const handleRowClick = (notification) => {
-    if (notification.notificationType === "Evaluation") {
-      setSelectedNotification(notification); // Open evaluation dialog
-    } else if (notification.recipientRole === "User") {
-      navigate(`/home/${user_id}/history`);
+  const handleRowClick = async (notification) => {
+    if (notification.isRead) return;
+
+    try {
+      const response = await axios.put(
+        `${API_URL}/notifications/mark-as-read/${notification.notificationId}`
+      );
+      console.log("Backend Response:", response.data);
+
+      const updatedNotifications = notifications.map((n) =>
+        n.notificationId === notification.notificationId
+          ? { ...n, isRead: true }
+          : n
+      );
+      setNotifications(updatedNotifications);
+
+      const unreadCount = updatedNotifications.filter((n) => !n.isRead).length;
+      setNotificationCount(unreadCount);
+
+      const readStatusKey =
+        userType === "admin"
+          ? "readNotificationsAdmin"
+          : "readNotificationsUser";
+      let storedReadStatus =
+        JSON.parse(localStorage.getItem(readStatusKey)) || [];
+
+      if (!storedReadStatus.includes(notification.notificationId)) {
+        storedReadStatus.push(notification.notificationId);
+      }
+
+      localStorage.setItem(readStatusKey, JSON.stringify(storedReadStatus));
+      if (notification.notificationType === "Admin") {
+        navigate(`/home/${user_id}/approval`);
+      } else if (notification.recipientRole === "User") {
+        navigate(`/home/${user_id}`);
+      }
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
     }
   };
 
   const handleCloseDialog = () => {
-    setSelectedNotification(null); // Close the dialog
+    setSelectedNotification(null);
   };
 
   useEffect(() => {
@@ -80,6 +132,7 @@ const Notification = ({ user_id }) => {
         setShowNotification(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
 
     fetchNotifications();
@@ -87,7 +140,7 @@ const Notification = ({ user_id }) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [user_id]);
+  }, [user_id, userType]);
 
   return (
     <div className={classes.main} ref={dropdownRef}>
@@ -106,12 +159,20 @@ const Notification = ({ user_id }) => {
             <ul className={classes.notificationItems}>
               {notifications.map((notification) => (
                 <li
-                  key={notification.id}
-                  className={classes.notificationsRow}
+                  key={notification.notificationId}
+                  className={`${classes.notificationsRow} ${
+                    !notification.isRead ? classes.unread : ""
+                  }`}
                   onClick={() => handleRowClick(notification)}
                 >
                   <div className={classes.parentRow}>
-                    <p>{notification.message}</p>
+                    <p
+                      style={{
+                        fontWeight: !notification.isRead ? "700" : "400",
+                      }}
+                    >
+                      {notification.message}
+                    </p>
                     <div className={classes.childRow}>
                       <span>{timeDifference(notification.timestamp)}</span>
                       <span>{formatDateTime(notification.timestamp)}</span>

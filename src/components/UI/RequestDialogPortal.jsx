@@ -140,11 +140,27 @@ const RequestDialogPortal = ({
                 <p className={classes.first}>Description</p>
                 <p className={classes.second}>{request.description}</p>
               </div>
+      
               <div className={classes.requestDetailsPortalInputs}>
-                <p className={classes.first}>Attachment</p>
-                <p className={classes.second}>
-                  {!request.attachment ? "No Attachment" : request.attachment}
-                </p>
+  <p className={classes.first}>Attachment</p>
+  {!request.attachment ? (
+    <p className={classes.second}>No Attachment</p>
+  ) : (
+    <div className={classes.attachmentPreview}>
+      <a
+        href={`${API_URL}/uploads/${request.attachment}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={classes.previewLink}
+      >
+        Preview Attachment
+      </a>
+    </div>
+  )}
+</div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Request Type</p>
+                <p className={classes.second}>{request.request_technician}</p>
               </div>
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Location</p>

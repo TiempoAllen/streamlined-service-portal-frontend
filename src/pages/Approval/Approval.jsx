@@ -12,6 +12,8 @@ import { loadRequestsAndTechnicians } from "../../util/auth";
 import classes from "./Approval.module.css";
 import SelectArea from "../../components/UI/SelectArea";
 
+
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const Approval = () => {
@@ -66,7 +68,7 @@ const Approval = () => {
           denialReason: null,
         }
       );
-
+  
       const updatedRequests = requests
         .map((request) =>
           request.request_id === request_id
@@ -74,7 +76,7 @@ const Approval = () => {
             : request
         )
         .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
-
+  
       setRequests(updatedRequests);
       setRowData(
         updatedRequests.filter((request) => {
@@ -84,13 +86,17 @@ const Approval = () => {
           return request.status === filter;
         })
       );
+  
+      // Reset selected request to close the dialog
+      setSelectedRequest(null);
+  
       toast.success("Request saved successfully.", { autoClose: 2000 });
     } catch (error) {
       console.error(error);
       toast.error("There was an error.");
     }
   };
-
+  
   const denyRequest = async (request_id, denialReason) => {
     try {
       await axios.put(
@@ -100,7 +106,7 @@ const Approval = () => {
           denialReason: denialReason,
         }
       );
-
+  
       const updatedRequests = requests
         .map((request) =>
           request.request_id === request_id
@@ -108,8 +114,7 @@ const Approval = () => {
             : request
         )
         .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
-
-      // Update both requests and rowData states
+  
       setRequests(updatedRequests);
       setRowData(
         updatedRequests.filter((request) => {
@@ -119,12 +124,17 @@ const Approval = () => {
           return request.status === filter;
         })
       );
+  
+      // Reset selected request to close the dialog
+      setSelectedRequest(null);
+  
       toast.success("Request saved successfully.", { autoClose: 5000 });
     } catch (error) {
       console.error(error);
       toast.error("There was an error.");
     }
   };
+  
 
   const handleRequestDone = async (request_id) => {
     try {
@@ -236,7 +246,7 @@ const Approval = () => {
       cellRenderer: (params) => (
         <div>
           <Dialog.Root
-            open={selectedRequest?.request_id === params.data.request_id}
+           open={!!selectedRequest && selectedRequest.request_id === params.data.request_id}
             onOpenChange={(open) => {
               if (open) {
                 setSelectedRequest(params.data);
