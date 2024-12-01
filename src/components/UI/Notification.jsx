@@ -48,18 +48,19 @@ const Notification = ({ user_id, userType }) => {
 
       const mappedNotifications = response.data.map((n) => ({
         ...n,
-        notificationId: n.notification_id, 
+        notificationId: n.notification_id,
       }));
 
-      
-      const readStatusKey = userType === "admin" ? "readNotificationsAdmin" : "readNotificationsUser";
+      const readStatusKey =
+        userType === "admin"
+          ? "readNotificationsAdmin"
+          : "readNotificationsUser";
       console.log("Using LocalStorage key:", readStatusKey);
 
-     
-      const storedReadStatus = JSON.parse(localStorage.getItem(readStatusKey)) || [];
+      const storedReadStatus =
+        JSON.parse(localStorage.getItem(readStatusKey)) || [];
       console.log("Stored Read Status:", storedReadStatus);
 
-     
       const notificationsWithReadStatus = mappedNotifications.map((n) => {
         return {
           ...n,
@@ -67,7 +68,6 @@ const Notification = ({ user_id, userType }) => {
         };
       });
 
-      
       const sortedNotifications = notificationsWithReadStatus.sort(
         (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
       );
@@ -83,48 +83,44 @@ const Notification = ({ user_id, userType }) => {
 
   const handleRowClick = async (notification) => {
     if (notification.isRead) return;
-  
+
     try {
-   
       const response = await axios.put(
         `${API_URL}/notifications/mark-as-read/${notification.notificationId}`
       );
       console.log("Backend Response:", response.data);
-  
-      
+
       const updatedNotifications = notifications.map((n) =>
-        n.notificationId === notification.notificationId ? { ...n, isRead: true } : n
+        n.notificationId === notification.notificationId
+          ? { ...n, isRead: true }
+          : n
       );
       setNotifications(updatedNotifications);
-  
-  
+
       const unreadCount = updatedNotifications.filter((n) => !n.isRead).length;
       setNotificationCount(unreadCount);
-  
-     
-      const readStatusKey = userType === "admin" ? "readNotificationsAdmin" : "readNotificationsUser";
-      let storedReadStatus = JSON.parse(localStorage.getItem(readStatusKey)) || [];
-  
-      
+
+      const readStatusKey =
+        userType === "admin"
+          ? "readNotificationsAdmin"
+          : "readNotificationsUser";
+      let storedReadStatus =
+        JSON.parse(localStorage.getItem(readStatusKey)) || [];
+
       if (!storedReadStatus.includes(notification.notificationId)) {
         storedReadStatus.push(notification.notificationId);
       }
-  
-      
+
       localStorage.setItem(readStatusKey, JSON.stringify(storedReadStatus));
       if (notification.notificationType === "Admin") {
         navigate(`/home/${user_id}/approval`);
       } else if (notification.recipientRole === "User") {
-        
-        navigate(`/home/${user_id}/history`); 
+        navigate(`/home/${user_id}`);
       }
-      
-  
     } catch (error) {
       console.error("Error marking notification as read:", error);
     }
   };
-  
 
   const handleCloseDialog = () => {
     setSelectedNotification(null);
@@ -144,7 +140,7 @@ const Notification = ({ user_id, userType }) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [user_id, userType]); 
+  }, [user_id, userType]);
 
   return (
     <div className={classes.main} ref={dropdownRef}>

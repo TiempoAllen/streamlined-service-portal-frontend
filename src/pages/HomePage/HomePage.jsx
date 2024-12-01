@@ -27,15 +27,19 @@ const formatDateTime = (datetime) => {
 };
 
 const HomePage = () => {
-  const { user, requests: initialRequests } = useRouteLoaderData("home");
+  const { user, requests: initialRequests = [] } = useRouteLoaderData("home");
   const isAdmin = user && user.isadmin;
   const [activeTab, setActiveTab] = useState("all");
-  const [requests, setRequests] = useState(initialRequests);
+  const [requests, setRequests] = useState(
+    Array.isArray(initialRequests) ? initialRequests : []
+  );
   const themeClass = "ag-theme-quartz";
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("Pending");
   const [rowData, setRowData] = useState(
-    initialRequests.filter((request) => request.status === "Pending")
+    (Array.isArray(initialRequests) ? initialRequests : []).filter(
+      (request) => request.status === "Pending"
+    )
   );
 
   const handleCancelRequest = async (request_id) => {
@@ -194,7 +198,7 @@ const HomePage = () => {
               className={`${themeClass} ${classes.grid}`}
               style={{ height: "100%", width: "100%" }}
             >
-              <div className={classes.grid}>
+              {transformedRequests.length > 0 ? (
                 <AgGridReact
                   detailRowAutoHeight
                   rowHeight={80}
@@ -204,7 +208,11 @@ const HomePage = () => {
                   pagination={true}
                   paginationPageSize={10}
                 />
-              </div>
+              ) : (
+                <p style={{ width: "100%", textAlign: "center" }}>
+                  No requests found.
+                </p>
+              )}
             </div>
           </div>
         )}
