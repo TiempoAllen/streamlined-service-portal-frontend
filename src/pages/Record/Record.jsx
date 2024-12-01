@@ -41,20 +41,20 @@ const Record = () => {
       filter: "agTextColumnFilter", // Enable Text Filter for Status
     },
     { field: "Attachment", flex: 1 },
-    {
-      headerName: "Actions",
-      flex: 1,
-      cellRenderer: (params) => (
-        <p
-          className={classes.viewBtn}
-          onClick={() =>
-            navigate(`/home/${user_id}/record/${params.data.RequestID}`)
-          }
-        >
-          View
-        </p>
-      ),
-    },
+    // {
+    //   headerName: "Actions",
+    //   flex: 1,
+    //   cellRenderer: (params) => (
+    //     <p
+    //       className={classes.viewBtn}
+    //       onClick={() =>
+    //         navigate(`/home/${user_id}/record/${params.data.RequestID}`)
+    //       }
+    //     >
+    //       View
+    //     </p>
+    //   ),
+    // },
   ]);
 
   const transformedRequests = requests.map((request) => ({

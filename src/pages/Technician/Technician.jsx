@@ -12,7 +12,6 @@ import * as Dialog from "@radix-ui/react-dialog";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
-
 const Technician = () => {
   const data = useRouteLoaderData("technician");
   const technicians = data.technicians;
@@ -28,8 +27,7 @@ const Technician = () => {
     { field: "Name", flex: 1 },
     { field: "Phone Number", flex: 1 },
     { field: "Gender", flex: 1 },
-    { field: "Availability", flex: 1 },
-    { field: "Status", flex: 1 },
+    { field: "Classification", flex: 1 },
     {
       field: "Action",
       flex: 1,
@@ -64,8 +62,6 @@ const Technician = () => {
       "Phone Number": technician.tech_phone,
       Gender: technician.tech_gender,
       Classification: technician.tech_classification,
-      Availability: technician.isavailable,
-      Status: technician.tech_status,
     };
   });
 
@@ -89,7 +85,6 @@ const Technician = () => {
   );
 };
 
-
 export default Technician;
 
 export const loader = async ({ params }) => {
@@ -100,14 +95,11 @@ export const loader = async ({ params }) => {
   }
 
   try {
-    const response = await axios.get(
-      `${API_URL}/technician/getAllTechnician`,
-      {
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
-      }
-    );
+    const response = await axios.get(`${API_URL}/technician/getAllTechnician`, {
+      // headers: {
+      //   Authorization: `Bearer ${token}`,
+      // },
+    });
 
     const technicians = response.data;
     console.log(technicians);
