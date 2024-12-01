@@ -73,26 +73,10 @@ const ResubmitForm = () => {
 
   useEffect(() => {
     if (requestDetails) {
-      formRef.current.title.value = requestDetails.title;
       formRef.current.description.value = requestDetails.description;
       formRef.current.request_location.value = requestDetails.request_location;
       formRef.current.request_technician.value =
         requestDetails.request_technician;
-      formRef.current.urgencyLevel.value = requestDetails.urgencyLevel;
-
-      const preferredStartDate = new Date(requestDetails.preferredStartDate);
-      const formattedPreferredStartDate = preferredStartDate
-        .toISOString()
-        .slice(0, 16);
-
-      formRef.current.preferredStartDate.value = formattedPreferredStartDate;
-
-      const preferredEndDate = new Date(requestDetails.preferredEndDate);
-      const formattedPreferredEndDate = preferredEndDate
-        .toISOString()
-        .slice(0, 16);
-
-      formRef.current.preferredEndDate.value = formattedPreferredEndDate;
 
       if (requestDetails.attachment) {
         const fileName = requestDetails.attachment;
@@ -100,39 +84,32 @@ const ResubmitForm = () => {
         setFile(new File([""], fileName, { type: mimeType }));
       }
     }
-
-   
-    
-  }, [ user.id, requestDetails]);
+  }, [user.id, requestDetails]);
 
   useEffect(() => {
     if (actionData) {
       if (actionData.status === "success") {
-       
         if (!actionData.shownToast) {
           toast.success("Request resubmitted successfully!");
           formRef.current.reset();
         }
       } else if (actionData.status === "error") {
-       
         if (!actionData.shownToast) {
           toast.error("There was an error submitting the request.");
         }
       }
-  
-      
+
       if (actionData.status === "success" || actionData.status === "error") {
         actionData.shownToast = true;
       }
     }
-  }, [actionData]);  
-  
+  }, [actionData]);
 
   return (
     <section className={classes.request}>
       <div className={classes.main}>
         <header>
-          <h1>Request</h1>
+          <h1>Resubmit Request</h1>
           <p>
             Please fill out the required fields <span>*</span>
           </p>
@@ -140,16 +117,22 @@ const ResubmitForm = () => {
         <Form method="post" encType="multipart/form-data" ref={formRef}>
           <div className={classes.inputs}>
             <span>
-              <label id="titleLabel">
-                Title <span className={classes.required}>*</span>
+              <label id="technicianLabel">
+                Request Type <span className={classes.required}>*</span>
               </label>
-              <input
-                type="text"
-                name="title"
+              <select
+                name="request_technician"
                 className={classes.inputText}
-                placeholder="e.g. Fix something."
                 required
-              />
+              >
+                <option value="Buiding Maintenance">
+                  Building Maintenance
+                </option>
+                <option value="Electrical Maintenance">
+                  Electrical Maintenance
+                </option>
+                <option value="General Services">General Services</option>
+              </select>
             </span>
             <span>
               <label id="descriptionLabel">
@@ -163,23 +146,6 @@ const ResubmitForm = () => {
               ></textarea>
             </span>
             <span>
-              <label id="technicianLabel">
-                Request Type <span className={classes.required}>*</span>
-              </label>
-              <select
-                name="request_technician"
-                className={classes.inputText}
-                required
-              >
-                <option value="Janitor">Janitor</option>
-                <option value="Electrician">Electrician</option>
-                <option value="Plumber">Plumber</option>
-                <option value="Carpentry">Carpentry</option>
-                <option value="Masonry">Masonry</option>
-                <option value="Maintenance">Maintenance</option>
-              </select>
-            </span>
-            <span>
               <label id="locationLabel">
                 Location <span className={classes.required}>*</span>
               </label>
@@ -190,54 +156,6 @@ const ResubmitForm = () => {
                 placeholder="e.g. CCS Faculty Room"
                 required
               />
-            </span>
-            <span className={classes.preferredDateTime}>
-              <div>
-                <label id="preferredDateTimeLabel">
-                  Preferred Start Date and Time{" "}
-                  <span className={classes.required}>*</span>
-                </label>
-                <p>
-                  This may be subject to approval and scheduling by the admin.
-                </p>
-              </div>
-              <input
-                type="datetime-local"
-                name="preferredStartDate"
-                className={classes.inputText}
-                required
-              />
-            </span>
-            <span className={classes.preferredDateTime}>
-              <div>
-                <label id="preferredDateTimeLabel">
-                  Preferred End Date and Time{" "}
-                  <span className={classes.required}>*</span>
-                </label>
-                <p>
-                  This may be subject to approval and scheduling by the admin.
-                </p>
-              </div>
-              <input
-                type="datetime-local"
-                name="preferredEndDate"
-                className={classes.inputText}
-                required
-              />
-            </span>
-            <span>
-              <label id="urgencyLabel">
-                Urgency Level <span className={classes.required}>*</span>
-              </label>
-              <select
-                name="urgencyLevel"
-                className={classes.inputText}
-                required
-              >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-              </select>
             </span>
             <span>
               <label id="attachFileLabel">Attachment</label>
@@ -318,25 +236,14 @@ export const action = async ({ request, params }) => {
   console.log("UserID: ", user_id);
   console.log("RequestID: ", request_id);
 
-  const rawPreferredStartDate = data.get("preferredStartDate");
-  const formattedPreferredStartDate = new Date(
-    rawPreferredStartDate
-  ).toISOString();
-  const rawPreferredEndDate = data.get("preferredEndDate");
-  const formattedPreferredEndDate = new Date(rawPreferredEndDate).toISOString();
-
   const currentDateTime = new Date().toISOString();
 
   const requestData = new FormData();
   requestData.append("request_location", data.get("request_location"));
   requestData.append("datetime", currentDateTime);
-  requestData.append("preferredStartDate", formattedPreferredStartDate);
-  requestData.append("preferredEndDate", formattedPreferredEndDate);
-  requestData.append("title", data.get("title"));
   requestData.append("description", data.get("description"));
   requestData.append("user_id", user_id);
   requestData.append("request_technician", data.get("request_technician"));
-  requestData.append("urgency_level", data.get("urgencyLevel"));
   requestData.append("attachment", data.get("attachment"));
 
   try {

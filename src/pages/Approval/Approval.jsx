@@ -290,7 +290,7 @@ const Approval = () => {
     Pending: "Pending",
     Approved: "Approved",
     "In Progress": "In Progress",
-    Completed: "Completed",
+    Done: "Completed",
     Denied: "Rejected",
   };
 

@@ -29,6 +29,11 @@
     border-radius: 5px;
 }
 
+.record .filters {
+    margin-top: 1rem;
+    width: 100%;
+}
+
 .tableRecords {
     width: 100%;
 }
@@ -80,7 +85,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    
+
 }
 
 .recordDetailsContainer .button button {
@@ -112,48 +117,52 @@
 
 @media print {
     body {
-        margin: 0; 
+        margin: 0;
         display: flex;
-        justify-content: center; 
-        align-items: center; 
-        height: 100vh; 
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
     }
 
     body * {
-        visibility: hidden; 
+        visibility: hidden;
     }
 
     nav {
-        visibility: hidden; 
+        visibility: hidden;
     }
 
     .recordDetailsContainer,
     .recordDetailsContainer * {
-        visibility: visible; 
+        visibility: visible;
     }
 
     .recordDetailsContainer {
-        position: relative; 
-        width: 90%; 
-        max-width: 800px; 
-        margin: 0 auto; 
-        padding: 2rem; 
+        position: relative;
+        width: 90%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
         display: flex;
-        flex-direction: column; 
-        align-items: center; /* Center content */
+        flex-direction: column;
+        align-items: center;
+        /* Center content */
         justify-content: center;
         margin-right: 200px;
     }
 
-    .recordDetailsContainer h1, /* Center the header */
-    .recordDetailsContainer p, /* Center any paragraph */
-    .recordDetailsContainer label { /* Center labels */
-        text-align: center; 
+    .recordDetailsContainer h1,
+    /* Center the header */
+    .recordDetailsContainer p,
+    /* Center any paragraph */
+    .recordDetailsContainer label {
+        /* Center labels */
+        text-align: center;
         justify-content: center;
         align-items: center;
     }
 
     .button {
-        display: none; 
+        display: none;
     }
 }

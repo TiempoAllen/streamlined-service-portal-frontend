@@ -35,8 +35,6 @@ const RequestDialogPortal = ({
 }) => {
   const requestor = `${request.user_firstname} ${request.user_lastname}`;
   const [techAssigned, setTechAssigned] = useState(null);
-  const [isTimeConflict, setIsTimeConflict] = useState(false);
-  const [timeConflictError, setTimeConflictError] = useState("");
   const [user, setUser] = useState({});
 
   const getUserById = async (user_id) => {
@@ -44,7 +42,7 @@ const RequestDialogPortal = ({
       const response = await axios.get(`${API_URL}/user/${user_id}`);
       setUser(response.data);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch user:", error);
     }
   };
 
@@ -135,19 +133,14 @@ const RequestDialogPortal = ({
           <div className={classes.requestDetailsPortalMain}>
             <div className={classes.requestDetailsPortalMainInfo}>
               <div className={classes.requestDetailsPortalInputs}>
-                <p className={classes.first}>Title</p>
-                <p className={classes.second}>{request.title}</p>
+                <p className={classes.first}>Request Type</p>
+                <p className={classes.second}>{request.request_technician}</p>
               </div>
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Description</p>
                 <p className={classes.second}>{request.description}</p>
               </div>
-              <div className={classes.requestDetailsPortalInputs}>
-                <p className={classes.first}>Attachment</p>
-                <p className={classes.second}>
-                  {!request.attachment ? "No Attachment" : request.attachment}
-                </p>
-              </div>
+      
               <div className={classes.requestDetailsPortalInputs}>
   <p className={classes.first}>Attachment</p>
   {!request.attachment ? (
@@ -181,20 +174,6 @@ const RequestDialogPortal = ({
                     : "No Date Provided"}
                 </p>
               </div>
-              <div className={classes.requestDetailsPortalInputs}>
-                <p className={classes.first}>Urgency Level</p>
-                <p
-                  className={`${classes.second} ${
-                    request.urgency_level === "Low"
-                      ? classes.lowLevel
-                      : request.urgency_level === "Medium"
-                      ? classes.mediumLevel
-                      : classes.highLevel
-                  }`}
-                >
-                  {request.urgency_level}
-                </p>
-              </div>
             </div>
             <div className={classes.requestDetailsPortalReqInfo}>
               <p className={classes.requestDetailsPortalSecHeader}>
@@ -206,7 +185,7 @@ const RequestDialogPortal = ({
               </div>
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Department</p>
-                <p className={classes.second}>{user.department}</p>
+                <p className={classes.second}>{user?.department || "Null"}</p>
               </div>
             </div>
             <div className={classes.requestDetailsPortalReqInfo}>
@@ -216,22 +195,6 @@ const RequestDialogPortal = ({
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Current Status</p>
                 <p className={classes.second}>{request.status}</p>
-              </div>
-              <div className={classes.requestDetailsPortalInputs}>
-                <p className={classes.first}>Preferred Date and Time</p>
-                <p className={classes.second}>
-                  {request.preferredStartDate
-                    ? formatDateTime(request.preferredStartDate)
-                    : "No Start Date"}
-                </p>
-              </div>
-              <div className={classes.requestDetailsPortalInputs}>
-                <p className={classes.first}>Preferred Date and Time</p>
-                <p className={classes.second}>
-                  {request.preferredEndDate
-                    ? formatDateTime(request.preferredEndDate)
-                    : "No End Date"}
-                </p>
               </div>
               {["Assigned", "In Progress", "Done"].includes(request.status) && (
                 <div className={classes.requestDetailsPortalInputs}>
@@ -251,7 +214,7 @@ const RequestDialogPortal = ({
               )}
             </div>
             {/* Displays if a Personnel is assigned, if not assigned then empty. */}
-            {["Assigned", "In Progress", "Done"].includes(request.status) && (
+            {["In Progress", "Done"].includes(request.status) && (
               <div className={classes.requestDetailsPortalReqInfo}>
                 <p className={classes.requestDetailsPortalSecHeader}>
                   Personnel Information
@@ -310,10 +273,6 @@ const RequestDialogPortal = ({
                       Assign Personnel
                     </button>
                   </Dialog.Trigger>
-                  {/* <MessagePortal
-                    messageType="assign"
-                    request_id={request.request_id}
-                  /> */}
                   <TechnicianPortal
                     technicians={technicians}
                     request={request}

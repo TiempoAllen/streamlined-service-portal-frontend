@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 const MessagePortal = ({
   messageType,
   isTechnicianAssigned,
+  onCancelRequest,
   request_id,
   onApproveRequest,
   onRequestDone,
@@ -22,6 +23,7 @@ const MessagePortal = ({
   const isAssign = messageType === "assign";
   const isStartRequest = messageType === "startRequest";
   const isMarkAsDoneMessage = messageType === "markAsDone";
+  const isCancelRequest = messageType === "cancel";
   const [denyReason, setDenyReason] = useState("");
 
   const handleDenyReasonChange = (e) => {
@@ -37,13 +39,7 @@ const MessagePortal = ({
             Notice
           </Dialog.Title>
           <Dialog.Description className={classes.DialogDescription}>
-            {/* {isAssign && (
-              <>
-                {isTechnicianAssigned
-                  ? "Are you sure you want to add this personnel and date to this request?"
-                  : "A technician has not yet been assigned to this request. A technician must be assigned before the request can be approved."}
-              </>
-            )} */}
+            {isCancelRequest && "Are you sure you want to cancel this request?"}
             {isAssign &&
               "Are you sure you want to add this personnel and date to this request?"}
             {isApproveMessage &&
@@ -100,16 +96,16 @@ const MessagePortal = ({
                 </button>
               </Dialog.Close>
             )}
-            {/* {isAssign && (
+            {isCancelRequest && (
               <Dialog.Close asChild>
                 <button
                   className={classes.btnApprove}
-                  onClick={() => onApproveRequest(request_id)}
+                  onClick={() => onCancelRequest(request_id)}
                 >
                   Yes
                 </button>
               </Dialog.Close>
-            )} */}
+            )}
             {isStartRequest && (
               <Dialog.Close asChild>
                 <button
