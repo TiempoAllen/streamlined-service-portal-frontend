@@ -7,7 +7,12 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import * as Dialog from "@radix-ui/react-dialog";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import RequestDetailsPortal from "../../components/UI/RequestDetailsPortal";
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const formatDateTime = (datetime) => {
   const date = new Date(datetime);
@@ -22,21 +27,53 @@ const formatDateTime = (datetime) => {
 };
 
 const HomePage = () => {
-  const { user, requests } = useRouteLoaderData("home");
+  const { user, requests: initialRequests } = useRouteLoaderData("home");
   const isAdmin = user && user.isadmin;
   const [activeTab, setActiveTab] = useState("all");
+  const [requests, setRequests] = useState(initialRequests);
   const themeClass = "ag-theme-quartz";
   const [searchTerm, setSearchTerm] = useState("");
-  // const sortedRequests = requests.sort(
-  //   (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-  // );
+  const [filter, setFilter] = useState("Pending");
+  const [rowData, setRowData] = useState(
+    initialRequests.filter((request) => request.status === "Pending")
+  );
+
+  const handleCancelRequest = async (request_id) => {
+    try {
+      await axios.put(
+        `${API_URL}/request/updateStatus?request_id=${request_id}`,
+        { status: "Cancelled" }
+      );
+      // Update the requests array
+      const updatedRequests = requests.map((request) =>
+        request.request_id === request_id
+          ? { ...request, status: "Cancelled" }
+          : request
+      );
+
+      // Update both requests and rowData states
+      setRequests(updatedRequests);
+      setRowData(
+        updatedRequests.filter((request) => {
+          if (filter === "All") {
+            return true;
+          }
+          return request.status === filter;
+        })
+      );
+      toast.success("Request saved successfully.", { autoClose: 2000 });
+    } catch (error) {
+      console.error(error);
+      toast.error("There was an error marking the request as done.");
+    }
+  };
 
   const [colDefs] = useState([
     { field: "Request Type", headerName: "Request Type" },
     { field: "Description", headerName: "Description" },
-    {field: "Location", headerName: "Location"},
+    { field: "Location", headerName: "Location" },
     { field: "Status", headerName: "Status" },
-    {field: "Date Requested", headerName: "Date Requested"},
+    { field: "Date Requested", headerName: "Date Requested" },
     {
       headerName: "Actions",
       flex: 1,
@@ -46,7 +83,10 @@ const HomePage = () => {
             <Dialog.Trigger asChild>
               <p className={classes.viewBtn}>View</p>
             </Dialog.Trigger>
-            <RequestDetailsPortal request_id={params.data.RequestID} />
+            <RequestDetailsPortal
+              request_id={params.data.RequestID}
+              onCancelRequest={handleCancelRequest}
+            />
           </Dialog.Root>
         </div>
       ),
@@ -55,6 +95,11 @@ const HomePage = () => {
 
   const handleTabClick = (status) => {
     setActiveTab(status);
+    if (status === "all") {
+      setRowData(requests);
+    } else {
+      setRowData(requests.filter((request) => request.status === status));
+    }
   };
 
   const onFilterTextBoxChanged = (event) => {
@@ -62,14 +107,13 @@ const HomePage = () => {
   };
 
   const transformedRequests =
-    !isAdmin && Array.isArray(requests)
-      ? requests
+    !isAdmin && Array.isArray(rowData)
+      ? rowData
           .filter(
             (request) => activeTab === "all" || request.status === activeTab
           )
           .filter(
             (request) =>
-              request.title.toLowerCase().includes(searchTerm) ||
               request.description.toLowerCase().includes(searchTerm) ||
               (request.request_technician &&
                 request.request_technician.toLowerCase().includes(searchTerm))
@@ -81,7 +125,7 @@ const HomePage = () => {
               Description: request.description,
               Location: request.request_location,
               Status: request.status,
-              "Date Requested": formatDateTime(request.datetime)
+              "Date Requested": formatDateTime(request.datetime),
             };
           })
       : [];
@@ -90,10 +134,10 @@ const HomePage = () => {
     all: "All",
     Pending: "Pending",
     Approved: "Approved",
-    Assigned: "Assigned",
     "In Progress": "In Progress",
-    Completed: "Completed",
+    Done: "Completed",
     Denied: "Rejected",
+    Cancelled: "Cancelled",
   };
 
   return (
@@ -165,6 +209,8 @@ const HomePage = () => {
           </div>
         )}
       </div>
+
+      <ToastContainer />
     </section>
   );
 };

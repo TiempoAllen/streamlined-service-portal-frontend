@@ -4,9 +4,10 @@ import classes from "./RequestDetailsPortal.module.css";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import MessagePortal from "./MessagePortal";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
-const RequestDetailsPortal = ({ request_id }) => {
+const RequestDetailsPortal = ({ request_id, onCancelRequest }) => {
   const [request, setRequest] = useState({});
   const [user, setUser] = useState({});
   const navigate = useNavigate();
@@ -51,144 +52,128 @@ const RequestDetailsPortal = ({ request_id }) => {
   };
 
   return (
-    <Dialog.Portal>
-      <Dialog.Overlay className={classes.DialogOverlay} />
-      <Dialog.Content className={classes.DialogContent}>
-        <Dialog.Title className={classes.DialogTitle}>
-          <p>Request Details</p>
-          <span>ID #{request.request_id}</span>
-        </Dialog.Title>
-        <Dialog.Description className={classes.DialogDescription}>
-          Detailed Request Information
-        </Dialog.Description>
-        <div className={classes.requestDetailsPortalMain}>
-          <div className={classes.requestDetailsPortalMainInfo}>
-            <div className={classes.requestDetailsPortalInputs}>
-              <p className={classes.first}>Title</p>
-              <p className={classes.second}>{request.title}</p>
-            </div>
-            <div className={classes.requestDetailsPortalInputs}>
-              <p className={classes.first}>Description</p>
-              <p className={classes.second}>{request.description}</p>
-            </div>
-            <div className={classes.requestDetailsPortalInputs}>
-              <p className={classes.first}>Attachment</p>
-              <p className={classes.second}>
-                {!request.attachment ? "No Attachment" : request.attachment}
-              </p>
-            </div>
-            <div className={classes.requestDetailsPortalInputs}>
-              <p className={classes.first}>Request Type</p>
-              <p className={classes.second}>{request.request_technician}</p>
-            </div>
-            <div className={classes.requestDetailsPortalInputs}>
-              <p className={classes.first}>Location</p>
-              <p className={classes.second}>{request.request_location}</p>
-            </div>
-            <div className={classes.requestDetailsPortalInputs}>
-              <p className={classes.first}>Created Date and Time</p>
-              <p className={classes.second}>
-                {formatDateTime(request.datetime)}
-              </p>
-            </div>
-            <div className={classes.requestDetailsPortalInputs}>
-              <p className={classes.first}>Urgency Level</p>
-              <p
-                className={`${classes.second} ${
-                  request.urgency_level === "Low"
-                    ? classes.lowLevel
-                    : request.urgency_level === "Medium"
-                    ? classes.mediumLevel
-                    : classes.highLevel
-                }`}
-              >
-                {request.urgency_level}
-              </p>
-            </div>
-          </div>
-          <div className={classes.requestDetailsPortalReqInfo}>
-            <p className={classes.requestDetailsPortalSecHeader}>
-              Requester Information
-            </p>
-            <div className={classes.requestDetailsPortalInputs}>
-              <p className={classes.first}>Name</p>
-              <p className={classes.second}>{requestor}</p>
-            </div>
-            <div className={classes.requestDetailsPortalInputs}>
-              <p className={classes.first}>Department</p>
-              <p className={classes.second}>{user.department}</p>
-            </div>
-          </div>
-          <div className={classes.requestDetailsPortalReqInfo}>
-            <p className={classes.requestDetailsPortalSecHeader}>
-              Status Information
-            </p>
-            <div className={classes.requestDetailsPortalInputs}>
-              <p className={classes.first}>Current Status</p>
-              <p className={classes.second}>{request.status}</p>
-            </div>
-            <div className={classes.requestDetailsPortalInputs}>
-              <p className={classes.first}>Preferred Date and Time</p>
-              <p className={classes.second}>
-                {formatDateTime(request.preferredStartDate)}
-              </p>
-            </div>
-            <div className={classes.requestDetailsPortalInputs}>
-              <p className={classes.first}>Preferred Date and Time</p>
-              <p className={classes.second}>
-                {formatDateTime(request.preferredEndDate)}
-              </p>
-            </div>
-            {request.status === "Denied" && (
+    <>
+      <Dialog.Portal>
+        <Dialog.Overlay className={classes.DialogOverlay} />
+        <Dialog.Content className={classes.DialogContent}>
+          <Dialog.Title className={classes.DialogTitle}>
+            <p>Request Details</p>
+            <span>ID #{request.request_id}</span>
+          </Dialog.Title>
+          <Dialog.Description className={classes.DialogDescription}>
+            Detailed Request Information
+          </Dialog.Description>
+          <div className={classes.requestDetailsPortalMain}>
+            <div className={classes.requestDetailsPortalMainInfo}>
               <div className={classes.requestDetailsPortalInputs}>
-                <p className={classes.first}>Remarks/Comments</p>
-                <p className={classes.second}>{request.denialReason}</p>
+                <p className={classes.first}>Request Type</p>
+                <p className={classes.second}>{request.request_technician}</p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Description</p>
+                <p className={classes.second}>{request.description}</p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Attachment</p>
+                <p className={classes.second}>
+                  {!request.attachment ? "No Attachment" : request.attachment}
+                </p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Location</p>
+                <p className={classes.second}>{request.request_location}</p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Created Date and Time</p>
+                <p className={classes.second}>
+                  {formatDateTime(request.datetime)}
+                </p>
+              </div>
+            </div>
+            <div className={classes.requestDetailsPortalReqInfo}>
+              <p className={classes.requestDetailsPortalSecHeader}>
+                Requester Information
+              </p>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Name</p>
+                <p className={classes.second}>{requestor}</p>
+              </div>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Department</p>
+                <p className={classes.second}>{user.department}</p>
+              </div>
+            </div>
+            <div className={classes.requestDetailsPortalReqInfo}>
+              <p className={classes.requestDetailsPortalSecHeader}>
+                Status Information
+              </p>
+              <div className={classes.requestDetailsPortalInputs}>
+                <p className={classes.first}>Current Status</p>
+                <p className={classes.second}>{request.status}</p>
+              </div>
+              {request.status === "Denied" && (
+                <div className={classes.requestDetailsPortalInputs}>
+                  <p className={classes.first}>Remarks/Comments</p>
+                  <p className={classes.second}>{request.denialReason}</p>
+                </div>
+              )}
+            </div>
+            {/* Displays if a Personnel is assigned, if not assigned then empty. */}
+            {["In Progress", "Done"].includes(request.status) && (
+              <div className={classes.requestDetailsPortalReqInfo}>
+                <p className={classes.requestDetailsPortalSecHeader}>
+                  Personnel Information
+                </p>
+                <div className={classes.requestDetailsPortalInputs}>
+                  <p className={classes.first}>Assigned Personnel</p>
+                  <p className={classes.second}>Jake Doe</p>
+                </div>
+                <div className={classes.requestDetailsPortalInputs}>
+                  <p className={classes.first}>Personnel Type</p>
+                  <p className={classes.second}>Janitor</p>
+                </div>
               </div>
             )}
           </div>
-          {/* Displays if a Personnel is assigned, if not assigned then empty. */}
-          {request.status === "Assigned" && (
-            <div className={classes.requestDetailsPortalReqInfo}>
-              <p className={classes.requestDetailsPortalSecHeader}>
-                Personnel Information
-              </p>
-              <div className={classes.requestDetailsPortalInputs}>
-                <p className={classes.first}>Assigned Personnel</p>
-                <p className={classes.second}>Jake Doe</p>
-              </div>
-              <div className={classes.requestDetailsPortalInputs}>
-                <p className={classes.first}>Personnel Type</p>
-                <p className={classes.second}>Janitor</p>
-              </div>
-            </div>
-          )}
-        </div>
-        <div
-          style={{
-            display: "flex",
-            marginTop: 25,
-            justifyContent: "flex-end",
-            gap: "1rem",
-          }}
-        >
-          {request.status === "Denied" && (
+          <div
+            style={{
+              display: "flex",
+              marginTop: 25,
+              justifyContent: "flex-end",
+              gap: "1rem",
+            }}
+          >
+            {request.status === "Pending" && (
+              <Dialog.Root>
+                <Dialog.Trigger asChild>
+                  <button className={classes.btnDeny}>Cancel Request</button>
+                </Dialog.Trigger>
+                <MessagePortal
+                  messageType="cancel"
+                  onCancelRequest={onCancelRequest}
+                  request_id={request_id}
+                />
+              </Dialog.Root>
+            )}
+            {request.status === "Denied" && (
+              <Dialog.Close asChild>
+                <button className={classes.btnDeny} onClick={handleResubmit}>
+                  Resubmit
+                </button>
+              </Dialog.Close>
+            )}
             <Dialog.Close asChild>
-              <button className={classes.btnDeny} onClick={handleResubmit}>
-                Resubmit
-              </button>
+              <button className={classes.btnBack}>Back</button>
             </Dialog.Close>
-          )}
+          </div>
           <Dialog.Close asChild>
-            <button className={classes.btnBack}>Back</button>
+            <button className={classes.IconButton} aria-label="Close">
+              <Cross2Icon />
+            </button>
           </Dialog.Close>
-        </div>
-        <Dialog.Close asChild>
-          <button className={classes.IconButton} aria-label="Close">
-            <Cross2Icon />
-          </button>
-        </Dialog.Close>
-      </Dialog.Content>
-    </Dialog.Portal>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </>
   );
 };
 

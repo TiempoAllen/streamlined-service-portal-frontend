@@ -65,7 +65,7 @@ const RequestPage = () => {
         </header>
         <Form method="post" encType="multipart/form-data" ref={formRef}>
           <div className={classes.inputs}>
-          <span>
+            <span>
               <label id="technicianLabel">
                 Request Type <span className={classes.required}>*</span>
               </label>
@@ -74,8 +74,12 @@ const RequestPage = () => {
                 className={classes.inputText}
                 required
               >
-                <option value="Buiding Maintenance">Building Maintenance</option>
-                <option value="Electrical Maintenance">Electrical Maintenance</option>
+                <option value="Buiding Maintenance">
+                  Building Maintenance
+                </option>
+                <option value="Electrical Maintenance">
+                  Electrical Maintenance
+                </option>
                 <option value="General Services">General Services</option>
               </select>
             </span>
