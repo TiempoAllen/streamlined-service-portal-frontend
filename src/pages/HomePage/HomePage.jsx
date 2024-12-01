@@ -37,6 +37,8 @@ const HomePage = () => {
   const [rowData, setRowData] = useState(
     initialRequests.filter((request) => request.status === "Pending")
   );
+  
+
 
   const handleCancelRequest = async (request_id) => {
     try {
@@ -67,6 +69,9 @@ const HomePage = () => {
       toast.error("There was an error marking the request as done.");
     }
   };
+
+  console.log({ user, requests: initialRequests });
+
 
   const [colDefs] = useState([
     { field: "Request Type", headerName: "Request Type" },
@@ -140,6 +145,7 @@ const HomePage = () => {
     Denied: "Rejected",
     Cancelled: "Cancelled",
   };
+
 
   return (
     <section className={isAdmin ? classes.adminHome : classes.home}>
