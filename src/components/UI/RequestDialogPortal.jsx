@@ -22,7 +22,8 @@ const formatDateTime = (datetime) => {
     minute: "2-digit",
   };
   return new Intl.DateTimeFormat("en-US", options).format(date);
-};
+};  
+
 
 const RequestDialogPortal = ({
   request,
@@ -36,6 +37,65 @@ const RequestDialogPortal = ({
   const requestor = `${request.user_firstname} ${request.user_lastname}`;
   const [techAssigned, setTechAssigned] = useState(null);
   const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(false);
+
+
+
+
+  const [previewUrl, setPreviewUrl] = useState(null);
+ 
+  const fetchAttachment = async (filename) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/request/${filename}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/pdf, image/*", 
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const contentType = response.headers.get("Content-Type");
+      console.log("Content-Type returned by server:", contentType);
+  
+     
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+  
+     
+      const fileExtension = filename.split('.').pop().toLowerCase();
+      console.log("File Extension:", fileExtension);
+  
+      if (["jpg", "jpeg", "png", "gif", "bmp"].includes(fileExtension) || contentType.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.src = e.target.result;
+          const imgWindow = window.open('', '_blank');
+          imgWindow.document.write(img.outerHTML);
+        };
+        reader.readAsDataURL(blob);
+      } else if (contentType === "application/pdf" || contentType === "application/x-pdf") {
+        window.open(url, "_blank");
+      } else {
+        throw new Error("Unsupported file type.");
+      }
+  
+    } catch (error) {
+      console.error("Error fetching attachment:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  
+  
+  
+
+
 
   const getUserById = async (user_id) => {
     try {
@@ -147,15 +207,24 @@ const RequestDialogPortal = ({
     <p className={classes.second}>No Attachment</p>
   ) : (
     <div className={classes.attachmentPreview}>
-      <a
-        href={`${API_URL}/uploads/${request.attachment}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={classes.previewLink}
-      >
-        Preview Attachment
-      </a>
-    </div>
+        <h4 style={{ marginBottom: "1rem" }}>{request.attachmentTitle}</h4>
+            <button
+              onClick={() => fetchAttachment(request.attachment)}
+              style={{
+                backgroundColor: "#007BFF", 
+                color: "white",
+                padding: "5px 15px", 
+                border: "none", 
+                borderRadius: "5px", 
+                cursor: "pointer",
+                fontSize: "16px", 
+                transition: "background-color 0.3s", 
+              }}
+              disabled={loading} 
+            >
+              {loading ? "Loading..." : "Preview Attachment"}
+            </button>
+          </div>
   )}
 </div>
               <div className={classes.requestDetailsPortalInputs}>
