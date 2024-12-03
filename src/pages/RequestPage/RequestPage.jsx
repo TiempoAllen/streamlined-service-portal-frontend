@@ -34,6 +34,8 @@ const RequestPage = () => {
     setFile("");
   };
 
+  
+
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     setFile(selectedFile);
@@ -47,12 +49,15 @@ const RequestPage = () => {
     if (actionData) {
       if (actionData.status === "success") {
         toast.success("Request submitted successfully!");
-        formRef.current.reset();
+        formRef.current.reset(); 
+        setFile(null); 
+        fileInputRef.current.value = ""; 
       } else if (actionData.status === "error") {
         toast.error("There was an error submitting the request.");
       }
     }
   }, [actionData, user.id]);
+  
 
   return (
     <section className={classes.request}>
