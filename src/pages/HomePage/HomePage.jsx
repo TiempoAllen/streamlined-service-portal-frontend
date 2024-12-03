@@ -29,7 +29,7 @@ const formatDateTime = (datetime) => {
 const HomePage = () => {
   const { user, requests: initialRequests = [] } = useRouteLoaderData("home");
   const isAdmin = user && user.isadmin;
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("Pending");
   const [requests, setRequests] = useState(
     Array.isArray(initialRequests) ? initialRequests : []
   );
