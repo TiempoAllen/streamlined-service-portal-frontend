@@ -113,12 +113,13 @@ const Dashboard = () => {
         return "orange";
       case "rejected":
         return "red";
+      case "completed":
       case "done":
         return "blue";
       case "in progress":
         return "purple";
-      case "on hold":
-        return "yellow";
+      case "cancelled":
+        return "gray";
       default:
         return "gray";
     }
