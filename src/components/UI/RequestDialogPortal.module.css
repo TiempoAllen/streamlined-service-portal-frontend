@@ -10,6 +10,7 @@ input {
     all: unset;
 }
 
+
 .requestDetails {
     display: flex;
     align-items: start;
