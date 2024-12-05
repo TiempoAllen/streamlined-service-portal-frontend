@@ -26,12 +26,12 @@ const Record = () => {
       filter: "agDateColumnFilter", // Enable Date Filter
       filterParams: {
         comparator: (filterDate, cellValue) => {
-          const cellDate = new Date(cellValue);
+          const cellDate = new Date(cellValue); // Ensure cellValue is parsable
           if (cellDate < filterDate) return -1;
           if (cellDate > filterDate) return 1;
           return 0;
         },
-        browserDatePicker: true,
+        browserDatePicker: true, // Enable date picker
       },
     },
     { field: "Location", flex: 1 },
@@ -116,7 +116,12 @@ const Record = () => {
       </div>
       <div
         className="ag-theme-quartz"
-        style={{ height: "100%", width: "100%", marginTop: "1rem" }}
+        style={{
+          height: "100%",
+          width: "100%",
+          marginTop: "1rem",
+          minHeight: "50vh",
+        }}
       >
         <AgGridReact
           rowData={transformedRequests}

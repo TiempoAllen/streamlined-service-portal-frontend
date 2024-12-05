@@ -22,8 +22,7 @@ const formatDateTime = (datetime) => {
     minute: "2-digit",
   };
   return new Intl.DateTimeFormat("en-US", options).format(date);
-};  
-
+};
 
 const RequestDialogPortal = ({
   request,
@@ -32,6 +31,7 @@ const RequestDialogPortal = ({
   onDenyRequest,
   onRemoveTechnician,
   onRequestStart,
+  onAssignTechnician,
   onRequestDone,
 }) => {
   const requestor = `${request.user_firstname} ${request.user_lastname}`;
@@ -39,63 +39,57 @@ const RequestDialogPortal = ({
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
 
-
-
-
   const [previewUrl, setPreviewUrl] = useState(null);
- 
+
   const fetchAttachment = async (filename) => {
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/request/${filename}`, {
         method: "GET",
         headers: {
-          Accept: "application/pdf, image/*", 
+          Accept: "application/pdf, image/*",
         },
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const contentType = response.headers.get("Content-Type");
       console.log("Content-Type returned by server:", contentType);
-  
-     
+
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-  
-     
-      const fileExtension = filename.split('.').pop().toLowerCase();
+
+      const fileExtension = filename.split(".").pop().toLowerCase();
       console.log("File Extension:", fileExtension);
-  
-      if (["jpg", "jpeg", "png", "gif", "bmp"].includes(fileExtension) || contentType.startsWith("image/")) {
+
+      if (
+        ["jpg", "jpeg", "png", "gif", "bmp"].includes(fileExtension) ||
+        contentType.startsWith("image/")
+      ) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
           const img = new Image();
           img.src = e.target.result;
-          const imgWindow = window.open('', '_blank');
+          const imgWindow = window.open("", "_blank");
           imgWindow.document.write(img.outerHTML);
         };
         reader.readAsDataURL(blob);
-      } else if (contentType === "application/pdf" || contentType === "application/x-pdf") {
+      } else if (
+        contentType === "application/pdf" ||
+        contentType === "application/x-pdf"
+      ) {
         window.open(url, "_blank");
       } else {
         throw new Error("Unsupported file type.");
       }
-  
     } catch (error) {
       console.error("Error fetching attachment:", error);
     } finally {
       setLoading(false);
     }
   };
-  
-  
-  
-  
-
-
 
   const getUserById = async (user_id) => {
     try {
@@ -146,38 +140,6 @@ const RequestDialogPortal = ({
     }
   };
 
-  const handleAssignTechnicianToRequest = async (
-    request_id,
-    tech_id,
-    scheduledStartDate,
-    closeDialog
-  ) => {
-    try {
-      const formattedScheduledStartDate = new Date(
-        scheduledStartDate
-      ).toISOString();
-
-      await axios.post(
-        `${API_URL}/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&startTime=${formattedScheduledStartDate}`
-      );
-      setTechAssigned(tech_id);
-
-      const updatedRequest = await fetchRequestById(request_id);
-      if (updatedRequest) {
-        setTechAssigned(updatedRequest.technicianId);
-      }
-      alert("Success");
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        console.error("Error details:", error.response.data);
-        setTimeConflictError(error.response.data.message);
-        setIsTimeConflict(true);
-      } else {
-        console.error("Failed to assign technician:", error);
-      }
-    }
-  };
-
   return (
     <>
       <Dialog.Portal>
@@ -200,33 +162,35 @@ const RequestDialogPortal = ({
                 <p className={classes.first}>Description</p>
                 <p className={classes.second}>{request.description}</p>
               </div>
-      
+
               <div className={classes.requestDetailsPortalInputs}>
-  <p className={classes.first}>Attachment</p>
-  {!request.attachment ? (
-    <p className={classes.second}>No Attachment</p>
-  ) : (
-    <div className={classes.attachmentPreview}>
-        <h4 style={{ marginBottom: "1rem" }}>{request.attachmentTitle}</h4>
-            <button
-              onClick={() => fetchAttachment(request.attachment)}
-              style={{
-                backgroundColor: "#007BFF", 
-                color: "white",
-                padding: "5px 15px", 
-                border: "none", 
-                borderRadius: "5px", 
-                cursor: "pointer",
-                fontSize: "16px", 
-                transition: "background-color 0.3s", 
-              }}
-              disabled={loading} 
-            >
-              {loading ? "Loading..." : "Preview Attachment"}
-            </button>
-          </div>
-  )}
-</div>
+                <p className={classes.first}>Attachment</p>
+                {!request.attachment ? (
+                  <p className={classes.second}>No Attachment</p>
+                ) : (
+                  <div className={classes.attachmentPreview}>
+                    <h4 style={{ marginBottom: "1rem" }}>
+                      {request.attachmentTitle}
+                    </h4>
+                    <button
+                      onClick={() => fetchAttachment(request.attachment)}
+                      style={{
+                        backgroundColor: "#007BFF",
+                        color: "white",
+                        padding: "5px 15px",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        transition: "background-color 0.3s",
+                      }}
+                      disabled={loading}
+                    >
+                      {loading ? "Loading..." : "Preview Attachment"}
+                    </button>
+                  </div>
+                )}
+              </div>
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Request Type</p>
                 <p className={classes.second}>{request.request_technician}</p>
@@ -346,9 +310,7 @@ const RequestDialogPortal = ({
                     technicians={technicians}
                     request={request}
                     isTechnicianAssigned={techAssigned !== null}
-                    onAssignTechnicianToRequest={
-                      handleAssignTechnicianToRequest
-                    }
+                    onAssignTechnicianToRequest={onAssignTechnician}
                   />
                 </Dialog.Root>
                 <Dialog.Close asChild>

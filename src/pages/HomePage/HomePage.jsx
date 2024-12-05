@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import classes from "./HomePage.module.css";
-import { useRouteLoaderData } from "react-router-dom";
+import { useRouteLoaderData, useParams } from "react-router-dom";
 import Dashboard from "../Dashboard/Dashboard";
 import { loadUserAndRequests } from "../../util/auth";
 import { AgGridReact } from "ag-grid-react";
@@ -11,6 +11,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import RequestDetailsPortal from "../../components/UI/RequestDetailsPortal";
 import axios from "axios";
+import RemarksModal from "../../components/UI/RemarksModal";
+import AddRemarkModal from "../../components/UI/AddRemarkModal";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
@@ -29,7 +31,7 @@ const formatDateTime = (datetime) => {
 const HomePage = () => {
   const { user, requests: initialRequests = [] } = useRouteLoaderData("home");
   const isAdmin = user && user.isadmin;
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("Pending");
   const [requests, setRequests] = useState(
     Array.isArray(initialRequests) ? initialRequests : []
   );
@@ -41,6 +43,8 @@ const HomePage = () => {
       (request) => request.status === "Pending"
     )
   );
+  const { user_id } = useParams();
+
 
   const handleCancelRequest = async (request_id) => {
     try {
@@ -72,6 +76,23 @@ const HomePage = () => {
     }
   };
 
+  const markRequestAsOpened = async (request_id) => {
+    console.log("Mark request as viewed triggered for request ID:", request_id);
+    try {
+      await axios.put(`${API_URL}/request/markViewed/${request_id}`);
+
+      const updatedRequests = requests.map((request) =>
+        request.request_id === request_id
+          ? { ...request, isOpened: true }
+          : request
+      );
+    } catch (error) {
+      console.error("Error marking request as opened:", error);
+      toast.error("An error occurred while processing the request.");
+    }
+  };
+
+
   const [colDefs] = useState([
     { field: "Request Type", headerName: "Request Type" },
     { field: "Description", headerName: "Description" },
@@ -81,8 +102,20 @@ const HomePage = () => {
     {
       headerName: "Actions",
       flex: 1,
-      cellRenderer: (params) => (
-        <div>
+      cellRenderer: (params) => {
+
+        const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+        const [selectedRequest, setSelectedRequest] = useState(null);
+        const [isAddRemarkOpen, setIsAddRemarkOpen] = useState(false);
+        const [selectedRowForRemarks, setSelectedRowForRemarks] = useState(null);
+
+        const openAddRemarkModal = () => {
+          setIsAddRemarkOpen(true);
+          setSelectedRequest(params.data);
+        };
+
+        return(
+        <div style={{ display: "flex", gap: "10px" }}>
           <Dialog.Root>
             <Dialog.Trigger asChild>
               <p className={classes.viewBtn}>View</p>
@@ -92,8 +125,52 @@ const HomePage = () => {
               onCancelRequest={handleCancelRequest}
             />
           </Dialog.Root>
+   
+          {/* History Button and Modal */}
+          <button
+              onClick={() => {
+                setIsHistoryOpen(true);
+                setSelectedRequest(params.data);
+                markRequestAsOpened(params.data.RequestID);
+              }}
+              className={classes.historyButton}
+            >
+              History
+            </button>
+  
+            {isHistoryOpen && selectedRequest?.RequestID === params.data.RequestID && (
+              <RemarksModal
+                isOpen={isHistoryOpen}
+                onClose={() => {
+                  setIsHistoryOpen(false);
+                  setSelectedRequest(null);
+                }}
+                requestID={params.data.RequestID}
+              />
+            )}
+    
+
+          <button
+            onClick={openAddRemarkModal} // Open the Add Remark modal
+            className={classes.addRemarkBtn}
+          >
+            Add Remark
+          </button>
+
+          {/* Add Remark Modal */}
+          {isAddRemarkOpen && (
+            <AddRemarkModal
+              isOpen={isAddRemarkOpen}
+              onClose={() => setIsAddRemarkOpen(false)}
+              requestId={params.data.RequestID}
+              userId = {user_id}
+              status={params.data.Status}
+            />
+          )}
+  
         </div>
-      ),
+        );
+      },
     },
   ]);
 
@@ -144,6 +221,7 @@ const HomePage = () => {
     Denied: "Rejected",
     Cancelled: "Cancelled",
   };
+
 
   return (
     <section className={isAdmin ? classes.adminHome : classes.home}>
@@ -217,6 +295,8 @@ const HomePage = () => {
           </div>
         )}
       </div>
+
+      
 
       <ToastContainer />
     </section>

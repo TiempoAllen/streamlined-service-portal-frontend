@@ -124,6 +124,30 @@ input {
     box-sizing: border-box;
 }
 
+.personnelSection .personnelField {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    min-height: 5rem;
+    border-radius: 10px;
+    width: 100%;
+    background-color: #F1F4F8;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.personnelSection .personnelField .personnel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 5px 8px;
+    border-radius: 5px;
+    width: fit-content;
+    border: solid 1px #39485d;
+    box-sizing: border-box;
+}
+
 .personnelSection .scheduledDate {
     min-height: 3rem;
     background-color: #F1F4F8;
@@ -310,7 +334,7 @@ hr {
     box-shadow: black;
 }
 
-  
+
 
 @keyframes overlayShow {
     from {

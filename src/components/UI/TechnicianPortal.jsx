@@ -14,15 +14,12 @@ const TechnicianPortal = ({
   technicians,
   request,
   onAssignTechnicianToRequest,
-  isTimeConflict,
-  timeConflictError,
   isTechnicianAssigned,
 }) => {
-  const [showError, setShowError] = useState(false);
-  const [assignedTechnician, setAssignedTechnician] = useState(null);
+  const [assignedTechnicians, setAssignedTechnicians] = useState([]);
   const [scheduledStartDate, setScheduledStartDate] = useState("");
-  const [scheduledEndDate, setScheduledEndDate] = useState("");
   const [availableTechnicians, setAvailableTechnicians] = useState([]);
+  const [assignedTechnicianIds, setAssignedTechnicianIds] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
 
   // useEffect(() => {
@@ -33,17 +30,32 @@ const TechnicianPortal = ({
   // }, [request.preferredStartDate, request.preferredEndDate]);
 
   const handleAssignClick = (technician) => {
-    setAssignedTechnician(technician.PersonnelID);
-    document.querySelector("input[name='assignedPersonnel']").value =
-      technician.Name;
+    // Use a consistent property for comparison
+    const isAlreadyAssigned = assignedTechnicians.find(
+      (tech) => tech.PersonnelID === technician.PersonnelID
+    );
+
+    if (!isAlreadyAssigned) {
+      setAssignedTechnicians((prevTechnicians) => [
+        ...prevTechnicians,
+        technician,
+      ]);
+      setAssignedTechnicianIds((prevIds) => [
+        ...prevIds,
+        technician.PersonnelID,
+      ]);
+    } else {
+      console.log(`Technician ${technician.Name} is already assigned.`);
+    }
   };
 
+  const handleRemoveTechnician = (index) => {
+    setAssignedTechnicians((prevTechnicians) =>
+      prevTechnicians.filter((_, i) => i !== index)
+    );
+  };
   const handleStartDateChange = (event) => {
     setScheduledStartDate(event.target.value);
-  };
-
-  const handleEndDateChange = (event) => {
-    setScheduledEndDate(event.target.value);
   };
 
   const [colDefs, setColDefs] = useState([
@@ -53,7 +65,6 @@ const TechnicianPortal = ({
     { field: "Gender", flex: 1 },
     { field: "Classification", flex: 1 },
     { field: "Department", flex: 1 },
-    { field: "Availability", flex: 1 },
     {
       field: "Action",
       flex: 1,
@@ -63,33 +74,32 @@ const TechnicianPortal = ({
     },
   ]);
 
-  const fetchAvailableTechnicians = async (startDate, endDate) => {
-    if (startDate && endDate) {
-      try {
-        const response = await axios.get(
-          `${API_URL}/technician/getAvailablePersonnel`,
-          {
-            params: {
-              requestedStartTime: startDate,
-              requestedEndTime: endDate,
-            },
-          }
-        );
-        const techniciansData = response.data.map((technician) => ({
-          PersonnelID: technician.tech_id,
-          Name: technician.tech_name,
-          "Phone Number": technician.tech_phone,
-          Gender: technician.tech_gender,
-          Classification: technician.tech_classification,
-          Department: technician.tech_department,
-          Availability: technician.isavailable,
-        }));
-        setAvailableTechnicians(techniciansData);
-      } catch (error) {
-        console.error("Error fetching available technicians:", error);
-      }
-    }
-  };
+  // const fetchAvailableTechnicians = async (startDate, endDate) => {
+  //   if (startDate && endDate) {
+  //     try {
+  //       const response = await axios.get(
+  //         `${API_URL}/technician/getAvailablePersonnel`,
+  //         {
+  //           params: {
+  //             requestedStartTime: startDate,
+  //             requestedEndTime: endDate,
+  //           },
+  //         }
+  //       );
+  //       const techniciansData = response.data.map((technician) => ({
+  //         PersonnelID: technician.tech_id,
+  //         Name: technician.tech_name,
+  //         "Phone Number": technician.tech_phone,
+  //         Gender: technician.tech_gender,
+  //         Classification: technician.tech_classification,
+  //         Department: technician.tech_department,
+  //       }));
+  //       setAvailableTechnicians(techniciansData);
+  //     } catch (error) {
+  //       console.error("Error fetching available technicians:", error);
+  //     }
+  //   }
+  // };
 
   const filters = {
     all: "All",
@@ -121,13 +131,21 @@ const TechnicianPortal = ({
             <h4>1. Assign a Personnel</h4>
             <div className={classes.form}>
               <p>Assigned Personnel:</p>
-              <input
+              {/* <input
                 type="text"
                 name="assignedPersonnel"
                 className={classes.assignedPersonnel}
                 readOnly
                 required
-              />
+              /> */}
+              <div className={classes.personnelField}>
+                {assignedTechnicians.map((technician, index) => (
+                  <div key={index} className={classes.personnel}>
+                    <p>{technician.Name}</p>
+                    <Cross2Icon onClick={() => handleRemoveTechnician(index)} />
+                  </div>
+                ))}
+              </div>
             </div>
             <div className={classes.exampleHeader}>
               <div className={classes.tabs}>
@@ -180,9 +198,6 @@ const TechnicianPortal = ({
             />
           </div> */}
 
-          {showError && (
-            <p className={classes.timeConflictError}>{timeConflictError}</p>
-          )}
           <div
             style={{
               display: "flex",
@@ -199,7 +214,7 @@ const TechnicianPortal = ({
                 messageType="assign"
                 onAssignTechnicianToRequest={onAssignTechnicianToRequest}
                 request_id={request.request_id}
-                assignedTechnician={assignedTechnician}
+                assignedTechnicians={assignedTechnicianIds}
                 scheduledStartDate={scheduledStartDate}
                 isTechnicianAssigned={isTechnicianAssigned}
               />

@@ -112,6 +112,13 @@ const RequestPage = () => {
               />
             </span>
             <span>
+              <label>Remarks</label>
+              <textarea
+                name="remarks"
+                placeholder="Optional: Add additional comments or details."
+              ></textarea>
+            </span>
+            <span>
               <label id="attachFileLabel">Attachment</label>
               <div className={classes.fileUpload}>
                 <div className={classes.fileArea}>
@@ -196,6 +203,7 @@ export const action = async ({ request, params }) => {
   requestData.append("preferredEndDate", formattedPreferredEndDate);
   requestData.append("title", data.get("title"));
   requestData.append("description", data.get("description"));
+  requestData.append("remarks", data.get("remarks"));
   requestData.append("user_id", user_id);
   requestData.append("request_technician", data.get("request_technician"));
   requestData.append("urgency_level", data.get("urgencyLevel"));

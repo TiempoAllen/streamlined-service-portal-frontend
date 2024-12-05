@@ -81,7 +81,7 @@ const SideNav = ({ user_id, isSuperUser }) => {
                   Record
                 </NavLink>
               </li>
-              <li>
+              {/* <li>
                 <NavLink
                   to={`/home/${user_id}/technician`}
                   className={({ isActive }) =>
@@ -95,7 +95,7 @@ const SideNav = ({ user_id, isSuperUser }) => {
                   />
                   Technician
                 </NavLink>
-              </li>
+              </li> */}
             </ul>
           )}
         </li>
