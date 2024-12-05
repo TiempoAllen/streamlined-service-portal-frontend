@@ -12,8 +12,6 @@ import { loadRequestsAndTechnicians } from "../../util/auth";
 import classes from "./Approval.module.css";
 import SelectArea from "../../components/UI/SelectArea";
 
-
-
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const Approval = () => {
@@ -59,6 +57,62 @@ const Approval = () => {
     );
   };
 
+  const handleAssignTechnicianToRequest = async (
+    request_id,
+    tech_ids,
+    scheduledStartDate,
+    closeDialog
+  ) => {
+    console.log(request_id);
+    console.log("Tech IDs: ", tech_ids);
+
+    try {
+      const formattedScheduledStartDate = new Date(
+        scheduledStartDate
+      ).toISOString();
+
+      const params = new URLSearchParams();
+      params.append("requestId", request_id);
+      params.append("techIds", tech_ids.join(",")); // Convert array to comma-separated values
+      params.append("scheduledStartDate", formattedScheduledStartDate);
+
+      const response = await axios.post(
+        `${API_URL}/request/assignTechnician`,
+        null, // No body
+        { params } // Attach formatted query params
+      );
+      const updatedRequests = requests
+        .map((request) =>
+          request.request_id === request_id
+            ? { ...request, status: "Approved" }
+            : request
+        )
+        .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
+
+      setRequests(updatedRequests);
+      setRowData(
+        updatedRequests.filter((request) => {
+          if (filter === "All") {
+            return true;
+          }
+          return request.status === filter;
+        })
+      );
+
+      // Reset selected request to close the dialog
+      setSelectedRequest(null);
+
+      toast.success("Request saved successfully.", { autoClose: 2000 });
+    } catch (error) {
+      // Error handling
+      console.error(
+        "Error assigning technicians:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  };
+
   const approveRequest = async (request_id) => {
     try {
       await axios.put(
@@ -68,7 +122,7 @@ const Approval = () => {
           denialReason: null,
         }
       );
-  
+
       const updatedRequests = requests
         .map((request) =>
           request.request_id === request_id
@@ -76,7 +130,7 @@ const Approval = () => {
             : request
         )
         .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
-  
+
       setRequests(updatedRequests);
       setRowData(
         updatedRequests.filter((request) => {
@@ -86,17 +140,17 @@ const Approval = () => {
           return request.status === filter;
         })
       );
-  
+
       // Reset selected request to close the dialog
       setSelectedRequest(null);
-  
+
       toast.success("Request saved successfully.", { autoClose: 2000 });
     } catch (error) {
       console.error(error);
       toast.error("There was an error.");
     }
   };
-  
+
   const denyRequest = async (request_id, denialReason) => {
     try {
       await axios.put(
@@ -106,7 +160,7 @@ const Approval = () => {
           denialReason: denialReason,
         }
       );
-  
+
       const updatedRequests = requests
         .map((request) =>
           request.request_id === request_id
@@ -114,7 +168,7 @@ const Approval = () => {
             : request
         )
         .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
-  
+
       setRequests(updatedRequests);
       setRowData(
         updatedRequests.filter((request) => {
@@ -124,17 +178,16 @@ const Approval = () => {
           return request.status === filter;
         })
       );
-  
+
       // Reset selected request to close the dialog
       setSelectedRequest(null);
-  
+
       toast.success("Request saved successfully.", { autoClose: 5000 });
     } catch (error) {
       console.error(error);
       toast.error("There was an error.");
     }
   };
-  
 
   const handleRequestDone = async (request_id) => {
     try {
@@ -246,7 +299,10 @@ const Approval = () => {
       cellRenderer: (params) => (
         <div>
           <Dialog.Root
-           open={!!selectedRequest && selectedRequest.request_id === params.data.request_id}
+            open={
+              !!selectedRequest &&
+              selectedRequest.request_id === params.data.request_id
+            }
             onOpenChange={(open) => {
               if (open) {
                 setSelectedRequest(params.data);
@@ -266,6 +322,7 @@ const Approval = () => {
               onRequestDone={handleRequestDone}
               onDenyRequest={denyRequest}
               onRequestStart={handleStartRequest}
+              onAssignTechnician={handleAssignTechnicianToRequest}
               onClose={() => setSelectedRequest(null)}
               //={markRequestAsOpened}
             />

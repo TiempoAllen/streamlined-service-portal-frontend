@@ -31,6 +31,7 @@ const RequestDialogPortal = ({
   onDenyRequest,
   onRemoveTechnician,
   onRequestStart,
+  onAssignTechnician,
   onRequestDone,
 }) => {
   const requestor = `${request.user_firstname} ${request.user_lastname}`;
@@ -86,38 +87,6 @@ const RequestDialogPortal = ({
     }
   };
 
-  const handleAssignTechnicianToRequest = async (
-    request_id,
-    tech_id,
-    scheduledStartDate,
-    closeDialog
-  ) => {
-    try {
-      const formattedScheduledStartDate = new Date(
-        scheduledStartDate
-      ).toISOString();
-
-      await axios.post(
-        `${API_URL}/request/assignTechnician?request_id=${request_id}&tech_id=${tech_id}&startTime=${formattedScheduledStartDate}`
-      );
-      setTechAssigned(tech_id);
-
-      const updatedRequest = await fetchRequestById(request_id);
-      if (updatedRequest) {
-        setTechAssigned(updatedRequest.technicianId);
-      }
-      alert("Success");
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        console.error("Error details:", error.response.data);
-        setTimeConflictError(error.response.data.message);
-        setIsTimeConflict(true);
-      } else {
-        console.error("Failed to assign technician:", error);
-      }
-    }
-  };
-
   return (
     <>
       <Dialog.Portal>
@@ -140,24 +109,24 @@ const RequestDialogPortal = ({
                 <p className={classes.first}>Description</p>
                 <p className={classes.second}>{request.description}</p>
               </div>
-      
+
               <div className={classes.requestDetailsPortalInputs}>
-  <p className={classes.first}>Attachment</p>
-  {!request.attachment ? (
-    <p className={classes.second}>No Attachment</p>
-  ) : (
-    <div className={classes.attachmentPreview}>
-      <a
-        href={`${API_URL}/uploads/${request.attachment}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={classes.previewLink}
-      >
-        Preview Attachment
-      </a>
-    </div>
-  )}
-</div>
+                <p className={classes.first}>Attachment</p>
+                {!request.attachment ? (
+                  <p className={classes.second}>No Attachment</p>
+                ) : (
+                  <div className={classes.attachmentPreview}>
+                    <a
+                      href={`${API_URL}/uploads/${request.attachment}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={classes.previewLink}
+                    >
+                      Preview Attachment
+                    </a>
+                  </div>
+                )}
+              </div>
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Request Type</p>
                 <p className={classes.second}>{request.request_technician}</p>
@@ -277,9 +246,7 @@ const RequestDialogPortal = ({
                     technicians={technicians}
                     request={request}
                     isTechnicianAssigned={techAssigned !== null}
-                    onAssignTechnicianToRequest={
-                      handleAssignTechnicianToRequest
-                    }
+                    onAssignTechnicianToRequest={onAssignTechnician}
                   />
                 </Dialog.Root>
                 <Dialog.Close asChild>
