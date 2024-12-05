@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Button, notification } from 'antd';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 const AddRemarkModal = ({ isOpen, onClose, requestId, userId, status }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
