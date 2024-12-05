@@ -104,21 +104,22 @@ const Dashboard = () => {
   };
 
   const getStatusColor = (status) => {
-    if (!status) return "gray"; 
-    const uppercasedStatus = status?.toUpperCase() || "UNKNOWN";
-    switch (uppercasedStatus) {
-      case "Approved":
+    if (!status) return "gray";
+    const normalizedStatus = status.toLowerCase();
+    switch (normalizedStatus) {
+      case "approved":
         return "green";
-      case "Pending":
+      case "pending":
         return "orange";
-      case "Rejected":
+      case "rejected":
         return "red";
-      case "Done":
+      case "completed":
+      case "done":
         return "blue";
-      case "In Progress":
+      case "in progress":
         return "purple";
-      case "On Hold":
-        return "yellow";
+      case "cancelled":
+        return "gray";
       default:
         return "gray";
     }
@@ -235,26 +236,7 @@ const Dashboard = () => {
                 `${record.user_firstname} ${record.user_lastname}`
               }
             />
-            <Column
-              title="Status"
-              dataIndex="status"
-              key="status"
-              filters={[
-                { text: "Denied", value: "Denied" },
-                { text: "Approved", value: "Approved" },
-                { text: "Done", value: "Done" },
-                { text: "Pending", value: "Pending" },
-                { text: "In Progress", value: "In Progress" },
-                { text: "On Hold", value: "On Hold" },
-              ]}
-              onFilter={(value, record) => record.status === value}
-              render={(status) => (
-                <Tag color={getStatusColor(status)} key={status}>
-                  {(status || "Unknown").toUpperCase()}
-                </Tag>
-              )}
-            />
-
+          
             <Column
               title="Date & Time"
               dataIndex="datetime"
@@ -280,20 +262,16 @@ const Dashboard = () => {
               dataIndex="status"
               key="status"
               filters={[
-                { text: "Denied", value: "Denied" },
-                { text: "Approved", value: "Approved" },
-                { text: "Done", value: "Done" },
                 { text: "Pending", value: "Pending" },
-                { text: "In Progress", value: "In Progress" },
-                { text: "On Hold", value: "On Hold" },
+                { text: "Approved", value: "Approved" },
+                { text: "Rejected", value: "Rejected" },
               ]}
               onFilter={(value, record) => record.status === value}
               render={(status) => (
-                <Tag color={getStatusColor(status)} key={status}>
-                  {(status || "Unknown").toUpperCase()}
+                <Tag color={getStatusColor(status)}>
+                  {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
                 </Tag>
               )}
-              
             />
           </Table>
         </div>
@@ -432,56 +410,58 @@ const Dashboard = () => {
       )}
 
       {/* Modal for Filtered Requests */}
-      <Modal
-        title={modalTitle}
-        open={isFilteredRequestsModalVisible}
-        onCancel={handleFilteredRequestsModalClose}
-        footer={[
-          <Button key="close" onClick={handleFilteredRequestsModalClose}>
-            Close
-          </Button>,
-        ]}
-        width="80%" // Adjust width dynamically (e.g., 80% of the viewport)
-        style={{ maxHeight: "70vh", overflowY: "auto" }}
-      >
-        <Table
-          dataSource={filteredRequests}
-          rowKey="id"
-          className={classes.modalTable}
-          pagination={false} // Remove pagination if you handle it separately
-          onRow={(record) => ({
-            onClick: () => showRequestDetails(record),
-          })}
-        >
-          <Column
-            title="Requestor"
-            key="requestor"
-            render={(_, record) =>
-              `${record.user_firstname} ${record.user_lastname}`
-            }
-          />
-          <Column title="Department" dataIndex="department" key="department" />
-          <Column
-            title="Date & Time"
-            dataIndex="datetime"
-            key="datetime"
-            render={(datetime) => new Date(datetime).toLocaleString()}
-          />
-          <Column
-            title="Location"
-            dataIndex="request_location"
-            key="request_location"
-          />
-          <Column
-            title="Status"
-            dataIndex="status"
-            key="status"
-            render={(status) => (
-              <Tag color={getStatusColor(status)}>{status}</Tag>
-            )}
-          />
-        </Table>
-      </Modal>
+<Modal
+  title={modalTitle}
+  open={isFilteredRequestsModalVisible}
+  onCancel={handleFilteredRequestsModalClose}
+  footer={[
+    <Button key="close" onClick={handleFilteredRequestsModalClose}>
+      Close
+    </Button>,
+  ]}
+  width="80%" // Adjust width dynamically (e.g., 80% of the viewport)
+  style={{ maxHeight: "100vh", overflowY: "auto" }}
+>
+  <Table
+    dataSource={filteredRequests}
+    rowKey="id"
+    className={classes.modalTable}
+    pagination={{
+      pageSize: 6, // Set the maximum number of rows per page
+    }}
+    onRow={(record) => ({
+      onClick: () => showRequestDetails(record),
+    })}
+  >
+    <Column
+      title="Requestor"
+      key="requestor"
+      render={(_, record) =>
+        `${record.user_firstname} ${record.user_lastname}`
+      }
+    />
+    <Column title="Department" dataIndex="department" key="department" />
+    <Column
+      title="Date & Time"
+      dataIndex="datetime"
+      key="datetime"
+      render={(datetime) => new Date(datetime).toLocaleString()}
+    />
+    <Column
+      title="Location"
+      dataIndex="request_location"
+      key="request_location"
+    />
+    <Column
+      title="Status"
+      dataIndex="status"
+      key="status"
+      render={(status) => (
+        <Tag color={getStatusColor(status)}>{status}</Tag>
+      )}
+    />
+  </Table>
+</Modal>
     </section>
   );
 };

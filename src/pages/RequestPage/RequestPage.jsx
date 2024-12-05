@@ -34,6 +34,8 @@ const RequestPage = () => {
     setFile("");
   };
 
+  
+
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     setFile(selectedFile);
@@ -47,12 +49,15 @@ const RequestPage = () => {
     if (actionData) {
       if (actionData.status === "success") {
         toast.success("Request submitted successfully!");
-        formRef.current.reset();
+        formRef.current.reset(); 
+        setFile(null); 
+        fileInputRef.current.value = ""; 
       } else if (actionData.status === "error") {
         toast.error("There was an error submitting the request.");
       }
     }
   }, [actionData, user.id]);
+  
 
   return (
     <section className={classes.request}>
@@ -105,6 +110,13 @@ const RequestPage = () => {
                 placeholder="e.g. CCS Faculty Room"
                 required
               />
+            </span>
+            <span>
+              <label>Remarks</label>
+              <textarea
+                name="remarks"
+                placeholder="Optional: Add additional comments or details."
+              ></textarea>
             </span>
             <span>
               <label id="attachFileLabel">Attachment</label>
@@ -191,6 +203,7 @@ export const action = async ({ request, params }) => {
   requestData.append("preferredEndDate", formattedPreferredEndDate);
   requestData.append("title", data.get("title"));
   requestData.append("description", data.get("description"));
+  requestData.append("remarks", data.get("remarks"));
   requestData.append("user_id", user_id);
   requestData.append("request_technician", data.get("request_technician"));
   requestData.append("urgency_level", data.get("urgencyLevel"));
