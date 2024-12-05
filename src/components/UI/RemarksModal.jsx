@@ -8,6 +8,7 @@ const { Text, Paragraph } = Typography;
 const RemarksModal = ({ isOpen, onClose, requestID }) => {
   const [remarks, setRemarks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
   useEffect(() => {
     if (isOpen && requestID) {
@@ -18,7 +19,7 @@ const RemarksModal = ({ isOpen, onClose, requestID }) => {
   const fetchRemarks = async (requestID) => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:8080/remarks/${requestID}`);
+      const response = await axios.get(`${API_URL}/remarks/${requestID}`);
       setRemarks(response.data);
     } catch (error) {
       console.error("Error fetching remarks:", error);

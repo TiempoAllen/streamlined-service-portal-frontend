@@ -6,12 +6,13 @@ const AddRemarkModal = ({ isOpen, onClose, requestId, userId, status }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [userFullName, setUserFullName] = useState('');
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
   // Fetch user full name based on userId
   useEffect(() => {
     if (userId) {
       axios
-        .get(`http://localhost:8080/user/${userId}`)
+        .get(`${API_URL}/user/${userId}`)
         .then((response) => {
           const { firstname, lastname } = response.data;
           setUserFullName(`${firstname} ${lastname}`);
@@ -48,7 +49,7 @@ const AddRemarkModal = ({ isOpen, onClose, requestId, userId, status }) => {
       });
 
       // Make the POST request with encoded parameters
-      await axios.post(`http://localhost:8080/remarks/add?${params.toString()}`);
+      await axios.post(`${API_URL}/remarks/add?${params.toString()}`);
       
       setLoading(false);
       notification.success({
