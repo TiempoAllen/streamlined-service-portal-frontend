@@ -57,19 +57,17 @@ import classes from "./RequestsTable.module.css";
       request_location: "",
       department:user_department || "",
       attachment: null,
-      request_technician: "",
+      request_type: "",
       user_id: user_id || "",  
     });
     const [requests, setRequests] = useState([]);
 
     const technicians = [
-      { id: "Janitor", name: "Janitor" },
-      { id: "Electrician", name: "Electrician" },
-      { id: "Plumber", name: "Plumber" },
-      { id: "Carpentry", name: "Carpentry" },
-      { id: "Masonry", name: "Masonry" },
-      { id: "Maintenance", name: "Maintenance" },
+      { id: "Building Maintenance", name: "Building Maintenance" },
+      { id: "Electrica lMaintenance", name: "Electrical Maintenance" },
+      { id: "General Services", name: "General Services" },
     ];
+    
 
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -82,6 +80,7 @@ import classes from "./RequestsTable.module.css";
     const [previewUrl, setPreviewUrl] = useState("");
     const [previewFileType, setPreviewFileType] = useState('');
     const [filename, setFilename] = useState(''); // Add this line
+    const [tech, setTech] = useState(null); // Initialize as null
 
     const fetchRequests = async () => {
       try {
@@ -225,7 +224,7 @@ import classes from "./RequestsTable.module.css";
       setPreviewOpen(false);
     };
 
-
+tech
 
 
     const handleDeleteRequest = async () => {
@@ -429,11 +428,11 @@ import classes from "./RequestsTable.module.css";
             <tr>
               <th>Request ID</th>
               <th>Purpose</th>
-              <th>Date & Time</th>
+              <th>Date Requested</th>
               <th>Status</th>
               <th>Location</th>
-              <th>Department</th>
-              <th>Technician</th>
+             {/* <th>Department</th> */}
+              <th>Request Type</th>
               <th>Attachment</th>
               <th>Actions</th>
             </tr>
@@ -446,7 +445,7 @@ import classes from "./RequestsTable.module.css";
                 <td>{formatDateTime(request.datetime) || "N/A"}</td>
                 <td>{request.status || "N/A"}</td>
                 <td>{request.request_location || "N/A"}</td>
-                <td>{request.department || "N/A"}</td>
+              {/*  <td>{request.department || "N/A"}</td> */}
                 <td>{request.request_technician || "N/A"}</td>
                 <td>
                 {request.attachment ? (
@@ -521,22 +520,24 @@ import classes from "./RequestsTable.module.css";
           readOnly: dialogMode === "view",
         }}
       />
-      <TextField
-        label="Date & Time"
-        name="datetime"
-        type="datetime-local"
-        value={formData.datetime}
-        onChange={handleFormChange}
-        fullWidth
-        required
-        margin="normal"
-        InputLabelProps={{
-          shrink: true,
-        }}
-        InputProps={{
-          readOnly: dialogMode === "view",
-        }}
-      />
+       {dialogMode !== "add" && (
+    <TextField
+      label="Date & Time"
+      name="datetime"
+      type="datetime-local"
+      value={formData.datetime}
+      onChange={handleFormChange}
+      fullWidth
+      required
+      margin="normal"
+      InputLabelProps={{
+        shrink: true,
+      }}
+      InputProps={{
+        readOnly: dialogMode === "view",
+      }}
+    />
+  )}
       <TextField
         label="Location"
         name="request_location"
@@ -572,7 +573,7 @@ import classes from "./RequestsTable.module.css";
                 />
             )}
       {/* User ID (Read-Only) */}
-      <TextField
+     { /* <TextField
         label="User ID"
         name="user_id"
         value={formData.user_id}
@@ -582,7 +583,7 @@ import classes from "./RequestsTable.module.css";
         InputProps={{
           readOnly: true,
         }}
-      />
+      /> */}
     </DialogContent>
 
     <DialogActions>
