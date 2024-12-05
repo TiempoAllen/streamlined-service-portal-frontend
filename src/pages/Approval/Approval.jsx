@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import { useLoaderData, useRouteLoaderData, useParams } from "react-router-dom";
 import RequestDialogPortal from "../../components/UI/RequestDialogPortal";
 import { ToastContainer, toast } from "react-toastify";
+import { Spin } from "antd";
 import "react-toastify/dist/ReactToastify.css";
 import { loadRequestsAndTechnicians } from "../../util/auth";
 import classes from "./Approval.module.css";
@@ -36,9 +37,20 @@ const Approval = () => {
   const [isRemarksModalOpen, setIsRemarksModalOpen] = useState(false);
   const [selectedRowForRemarks, setSelectedRowForRemarks] = useState(null);
   const { user_id } = useParams();
+  const [isLoading, setIsLoading] = useState(true);
 
 
-
+  useEffect(() => {
+    setIsLoading(true); // Show loader when fetching data
+    setTimeout(() => {
+      setRowData(
+        requests
+          .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
+          .filter((request) => request.status === "Pending")
+      );
+      setIsLoading(false); // Hide loader once data is set
+    }, 1000);
+  }, [requests]);
 
   
   useEffect(() => {
@@ -47,6 +59,7 @@ const Approval = () => {
       setStatusMessage(null);
     }
   }, [statusMessage]);
+
 
   const handleFilterChange = (selectedFilter) => {
     setFilter(selectedFilter);
@@ -369,7 +382,18 @@ const Approval = () => {
     Denied: "Rejected",
   };
 
-  return (
+  return isLoading ? (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
+      <Spin size="large" />
+    </div>
+  ) : (
     <section className={classes.approval}>
       {/* Dropdown filter component */}
       <SelectArea
@@ -377,7 +401,7 @@ const Approval = () => {
         header="Requests"
         isRecords={true}
       />
-      
+  
       {/* Tabs for filtering by status */}
       <div className={classes.exampleHeader}>
         <div className={classes.tabs}>
@@ -394,7 +418,7 @@ const Approval = () => {
           ))}
         </div>
       </div>
-      
+  
       {/* Data grid display */}
       <div
         className="ag-theme-quartz"
@@ -423,7 +447,6 @@ const Approval = () => {
     </section>
   );  
 };
-
 export default Approval;
 
 export const loader = loadRequestsAndTechnicians;

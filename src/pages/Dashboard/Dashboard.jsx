@@ -149,7 +149,7 @@ const Dashboard = () => {
   };
 
   if (isLoading) {
-    return <Spin indicator={<LoadingOutlined spin />} size="large" />;
+    return <Spin size="large" />;
   }
 
   if (error) {

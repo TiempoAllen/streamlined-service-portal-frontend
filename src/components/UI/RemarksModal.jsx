@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Collapse, Typography, Spin } from "antd";
+import { Modal, Collapse, Typography, Spin, Empty } from "antd";
 import axios from "axios";
 
 const { Panel } = Collapse;
@@ -51,7 +51,18 @@ const RemarksModal = ({ isOpen, onClose, requestID }) => {
       width={800}
     >
       {loading ? (
-        <Spin size="large" />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "200px", // Adjust height based on modal size
+          }}
+        >
+          <Spin size="large" />
+        </div>
+      ) : remarks.length === 0 ? (
+        <Empty description="No Remarks Available" />
       ) : (
         <Collapse>
           {Object.entries(groupedRemarks).map(([status, remarks]) => (

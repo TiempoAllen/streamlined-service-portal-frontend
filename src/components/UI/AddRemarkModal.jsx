@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Button, notification } from 'antd';
+import { Modal, Form, Input, Button, notification, Spin } from 'antd';
 import axios from 'axios';
 
 const AddRemarkModal = ({ isOpen, onClose, requestId, userId, status }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(false); // Track user fetching status
   const [userFullName, setUserFullName] = useState('');
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
   // Fetch user full name based on userId
   useEffect(() => {
     if (userId) {
+      setIsFetching(true); // Start fetching
       axios
         .get(`${API_URL}/user/${userId}`)
         .then((response) => {
@@ -19,10 +21,12 @@ const AddRemarkModal = ({ isOpen, onClose, requestId, userId, status }) => {
         })
         .catch((error) => {
           console.error('Error fetching user details:', error);
+        })
+        .finally(() => {
+          setIsFetching(false); // End fetching
         });
     }
   }, [userId]);
-
 
   const handleSubmit = async (values) => {
     const { content } = values;
@@ -88,10 +92,12 @@ const AddRemarkModal = ({ isOpen, onClose, requestId, userId, status }) => {
           <Input.TextArea placeholder="Enter remark content" />
         </Form.Item>
 
-        <Form.Item
-          label="Created By"
-        >
-          <Input value={userFullName} disabled />
+        <Form.Item label="Created By">
+          {isFetching ? (
+            <Spin size="small" /> // Show loader while fetching
+          ) : (
+            <Input value={userFullName} disabled placeholder="Full name" />
+          )}
         </Form.Item>
 
         <Form.Item>
