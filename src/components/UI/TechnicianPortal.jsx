@@ -30,23 +30,22 @@ const TechnicianPortal = ({
   // }, [request.preferredStartDate, request.preferredEndDate]);
 
   const handleAssignClick = (technician) => {
-    // Use a consistent property for comparison
-    const isAlreadyAssigned = assignedTechnicians.find(
-      (tech) => tech.PersonnelID === technician.PersonnelID
+    // Check if the technician is already assigned in the personnelField
+    const isAlreadyAssigned = assignedTechnicians.some(
+      (assignedTech) => assignedTech.PersonnelID === technician.PersonnelID
     );
 
-    if (!isAlreadyAssigned) {
-      setAssignedTechnicians((prevTechnicians) => [
-        ...prevTechnicians,
-        technician,
-      ]);
-      setAssignedTechnicianIds((prevIds) => [
-        ...prevIds,
-        technician.PersonnelID,
-      ]);
-    } else {
-      console.log(`Technician ${technician.Name} is already assigned.`);
+    if (isAlreadyAssigned) {
+      console.warn(`Technician ${technician.Name} is already assigned.`);
+      return;
     }
+
+    // Add the technician to the assigned list
+    setAssignedTechnicians((prevTechnicians) => [
+      ...prevTechnicians,
+      technician,
+    ]);
+    setAssignedTechnicianIds((prevIds) => [...prevIds, technician.PersonnelID]);
   };
 
   const handleRemoveTechnician = (index) => {
@@ -64,7 +63,6 @@ const TechnicianPortal = ({
     { field: "Phone Number", flex: 1 },
     { field: "Gender", flex: 1 },
     { field: "Classification", flex: 1 },
-    { field: "Department", flex: 1 },
     {
       field: "Action",
       flex: 1,
@@ -115,7 +113,6 @@ const TechnicianPortal = ({
     "Phone Number": technician.tech_phone,
     Gender: technician.tech_gender,
     Classification: technician.tech_classification,
-    Department: technician.tech_department,
     Availability: technician.isavailable,
   }));
 

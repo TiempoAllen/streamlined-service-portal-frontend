@@ -215,3 +215,20 @@ li {
 .TabsTrigger:focus {
     position: relative;
 }
+
+@media (max-width: 767px) {
+    .header .logo p {
+        display: none;
+    }
+
+    .list .icon {
+        display: none;
+    }
+
+    .buttons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+}

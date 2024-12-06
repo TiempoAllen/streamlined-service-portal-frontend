@@ -208,3 +208,9 @@
 .request .required {
     color: #ff0000;
 }
+
+@media (max-width: 767px) {
+    .request .main {
+        min-width: 70vw;
+    }
+}
