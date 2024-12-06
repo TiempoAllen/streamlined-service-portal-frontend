@@ -99,7 +99,7 @@ const SideNav = ({ user_id, isSuperUser }) => {
             </ul>
           )}
         </li>
-        {/* {isSuperUser && (
+         {isSuperUser && (
           <li>
             <div className={classes.link}>
               <NavLink
@@ -113,7 +113,7 @@ const SideNav = ({ user_id, isSuperUser }) => {
               </NavLink>
             </div>
           </li>
-        )} */}
+        )} 
         {/* <li>
           <div className={classes.link}>
           <NavLink
