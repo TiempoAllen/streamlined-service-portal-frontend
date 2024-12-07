@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import * as Dialog from "@radix-ui/react-dialog";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import { Table, Button } from "antd";
+import "antd/dist/reset.css"; // Ant Design reset styles
 import classes from "./RequestDialogPortal.module.css";
 import MessagePortal from "./MessagePortal";
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const TechnicianPortal = ({
   technicians,
@@ -18,216 +14,164 @@ const TechnicianPortal = ({
 }) => {
   const [assignedTechnicians, setAssignedTechnicians] = useState([]);
   const [scheduledStartDate, setScheduledStartDate] = useState("");
-  const [availableTechnicians, setAvailableTechnicians] = useState([]);
   const [assignedTechnicianIds, setAssignedTechnicianIds] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
 
-  // useEffect(() => {
-  //   fetchAvailableTechnicians(
-  //     request.preferredStartDate,
-  //     request.preferredEndDate
-  //   );
-  // }, [request.preferredStartDate, request.preferredEndDate]);
-
   const handleAssignClick = (technician) => {
-    // Check if the technician is already assigned in the personnelField
-    const isAlreadyAssigned = assignedTechnicians.some(
-      (assignedTech) => assignedTech.PersonnelID === technician.PersonnelID
+    const isAlreadyAssigned = assignedTechnicianIds.includes(
+      technician.PersonnelID
     );
 
     if (isAlreadyAssigned) {
-      console.warn(`Technician ${technician.Name} is already assigned.`);
+      alert(`Technician ${technician.Name} is already assigned.`);
       return;
     }
 
-    // Add the technician to the assigned list
-    setAssignedTechnicians((prevTechnicians) => [
-      ...prevTechnicians,
-      technician,
-    ]);
-    setAssignedTechnicianIds((prevIds) => [...prevIds, technician.PersonnelID]);
+    setAssignedTechnicians((prev) => [...prev, technician]);
+    setAssignedTechnicianIds((prev) => [...prev, technician.PersonnelID]);
   };
 
   const handleRemoveTechnician = (index) => {
-    setAssignedTechnicians((prevTechnicians) =>
-      prevTechnicians.filter((_, i) => i !== index)
-    );
+    setAssignedTechnicians((prev) => prev.filter((_, i) => i !== index));
+    setAssignedTechnicianIds((prev) => prev.filter((_, i) => i !== index));
   };
+
   const handleStartDateChange = (event) => {
     setScheduledStartDate(event.target.value);
-  };
-
-  const [colDefs, setColDefs] = useState([
-    { field: "PersonnelID", flex: 1 },
-    { field: "Name", flex: 1 },
-    { field: "Phone Number", flex: 1 },
-    { field: "Gender", flex: 1 },
-    { field: "Classification", flex: 1 },
-    {
-      field: "Action",
-      flex: 1,
-      cellRenderer: (params) => (
-        <button onClick={() => handleAssignClick(params.data)}>Assign</button>
-      ),
-    },
-  ]);
-
-  // const fetchAvailableTechnicians = async (startDate, endDate) => {
-  //   if (startDate && endDate) {
-  //     try {
-  //       const response = await axios.get(
-  //         `${API_URL}/technician/getAvailablePersonnel`,
-  //         {
-  //           params: {
-  //             requestedStartTime: startDate,
-  //             requestedEndTime: endDate,
-  //           },
-  //         }
-  //       );
-  //       const techniciansData = response.data.map((technician) => ({
-  //         PersonnelID: technician.tech_id,
-  //         Name: technician.tech_name,
-  //         "Phone Number": technician.tech_phone,
-  //         Gender: technician.tech_gender,
-  //         Classification: technician.tech_classification,
-  //         Department: technician.tech_department,
-  //       }));
-  //       setAvailableTechnicians(techniciansData);
-  //     } catch (error) {
-  //       console.error("Error fetching available technicians:", error);
-  //     }
-  //   }
-  // };
-
-  const filters = {
-    all: "All",
-  };
-
-  const handleTabClick = (status) => {
-    setActiveTab(status);
   };
 
   const allTechnicians = technicians.map((technician) => ({
     PersonnelID: technician.tech_id,
     Name: technician.tech_name,
-    "Phone Number": technician.tech_phone,
+    PhoneNumber: technician.tech_phone,
     Gender: technician.tech_gender,
     Classification: technician.tech_classification,
     Availability: technician.isavailable,
   }));
 
-  return (
-    <>
-      <Dialog.Portal>
-        <Dialog.Overlay className={classes.DialogOverlay} />
-        <Dialog.Content className={classes.TechnicianDialogContent}>
-          <Dialog.Title className={classes.TechnicianDialogTitle}>
-            Assign and Schedule
-          </Dialog.Title>
-          <div className={classes.personnelSection}>
-            <h4>1. Assign a Personnel</h4>
-            <div className={classes.form}>
-              <p>Assigned Personnel:</p>
-              {/* <input
-                type="text"
-                name="assignedPersonnel"
-                className={classes.assignedPersonnel}
-                readOnly
-                required
-              /> */}
-              <div className={classes.personnelField}>
-                {assignedTechnicians.map((technician, index) => (
-                  <div key={index} className={classes.personnel}>
-                    <p>{technician.Name}</p>
-                    <Cross2Icon onClick={() => handleRemoveTechnician(index)} />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className={classes.exampleHeader}>
-              <div className={classes.tabs}>
-                {Object.entries(filters).map(([key, displayValue]) => (
-                  <button
-                    className={`${classes.tabButton} ${
-                      activeTab === key ? classes.active : ""
-                    }`}
-                    onClick={() => handleTabClick(key)}
-                    key={key}
-                  >
-                    {displayValue}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div
-              className="ag-theme-quartz"
-              style={{ height: "100%", width: "100%", marginTop: "1rem" }}
-            >
-              <AgGridReact
-                rowData={
-                  activeTab === "all" ? allTechnicians : availableTechnicians
-                }
-                columnDefs={colDefs}
-                domLayout="autoHeight"
-              />
-            </div>
-          </div>
-          <div className={classes.personnelSection}>
-            <h4>2. Start Date and Time</h4>
-            <input
-              type="datetime-local"
-              name="scheduledStartDate"
-              className={classes.scheduledDate}
-              value={scheduledStartDate}
-              onChange={handleStartDateChange}
-              required
-            />
-          </div>
-          {/* <div className={classes.personnelSection}>
-            <h4>3. End Date and Time</h4>
-            <input
-              type="datetime-local"
-              name="scheduleEndDate"
-              className={classes.scheduledDate}
-              value={scheduledEndDate}
-              onChange={handleEndDateChange}
-              required
-            />
-          </div> */}
-
-          <div
-            style={{
-              display: "flex",
-              marginTop: 25,
-              justifyContent: "flex-end",
-              gap: "1rem",
-            }}
+  const columns = [
+    {
+      title: "Personnel ID",
+      dataIndex: "PersonnelID",
+      key: "PersonnelID",
+    },
+    {
+      title: "Name",
+      dataIndex: "Name",
+      key: "Name",
+    },
+    {
+      title: "Phone Number",
+      dataIndex: "PhoneNumber",
+      key: "PhoneNumber",
+    },
+    {
+      title: "Gender",
+      dataIndex: "Gender",
+      key: "Gender",
+    },
+    {
+      title: "Classification",
+      dataIndex: "Classification",
+      key: "Classification",
+    },
+    {
+      title: "Action",
+      key: "Action",
+      render: (_, technician) => {
+        const assigned = assignedTechnicianIds.includes(technician.PersonnelID);
+        return (
+          <Button
+            type="primary"
+            onClick={() => handleAssignClick(technician)}
+            disabled={assigned}
           >
-            <Dialog.Root>
-              <Dialog.Trigger asChild>
-                <button className={classes.btnApprove}>Proceed</button>
-              </Dialog.Trigger>
-              <MessagePortal
-                messageType="assign"
-                onAssignTechnicianToRequest={onAssignTechnicianToRequest}
-                request_id={request.request_id}
-                assignedTechnicians={assignedTechnicianIds}
-                scheduledStartDate={scheduledStartDate}
-                isTechnicianAssigned={isTechnicianAssigned}
-              />
-            </Dialog.Root>
-            <Dialog.Close asChild>
-              <button className={classes.btnBack}>Back</button>
-            </Dialog.Close>
+            {assigned ? "Assigned" : "Assign"}
+          </Button>
+        );
+      },
+    },
+  ];
+
+  const isProceedEnabled =
+    assignedTechnicians.length > 0 && scheduledStartDate.trim() !== "";
+
+  return (
+    <Dialog.Portal>
+      <Dialog.Overlay className={classes.DialogOverlay} />
+      <Dialog.Content className={classes.TechnicianDialogContent}>
+        <Dialog.Title className={classes.TechnicianDialogTitle}>
+          Assign and Schedule
+        </Dialog.Title>
+        <div className={classes.personnelSection}>
+          <h4>1. Assign a Personnel</h4>
+          <div className={classes.personnelField}>
+            {assignedTechnicians.map((technician, index) => (
+              <div key={index} className={classes.personnel}>
+                <p>{technician.Name}</p>
+                <Cross2Icon
+                  onClick={() => handleRemoveTechnician(index)}
+                  style={{ cursor: "pointer" }}
+                />
+              </div>
+            ))}
           </div>
+          <Table
+            dataSource={allTechnicians}
+            columns={columns}
+            rowKey="PersonnelID"
+            pagination={{ pageSize: 5 }}
+            style={{ marginTop: "1rem" }}
+          />
+        </div>
+        <div className={classes.personnelSection}>
+          <h4>2. Start Date and Time</h4>
+          <input
+            type="datetime-local"
+            name="scheduledStartDate"
+            className={classes.scheduledDate}
+            value={scheduledStartDate}
+            onChange={handleStartDateChange}
+            required
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            marginTop: 25,
+            justifyContent: "flex-end",
+            gap: "1rem",
+          }}
+        >
+          <Dialog.Root>
+            <Dialog.Trigger asChild>
+              <button
+                className={classes.btnApprove}
+                disabled={!isProceedEnabled}
+              >
+                Proceed
+              </button>
+            </Dialog.Trigger>
+            <MessagePortal
+              messageType="assign"
+              onAssignTechnicianToRequest={onAssignTechnicianToRequest}
+              request_id={request.request_id}
+              assignedTechnicians={assignedTechnicianIds}
+              scheduledStartDate={scheduledStartDate}
+              isTechnicianAssigned={isTechnicianAssigned}
+            />
+          </Dialog.Root>
           <Dialog.Close asChild>
-            <button className={classes.IconButton} aria-label="Close">
-              <Cross2Icon />
-            </button>
+            <button className={classes.btnBack}>Back</button>
           </Dialog.Close>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </>
+        </div>
+        <Dialog.Close asChild>
+          <button className={classes.IconButton} aria-label="Close">
+            <Cross2Icon />
+          </button>
+        </Dialog.Close>
+      </Dialog.Content>
+    </Dialog.Portal>
   );
 };
 

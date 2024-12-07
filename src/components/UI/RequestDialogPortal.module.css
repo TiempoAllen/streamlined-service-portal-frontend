@@ -148,6 +148,10 @@ input {
     box-sizing: border-box;
 }
 
+.personnelSection .personnelField .personnel p {
+    margin: 0;
+}
+
 .personnelSection .scheduledDate {
     min-height: 3rem;
     background-color: #F1F4F8;
@@ -232,6 +236,14 @@ hr {
     border-radius: 5px;
     cursor: pointer;
 }
+
+.btnApprove:disabled {
+    background-color: #d3d3d3;
+    color: #6c757d;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 
 .btnDeny {
     background-color: #631C21;

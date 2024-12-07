@@ -45,7 +45,6 @@ const HomePage = () => {
   );
   const { user_id } = useParams();
 
-
   const handleCancelRequest = async (request_id) => {
     try {
       await axios.put(
@@ -92,7 +91,6 @@ const HomePage = () => {
     }
   };
 
-
   const [colDefs] = useState([
     { field: "Request Type", headerName: "Request Type" },
     { field: "Description", headerName: "Description" },
@@ -103,31 +101,31 @@ const HomePage = () => {
       headerName: "Actions",
       flex: 1,
       cellRenderer: (params) => {
-
         const [isHistoryOpen, setIsHistoryOpen] = useState(false);
         const [selectedRequest, setSelectedRequest] = useState(null);
         const [isAddRemarkOpen, setIsAddRemarkOpen] = useState(false);
-        const [selectedRowForRemarks, setSelectedRowForRemarks] = useState(null);
+        const [selectedRowForRemarks, setSelectedRowForRemarks] =
+          useState(null);
 
         const openAddRemarkModal = () => {
           setIsAddRemarkOpen(true);
           setSelectedRequest(params.data);
         };
 
-        return(
-        <div style={{ display: "flex", gap: "10px" }}>
-          <Dialog.Root>
-            <Dialog.Trigger asChild>
-              <p className={classes.viewBtn}>View</p>
-            </Dialog.Trigger>
-            <RequestDetailsPortal
-              request_id={params.data.RequestID}
-              onCancelRequest={handleCancelRequest}
-            />
-          </Dialog.Root>
-   
-          {/* History Button and Modal */}
-          <button
+        return (
+          <div style={{ display: "flex", gap: "10px" }}>
+            <Dialog.Root>
+              <Dialog.Trigger asChild>
+                <p className={classes.viewBtn}>View</p>
+              </Dialog.Trigger>
+              <RequestDetailsPortal
+                request_id={params.data.RequestID}
+                onCancelRequest={handleCancelRequest}
+              />
+            </Dialog.Root>
+
+            {/* History Button and Modal */}
+            <button
               onClick={() => {
                 setIsHistoryOpen(true);
                 setSelectedRequest(params.data);
@@ -137,38 +135,37 @@ const HomePage = () => {
             >
               History
             </button>
-  
-            {isHistoryOpen && selectedRequest?.RequestID === params.data.RequestID && (
-              <RemarksModal
-                isOpen={isHistoryOpen}
-                onClose={() => {
-                  setIsHistoryOpen(false);
-                  setSelectedRequest(null);
-                }}
-                requestID={params.data.RequestID}
+
+            {isHistoryOpen &&
+              selectedRequest?.RequestID === params.data.RequestID && (
+                <RemarksModal
+                  isOpen={isHistoryOpen}
+                  onClose={() => {
+                    setIsHistoryOpen(false);
+                    setSelectedRequest(null);
+                  }}
+                  requestID={params.data.RequestID}
+                />
+              )}
+
+            <button
+              onClick={openAddRemarkModal} // Open the Add Remark modal
+              className={classes.addRemarkBtn}
+            >
+              Add Remark
+            </button>
+
+            {/* Add Remark Modal */}
+            {isAddRemarkOpen && (
+              <AddRemarkModal
+                isOpen={isAddRemarkOpen}
+                onClose={() => setIsAddRemarkOpen(false)}
+                requestId={params.data.RequestID}
+                userId={user_id}
+                status={params.data.Status}
               />
             )}
-    
-
-          <button
-            onClick={openAddRemarkModal} // Open the Add Remark modal
-            className={classes.addRemarkBtn}
-          >
-            Add Remark
-          </button>
-
-          {/* Add Remark Modal */}
-          {isAddRemarkOpen && (
-            <AddRemarkModal
-              isOpen={isAddRemarkOpen}
-              onClose={() => setIsAddRemarkOpen(false)}
-              requestId={params.data.RequestID}
-              userId = {user_id}
-              status={params.data.Status}
-            />
-          )}
-  
-        </div>
+          </div>
         );
       },
     },
@@ -221,7 +218,6 @@ const HomePage = () => {
     Denied: "Rejected",
     Cancelled: "Cancelled",
   };
-
 
   return (
     <section className={isAdmin ? classes.adminHome : classes.home}>
@@ -295,9 +291,6 @@ const HomePage = () => {
           </div>
         )}
       </div>
-
-      
-
       <ToastContainer />
     </section>
   );

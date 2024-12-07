@@ -21,6 +21,10 @@
     width: auto;
 }
 
+.logo p {
+    margin-bottom: 0;
+}
+
 .logo p,
 li {
     font-size: 1rem;
@@ -68,7 +72,7 @@ li {
 }
 
 .buttons img {
-    height: 27px;
+    height: 2.5rem;
     width: auto;
 }
 

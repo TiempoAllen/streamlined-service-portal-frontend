@@ -236,7 +236,7 @@ const Dashboard = () => {
                 `${record.user_firstname} ${record.user_lastname}`
               }
             />
-          
+
             <Column
               title="Date & Time"
               dataIndex="datetime"
@@ -269,7 +269,8 @@ const Dashboard = () => {
               onFilter={(value, record) => record.status === value}
               render={(status) => (
                 <Tag color={getStatusColor(status)}>
-                  {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
+                  {status.charAt(0).toUpperCase() +
+                    status.slice(1).toLowerCase()}
                 </Tag>
               )}
             />
@@ -410,58 +411,58 @@ const Dashboard = () => {
       )}
 
       {/* Modal for Filtered Requests */}
-<Modal
-  title={modalTitle}
-  open={isFilteredRequestsModalVisible}
-  onCancel={handleFilteredRequestsModalClose}
-  footer={[
-    <Button key="close" onClick={handleFilteredRequestsModalClose}>
-      Close
-    </Button>,
-  ]}
-  width="80%" // Adjust width dynamically (e.g., 80% of the viewport)
-  style={{ maxHeight: "100vh", overflowY: "auto" }}
->
-  <Table
-    dataSource={filteredRequests}
-    rowKey="id"
-    className={classes.modalTable}
-    pagination={{
-      pageSize: 6, // Set the maximum number of rows per page
-    }}
-    onRow={(record) => ({
-      onClick: () => showRequestDetails(record),
-    })}
-  >
-    <Column
-      title="Requestor"
-      key="requestor"
-      render={(_, record) =>
-        `${record.user_firstname} ${record.user_lastname}`
-      }
-    />
-    <Column title="Department" dataIndex="department" key="department" />
-    <Column
-      title="Date & Time"
-      dataIndex="datetime"
-      key="datetime"
-      render={(datetime) => new Date(datetime).toLocaleString()}
-    />
-    <Column
-      title="Location"
-      dataIndex="request_location"
-      key="request_location"
-    />
-    <Column
-      title="Status"
-      dataIndex="status"
-      key="status"
-      render={(status) => (
-        <Tag color={getStatusColor(status)}>{status}</Tag>
-      )}
-    />
-  </Table>
-</Modal>
+      <Modal
+        title={modalTitle}
+        open={isFilteredRequestsModalVisible}
+        onCancel={handleFilteredRequestsModalClose}
+        footer={[
+          <Button key="close" onClick={handleFilteredRequestsModalClose}>
+            Close
+          </Button>,
+        ]}
+        width="80%" // Adjust width dynamically (e.g., 80% of the viewport)
+        style={{ maxHeight: "100vh", overflowY: "auto" }}
+      >
+        <Table
+          dataSource={filteredRequests}
+          rowKey="id"
+          className={classes.modalTable}
+          pagination={{
+            pageSize: 6, // Set the maximum number of rows per page
+          }}
+          onRow={(record) => ({
+            onClick: () => showRequestDetails(record),
+          })}
+        >
+          <Column
+            title="Requestor"
+            key="requestor"
+            render={(_, record) =>
+              `${record.user_firstname} ${record.user_lastname}`
+            }
+          />
+          <Column title="Department" dataIndex="department" key="department" />
+          <Column
+            title="Date & Time"
+            dataIndex="datetime"
+            key="datetime"
+            render={(datetime) => new Date(datetime).toLocaleString()}
+          />
+          <Column
+            title="Location"
+            dataIndex="request_location"
+            key="request_location"
+          />
+          <Column
+            title="Status"
+            dataIndex="status"
+            key="status"
+            render={(status) => (
+              <Tag color={getStatusColor(status)}>{status}</Tag>
+            )}
+          />
+        </Table>
+      </Modal>
     </section>
   );
 };

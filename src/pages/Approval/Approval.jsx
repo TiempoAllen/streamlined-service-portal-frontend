@@ -4,10 +4,11 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { useLoaderData, useRouteLoaderData, useParams } from "react-router-dom";
+import { useLoaderData, useParams } from "react-router-dom";
 import RequestDialogPortal from "../../components/UI/RequestDialogPortal";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { notification, Spin } from "antd"; // Import Spin from Ant Design
+import "antd/dist/reset.css"; // Import Ant Design CSS reset
+import { LoadingOutlined } from "@ant-design/icons"; // For custom loading icon
 import { loadRequestsAndTechnicians } from "../../util/auth";
 import classes from "./Approval.module.css";
 import SelectArea from "../../components/UI/SelectArea";
@@ -16,61 +17,68 @@ import AddRemarkModal from "../../components/UI/AddRemarkModal.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
+// The loader for fetching data
+export const loader = async () => {
+  try {
+    const response = await loadRequestsAndTechnicians();
+    return response; // Return the fetched data
+  } catch (error) {
+    console.error("Error loading requests and technicians:", error);
+    return { requests: [], technicians: [] }; // Return empty data in case of error
+  }
+};
+
 const Approval = () => {
   const { requests: initialRequests, technicians } = useLoaderData();
   const [statusMessage, setStatusMessage] = useState(null);
-  const [requests, setRequests] = useState(
-    initialRequests.sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
-  );
+  const [requests, setRequests] = useState([]);
   const [filter, setFilter] = useState("Pending");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [activeTab, setActiveTab] = useState("all");
-  const [rowData, setRowData] = useState(
-    initialRequests
-      .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
-      .filter((request) => request.status === "Pending")
-  );
+  const [isLoading, setIsLoading] = useState(true); // For managing the loading state
+  const [rowData, setRowData] = useState([]);
   const [isRemarksModalOpen, setIsRemarksModalOpen] = useState(false);
   const [selectedRowForRemarks, setSelectedRowForRemarks] = useState(null);
   const { user_id } = useParams();
 
   useEffect(() => {
-    if (statusMessage) {
-      toast.success(statusMessage, { autoClose: 1000 });
-      setStatusMessage(null);
+    // This simulates data fetching
+    if (initialRequests.length === 0) {
+      setIsLoading(true); // Start loading
+    } else {
+      setRequests(
+        initialRequests.sort(
+          (a, b) => new Date(b.datetime) - new Date(a.datetime)
+        )
+      );
+      setRowData(
+        initialRequests
+          .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
+          .filter((request) => request.status === "Pending")
+      );
+      setIsLoading(false); // Stop loading when the data is loaded
     }
-  }, [statusMessage]);
+  }, [initialRequests]);
 
-  const handleFilterChange = (selectedFilter) => {
-    setFilter(selectedFilter);
-    setRowData(
-      requests
-        .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
-        .filter((request) => {
-          if (selectedFilter === "All") {
-            return true;
-          }
-          if (selectedFilter === "Pending") {
-            return request.status === "Pending";
-          }
-          if (selectedFilter === "Viewed") {
-            return request.isOpened === true;
-          }
-          return request.status === selectedFilter;
-        })
+  // Spinner during page load
+  if (isLoading) {
+    return (
+      <div className={classes.loaderContainer}>
+        <Spin
+          indicator={<LoadingOutlined spin />}
+          size="large"
+          style={{ display: "block", margin: "auto" }}
+        />
+      </div>
     );
-  };
-
+  }
   const handleAssignTechnicianToRequest = async (
     request_id,
     tech_ids,
     scheduledStartDate,
     closeDialog
   ) => {
-    console.log(request_id);
-    console.log("Tech IDs: ", tech_ids);
-
     try {
       const formattedScheduledStartDate = new Date(
         scheduledStartDate
@@ -83,9 +91,10 @@ const Approval = () => {
 
       const response = await axios.post(
         `${API_URL}/request/assignTechnician`,
-        null, // No body
-        { params } // Attach formatted query params
+        null,
+        { params }
       );
+
       const updatedRequests = requests
         .map((request) =>
           request.request_id === request_id
@@ -104,17 +113,24 @@ const Approval = () => {
         })
       );
 
-      // Reset selected request to close the dialog
       setSelectedRequest(null);
 
-      toast.success("Request saved successfully.", { autoClose: 2000 });
+      notification.success({
+        message: "Success",
+        description: "Request saved successfully.",
+        duration: 2,
+      });
     } catch (error) {
-      // Error handling
       console.error(
         "Error assigning technicians:",
         error.response?.data || error.message
       );
-      throw error;
+
+      notification.error({
+        message: "Error",
+        description: "Failed to assign technician.",
+        duration: 2,
+      });
     }
   };
 
@@ -149,10 +165,18 @@ const Approval = () => {
       // Reset selected request to close the dialog
       setSelectedRequest(null);
 
-      toast.success("Request saved successfully.", { autoClose: 2000 });
+      notification.success({
+        message: "Success",
+        description: "Request saved successfully.",
+        duration: 2,
+      });
     } catch (error) {
       console.error(error);
-      toast.error("There was an error.");
+      notification.error({
+        message: "Error",
+        description: "Failed to assign technician.",
+        duration: 2,
+      });
     }
   };
 
@@ -190,7 +214,11 @@ const Approval = () => {
       toast.success("Request saved successfully.", { autoClose: 5000 });
     } catch (error) {
       console.error(error);
-      toast.error("There was an error.");
+      notification.error({
+        message: "Error",
+        description: "Failed to assign technician.",
+        duration: 2,
+      });
     }
   };
 
@@ -219,7 +247,11 @@ const Approval = () => {
           return request.status === filter;
         })
       );
-      toast.success("Request saved successfully.", { autoClose: 2000 });
+      notification.success({
+        message: "Success",
+        description: "Request saved successfully.",
+        duration: 2,
+      });
     } catch (error) {
       console.error(error);
       toast.error("There was an error marking the request as done.");
@@ -250,10 +282,18 @@ const Approval = () => {
           return request.status === filter;
         })
       );
-      toast.success("Request saved successfully.", { autoClose: 2000 });
+      notification.success({
+        message: "Success",
+        description: "Request saved successfully.",
+        duration: 2,
+      });
     } catch (error) {
       console.error(error);
-      toast.error("There was an error.");
+      notification.error({
+        message: "Error",
+        description: "Failed to assign technician.",
+        duration: 2,
+      });
     }
   };
 
@@ -425,11 +465,7 @@ const Approval = () => {
   return (
     <section className={classes.approval}>
       {/* Dropdown filter component */}
-      <SelectArea
-        onFilterChange={handleFilterChange}
-        header="Requests"
-        isRecords={true}
-      />
+      <SelectArea header="Requests" isRecords={true} />
 
       {/* Tabs for filtering by status */}
       <div className={classes.exampleHeader}>
@@ -463,9 +499,6 @@ const Approval = () => {
         />
       </div>
 
-      {/* Toast notifications */}
-      <ToastContainer />
-
       {/* Remarks Modal */}
       {isRemarksModalOpen && (
         <RemarksModal
@@ -479,4 +512,4 @@ const Approval = () => {
 
 export default Approval;
 
-export const loader = loadRequestsAndTechnicians;
+// export const loader = loadRequestsAndTechnicians;
