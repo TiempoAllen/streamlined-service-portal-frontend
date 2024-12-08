@@ -55,6 +55,10 @@
     font-size: 3.5rem;
     color: black;
   }
+
+  .icon{
+    margin-left: 10px;
+  }
   
   .cardBox .card:hover{
     background: #BC4A4D;

@@ -6,15 +6,9 @@ import totalReq from "../../assets/Total Req.svg";
 import newReq from "../../assets/New Req.svg";
 import openReq from "../../assets/Open Req.svg";
 import closedReq from "../../assets/Closed Req.svg";
-import {
-  json,
-  redirect,
-  useNavigate,
-  useRouteLoaderData,
-} from "react-router-dom";
-import { LoadingOutlined } from "@ant-design/icons";
 import axios from "axios";
-import Calendar from "react-calendar";
+import RequestDetailsPortal from "../../components/UI/RequestDetailsPortal"; 
+
 
 const { Column } = Table;
 
@@ -35,19 +29,36 @@ const Dashboard = () => {
     useState(false);
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [modalTitle, setModalTitle] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [requestorDepartment, setRequestorDepartment] = useState(null);
+
+
 
   const onChange = (newDate) => {
     setDate(newDate);
   };
 
+  const formatDateTime = (datetime) => {
+    if (!datetime) return "No Date Provided";
+    const date = new Date(datetime);
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString("en-US", { 
+      hour: "numeric", 
+      minute: "numeric", 
+      hour12: true 
+    })}`;
+  };
+  
+
   useEffect(() => {
     const fetchRequest = async () => {
       try {
         const response = await axios.get(`${API_URL}/request/getAllRequest`);
-        const data = response.data.map((req) => ({
-          ...req,
-          status: req.status || "Unknown",
-        }));
+        const data = response.data
+          .map((req) => ({
+            ...req,
+            status: req.status || "Unknown",
+          }))
+          .sort((a, b) => new Date(b.datetime) - new Date(a.datetime)); // Sort by datetime in descending order
         setRequest(data);
         setIsLoading(false);
       } catch (err) {
@@ -57,6 +68,7 @@ const Dashboard = () => {
     };
     fetchRequest();
   }, []);
+  
 
   // Calculate the counts for new, open, and closed requests
   const newRequestsCount = request.filter(
@@ -68,7 +80,7 @@ const Dashboard = () => {
   ).length;
 
   const closedRequestsCount = request.filter((req) =>
-    ["Completed", "Rejected"].includes(req.status)
+    ["Completed", "Rejected", "Cancelled", "Denied"].includes(req.status)
   ).length;
 
   const handleCardClick = (type) => {
@@ -88,7 +100,7 @@ const Dashboard = () => {
         break;
       case "CLOSED":
         filtered = request.filter((req) =>
-          ["Completed", "Rejected"].includes(req.status)
+          ["Completed", "Rejected", "Cancelled", "Denied"].includes(req.status)
         );
         title = "Closed Requests";
         break;
@@ -125,6 +137,16 @@ const Dashboard = () => {
     }
   };
 
+  const fetchRequestorDepartment = async (user_id) => {
+    try {
+      const response = await axios.get(`${API_URL}/user/${user_id}`);
+      setRequestorDepartment(response.data.department || "Unknown");
+    } catch (error) {
+      console.error("Failed to fetch requestor department:", error);
+      setRequestorDepartment("Unknown");
+    }
+  };
+
   const onSelectChange = (newSelectedRowKeys) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
@@ -137,8 +159,9 @@ const Dashboard = () => {
 
   const showRequestDetails = (record) => {
     setSelectedRequest(record);
+    fetchRequestorDepartment(record.user_id); // Assuming `user_id` is part of the request data
     setIsRequestDetailsModalVisible(true);
-  };
+  };  
 
   const handleRequestDetailsModalClose = () => {
     setIsRequestDetailsModalVisible(false);
@@ -155,6 +178,22 @@ const Dashboard = () => {
   if (error) {
     return <p>{error}</p>;
   }
+
+
+  const fetchAttachment = async (attachment) => {
+    try {
+      setLoading(true);
+      // Perform the fetching logic here
+      window.open(attachment, "_blank"); // Example: Open the attachment
+    } catch (error) {
+      console.error("Failed to fetch the attachment:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  console.log("ID: ", requestorDepartment);
 
   return (
     <section className={classes.main}>
@@ -241,15 +280,8 @@ const Dashboard = () => {
               title="Date & Time"
               dataIndex="datetime"
               key="datetime"
-              render={(datetime) => {
-                const date = new Date(datetime);
-                const formattedDate = date.toLocaleDateString("en-US");
-                const formattedTime = date.toLocaleTimeString("en-US", {
-                  hour12: true,
-                });
-                return `${formattedDate} ${formattedTime}`;
-              }}
-              sorter={(a, b) => new Date(a.datetime) - new Date(b.datetime)}
+              render={(datetime) => formatDateTime(datetime)}
+              sorter={(a, b) => new Date(b.datetime) - new Date(a.datetime)}
             />
             <Column
               title="Location"
@@ -264,9 +296,18 @@ const Dashboard = () => {
               filters={[
                 { text: "Pending", value: "Pending" },
                 { text: "Approved", value: "Approved" },
-                { text: "Rejected", value: "Rejected" },
+                { text: "In Progress", value: "In Progress" },
+                { text: "Completed", value: "Completed" },
+                { text: "Rejected", value: "Rejected"  },
               ]}
-              onFilter={(value, record) => record.status === value}
+              
+              onFilter={(value, record) => {
+                // If 'Rejected' or 'Cancelled' is selected, include both values
+                if (value === 'Rejected') {
+                  return record.status === 'Denied' || record.status === 'Cancelled' || record.status === 'Rejected';
+                }
+                return record.status === value;
+              }}
               render={(status) => (
                 <Tag color={getStatusColor(status)}>
                   {status.charAt(0).toUpperCase() +
@@ -280,110 +321,162 @@ const Dashboard = () => {
 
       {/* Modal for Request Details */}
       {selectedRequest && (
-        <Modal
-          title={
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "10px",
-                width: "200px",
-                marginBottom: "-40px",
-                zIndex: 1050, // Set z-index directly in the modal style
-              }}
-            >
-              <h3>Request Details</h3>
-              <span style={{ fontSize: "12px", color: "#888" }}>
-                ID #{selectedRequest.request_id}
-              </span>
-            </div>
-          }
-          open={isRequestDetailsModalVisible}
-          onCancel={handleRequestDetailsModalClose}
-          footer={[
-            <Button key="close" onClick={handleRequestDetailsModalClose}>
-              Close
-            </Button>,
-          ]}
-        >
-          <div style={{ padding: "10px" }}>
-            {/* Detailed Request Information */}
-            <section style={{ marginBottom: "20px" }}>
-              <h4>Detailed Request Information</h4>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "150px 1fr",
-                  gap: "10px",
-                }}
-              >
-                
-                <p style={{ fontWeight: "400" }}>Request Type:</p>
-                <p>{selectedRequest.request_technician}</p>
-
-                <p style={{ fontWeight: "400" }}>Description:</p>
-                <p>{selectedRequest.description}</p>
-
-                <p style={{ fontWeight: "400" }}>Attachment:</p>
-                <p>{selectedRequest.attachment}</p>
-
-                <p style={{ fontWeight: "400" }}>Location:</p>
-                <p>{selectedRequest.request_location}</p>
-
-                <p style={{ fontWeight: "400" }}>Date:</p>
-                <p>{new Date(selectedRequest.datetime).toLocaleString()}</p>
-
-              </div>
-            </section>
-
-            {/* Requester Information */}
-            <section style={{ marginBottom: "20px" }}>
-              <h4>Requester Information</h4>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "150px 1fr",
-                  gap: "10px",
-                }}
-              >
-                <p style={{ fontWeight: "400" }}>Name:</p>
-                <p>
-                  {selectedRequest.user_firstname}{" "}
-                  {selectedRequest.user_lastname}
-                </p>
-
-                <p style={{ fontWeight: "400" }}>Department:</p>
-                <p>{selectedRequest.department}</p>
-              </div>
-            </section>
-
-            {/* Status Information */}
-            <section style={{ marginBottom: "20px" }}>
-              <h4>Status Information</h4>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "150px 1fr",
-                  gap: "10px",
-                }}
-              >
-                <p style={{ fontWeight: "400" }}>Current Status:</p>
-                <p>
-                  <Tag
-                    color={
-                      selectedRequest.status === "Rejected" ? "red" : "green"
-                    }
-                  >
-                    {selectedRequest.status}
-                  </Tag>
-                </p>
-                
-              </div>
-            </section>
-
-          </div>
-        </Modal>
+         <Modal
+         title={
+           <div style={{
+             display: "flex",
+             justifyContent: "space-between",
+             alignItems: "center",
+             padding: "10px",
+           }}>
+             <h3>Request Details</h3>
+             <span style={{
+              fontSize: "12px",
+              color: "#fff",
+              border: "1px solid grey",
+              backgroundColor: "grey",
+              padding: "2px 4px",
+              borderRadius: "6px",
+              marginRight: 250,
+              marginTop: -5
+            }}>
+              ID #{selectedRequest?.request_id}
+            </span>
+           </div>
+         }
+         open={isRequestDetailsModalVisible}
+         onCancel={handleRequestDetailsModalClose}
+         footer={[
+           <Button key="close" onClick={handleRequestDetailsModalClose}>
+             Close
+           </Button>,
+         ]}
+       >
+         <div style={{ padding: "10px" }}>
+           {/* Detailed Request Information */}
+           <section style={{ marginBottom: "20px" }}>
+             <h4>Detailed Request Information</h4>
+             <div
+               style={{
+                 display: "grid",
+                 gridTemplateColumns: "150px 1fr",
+                 gap: "10px",
+               }}
+             >
+               <p style={{ fontWeight: "400" }}>Request Type:</p>
+               <p>{selectedRequest?.request_technician}</p>
+   
+               <p style={{ fontWeight: "400" }}>Description:</p>
+               <p>{selectedRequest?.description}</p>
+   
+               <p style={{ fontWeight: "400"}}>Attachment:</p>
+               {selectedRequest?.attachment ? (
+                 <Button
+                   type="link"
+                   onClick={() => fetchAttachment(selectedRequest.attachment)}
+                   style={{ padding: 0, marginRight: 175, marginTop: -5  }}
+                   disabled={loading}
+                 >
+                   {loading ? "Loading..." : "Preview Attachment"}
+                 </Button>
+               ) : (
+                 <p>No attachment</p>
+               )}
+   
+               <p style={{ fontWeight: "400" }}>Location:</p>
+               <p>{selectedRequest?.request_location}</p>
+   
+               <p style={{ fontWeight: "400" }}>Date:</p>
+               <p>{
+                 selectedRequest?.datetime
+                   ? formatDateTime(selectedRequest.datetime)
+                   : "No Date Provided"
+               }</p>
+             </div>
+           </section>
+   
+           {/* Requester Information */}
+           <section style={{ marginBottom: "20px" }}>
+             <h4>Requester Information</h4>
+             <div
+               style={{
+                 display: "grid",
+                 gridTemplateColumns: "150px 1fr",
+                 gap: "10px",
+               }}
+             >
+               <p style={{ fontWeight: "400" }}>Name:</p>
+               <p>
+                 {selectedRequest?.user_firstname} {selectedRequest?.user_lastname}
+               </p>
+   
+               <p style={{ fontWeight: "400" }}>Department:</p>
+               <p>{requestorDepartment || "Null"}</p>
+             </div>
+           </section>
+   
+           {/* Status Information */}
+           <section style={{ marginBottom: "20px" }}>
+             <h4>Status Information</h4>
+             <div
+               style={{
+                 display: "grid",
+                 gridTemplateColumns: "150px 1fr",
+                 gap: "10px",
+               }}
+             >
+               <p style={{ fontWeight: "400" }}>Current Status:</p>
+               <p>
+                <Tag color={getStatusColor(selectedRequest?.status)}>
+                  {selectedRequest?.status}
+                </Tag>
+               </p>
+   
+               {[
+                 "Assigned",
+                 "In Progress",
+                 "Done",
+               ].includes(selectedRequest?.status) && (
+                 <>
+                   <p style={{ fontWeight: "400" }}>Scheduled Date and Time:</p>
+                   <p>{
+                     selectedRequest?.scheduledStartDate
+                       ? formatDateTime(selectedRequest.scheduledStartDate)
+                       : "No Scheduled Date"
+                   }</p>
+                 </>
+               )}
+   
+               {selectedRequest?.status === "Denied" && (
+                 <>
+                   <p style={{ fontWeight: "400" }}>Remarks/Comments:</p>
+                   <p>{selectedRequest?.denialReason}</p>
+                 </>
+               )}
+             </div>
+           </section>
+   
+           {/* Personnel Information */}
+           {["In Progress", "Done"].includes(selectedRequest?.status) && (
+             <section style={{ marginBottom: "20px" }}>
+               <h4>Personnel Information</h4>
+               <div
+                 style={{
+                   display: "grid",
+                   gridTemplateColumns: "150px 1fr",
+                   gap: "10px",
+                 }}
+               >
+                 <p style={{ fontWeight: "400" }}>Assigned Personnel:</p>
+                 <p>Jake Doe</p>
+   
+                 <p style={{ fontWeight: "400" }}>Personnel Type:</p>
+                 <p>Janitor</p>
+               </div>
+             </section>
+           )}
+         </div>
+       </Modal>
       )}
 
       {/* Modal for Filtered Requests */}
@@ -417,12 +510,12 @@ const Dashboard = () => {
               `${record.user_firstname} ${record.user_lastname}`
             }
           />
-          <Column title="Department" dataIndex="department" key="department" />
           <Column
             title="Date & Time"
             dataIndex="datetime"
             key="datetime"
-            render={(datetime) => new Date(datetime).toLocaleString()}
+            render={(datetime) => formatDateTime(datetime)}
+            sorter={(a, b) => new Date(b.datetime) - new Date(a.datetime)}
           />
           <Column
             title="Location"
@@ -433,6 +526,21 @@ const Dashboard = () => {
             title="Status"
             dataIndex="status"
             key="status"
+            filters={[
+              { text: "Pending", value: "Pending" },
+              { text: "Approved", value: "Approved" },
+              { text: "In Progress", value: "In Progress" },
+              { text: "Completed", value: "Completed" },
+              { text: "Rejected", value: "Rejected"  },
+            ]}
+            
+            onFilter={(value, record) => {
+              // If 'Rejected' or 'Cancelled' is selected, include both values
+              if (value === 'Rejected') {
+                return record.status === 'Denied' || record.status === 'Cancelled' || record.status === 'Rejected';
+              }
+              return record.status === value;
+            }}
             render={(status) => (
               <Tag color={getStatusColor(status)}>{status}</Tag>
             )}

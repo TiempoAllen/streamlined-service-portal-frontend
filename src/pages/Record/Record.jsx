@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Spin } from "antd"; // Import Ant Design Spin component
 import classes from "./Record.module.css";
 import SelectArea from "../../components/UI/SelectArea";
 import { formatDateTime, loadRequestsAndTechnicians } from "../../util/auth";
@@ -12,36 +13,37 @@ const Record = () => {
   const { user_id } = useParams();
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(true); // Loading state
+
   const [colDefs] = useState([
     { field: "RequestID", flex: 1 },
     { field: "Requestor", flex: 1 },
     {
       field: "Request Type",
       flex: 1,
-      filter: "agTextColumnFilter", // Enable Text Filter for Request Type
+      filter: "agTextColumnFilter",
     },
     {
       field: "Date Requested",
       flex: 1,
-      filter: "agDateColumnFilter", // Enable Date Filter
+      filter: "agDateColumnFilter",
       filterParams: {
         comparator: (filterDate, cellValue) => {
-          const cellDate = new Date(cellValue); // Ensure cellValue is parsable
+          const cellDate = new Date(cellValue);
           if (cellDate < filterDate) return -1;
           if (cellDate > filterDate) return 1;
           return 0;
         },
-        browserDatePicker: true, // Enable date picker
+        browserDatePicker: true,
       },
     },
     { field: "Location", flex: 1 },
     {
       field: "Status",
       flex: 1,
-      filter: 'agSetColumnFilter',
+      filter: "agSetColumnFilter",
       filterParams: {
         values: (params) => {
-          // Dynamically extract unique values from the data
           const uniqueValues = Array.from(
             new Set(params.api.getRowModel().rowsToDisplay.map((row) => row.data.Status))
           );
@@ -50,20 +52,6 @@ const Record = () => {
       },
     },
     { field: "Attachment", flex: 1 },
-    // {
-    //   headerName: "Actions",
-    //   flex: 1,
-    //   cellRenderer: (params) => (
-    //     <p
-    //       className={classes.viewBtn}
-    //       onClick={() =>
-    //         navigate(`/home/${user_id}/record/${params.data.RequestID}`)
-    //       }
-    //     >
-    //       View
-    //     </p>
-    //   ),
-    // },
   ]);
 
   const transformedRequests = requests.map((request) => ({
@@ -79,14 +67,19 @@ const Record = () => {
         : "No Attachment",
   }));
 
+  useEffect(() => {
+    // Simulate data loading delay
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer); // Cleanup timer on component unmount
+  }, []);
+
   let gridApi;
 
   const onGridReady = (params) => {
-    gridApi = params.api; // Store the API reference for later use
+    gridApi = params.api;
   };
 
   const exportToCSV = () => {
-    // Get the current filtered rows
     const filteredRows = [];
     gridApi.forEachNodeAfterFilter((node) => {
       filteredRows.push(node.data);
@@ -99,12 +92,11 @@ const Record = () => {
 
     const headers = Object.keys(filteredRows[0]);
     const csvRows = [
-      headers.join(","), // CSV Header
+      headers.join(","),
       ...filteredRows.map((row) =>
         headers.map((header) => `"${row[header] || ""}"`).join(",")
-      ), // Rows
+      ),
     ];
-    
 
     const csvContent = csvRows.join("\n");
 
@@ -118,32 +110,46 @@ const Record = () => {
     document.body.removeChild(link);
   };
 
-
   return (
     <section className={classes.record}>
-      <div className={classes.recordHeader}>
-        <SelectArea header="Records" isRecords={true} />
-        <button onClick={exportToCSV}>Export</button>
-      </div>
-      <div
-        className="ag-theme-quartz"
+      {loading ? ( // Display loader over the entire section
+        <div
         style={{
-          height: "100%",
-          width: "100%",
-          marginTop: "1rem",
-          minHeight: "50vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
         }}
-      >
-        <AgGridReact
-          rowData={transformedRequests}
-          columnDefs={colDefs}
-          rowHeight={80}
-          domLayout="autoHeight"
-          pagination={true}
-          paginationPageSize={10}
-          onGridReady={onGridReady} // Bind the onGridReady callback
-        />
-      </div>
+        >
+          <Spin size="large" />
+        </div>
+      ) : (
+        <>
+          <div className={classes.recordHeader}>
+            <SelectArea header="Records" isRecords={true} />
+            <button onClick={exportToCSV}>Export</button>
+          </div>
+          <div
+            className="ag-theme-quartz"
+            style={{
+              height: "100%",
+              width: "100%",
+              marginTop: "1rem",
+              minHeight: "50vh",
+            }}
+          >
+            <AgGridReact
+              rowData={transformedRequests}
+              columnDefs={colDefs}
+              rowHeight={80}
+              domLayout="autoHeight"
+              pagination={true}
+              paginationPageSize={10}
+              onGridReady={onGridReady}
+            />
+          </div>
+        </>
+      )}
     </section>
   );
 };

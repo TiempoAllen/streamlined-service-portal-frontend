@@ -7,9 +7,8 @@ import React, { useState, useEffect } from "react";
 import { useLoaderData, useParams } from "react-router-dom";
 import RequestDialogPortal from "../../components/UI/RequestDialogPortal";
 import { ToastContainer, toast } from "react-toastify";
-import { Spin, Button, Space, Table } from "antd";
+import { Spin, Button, notification } from "antd";
 import "react-toastify/dist/ReactToastify.css";
-import { notification, Spin } from "antd"; // Import Spin from Ant Design
 import "antd/dist/reset.css"; // Import Ant Design CSS reset
 import { LoadingOutlined } from "@ant-design/icons"; // For custom loading icon
 import { loadRequestsAndTechnicians } from "../../util/auth";
@@ -37,7 +36,7 @@ const Approval = () => {
   const [requests, setRequests] = useState([]);
   const [filter, setFilter] = useState("Pending");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("Pending");
   const [isLoading, setIsLoading] = useState(true);
   const [rowData, setRowData] = useState([]);
   const [isRemarksModalOpen, setIsRemarksModalOpen] = useState(false);
@@ -46,10 +45,10 @@ const Approval = () => {
   const { user_id } = useParams();
 
   useEffect(() => {
-    // This simulates data fetching
     if (initialRequests.length === 0) {
       setIsLoading(true); // Start loading
     } else {
+      // Sort and set data
       setRequests(
         initialRequests.sort(
           (a, b) => new Date(b.datetime) - new Date(a.datetime)
@@ -60,22 +59,15 @@ const Approval = () => {
           .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
           .filter((request) => request.status === "Pending")
       );
-      setIsLoading(false); // Stop loading when the data is loaded
+  
+      // Add a 1-second delay before stopping the loader
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
     }
   }, [initialRequests]);
 
-  // Spinner during page load
-  if (isLoading) {
-    return (
-      <div className={classes.loaderContainer}>
-        <Spin
-          indicator={<LoadingOutlined spin />}
-          size="large"
-          style={{ display: "block", margin: "auto" }}
-        />
-      </div>
-    );
-  }
+
   const handleAssignTechnicianToRequest = async (
     request_id,
     tech_ids,
