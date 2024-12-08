@@ -289,11 +289,12 @@ const Dashboard = () => {
                 padding: "10px",
                 width: "200px",
                 marginBottom: "-40px",
+                zIndex: 1050, // Set z-index directly in the modal style
               }}
             >
               <h3>Request Details</h3>
               <span style={{ fontSize: "12px", color: "#888" }}>
-                ID #{selectedRequest.id}
+                ID #{selectedRequest.request_id}
               </span>
             </div>
           }
@@ -316,25 +317,22 @@ const Dashboard = () => {
                   gap: "10px",
                 }}
               >
-                <p style={{ fontWeight: "400" }}>Title:</p>
-                <p>{selectedRequest.title}</p>
+                
+                <p style={{ fontWeight: "400" }}>Request Type:</p>
+                <p>{selectedRequest.request_technician}</p>
 
                 <p style={{ fontWeight: "400" }}>Description:</p>
                 <p>{selectedRequest.description}</p>
 
-                <p style={{ fontWeight: "400" }}>Date:</p>
-                <p>{new Date(selectedRequest.datetime).toLocaleString()}</p>
-
-                <p style={{ fontWeight: "400" }}>Request Type:</p>
-                <p>{selectedRequest.technician}</p>
+                <p style={{ fontWeight: "400" }}>Attachment:</p>
+                <p>{selectedRequest.attachment}</p>
 
                 <p style={{ fontWeight: "400" }}>Location:</p>
                 <p>{selectedRequest.request_location}</p>
 
-                <p style={{ fontWeight: "400" }}>Urgency Level:</p>
-                <p>
-                  <Tag color="green">Low</Tag>
-                </p>
+                <p style={{ fontWeight: "400" }}>Date:</p>
+                <p>{new Date(selectedRequest.datetime).toLocaleString()}</p>
+
               </div>
             </section>
 
@@ -379,32 +377,10 @@ const Dashboard = () => {
                     {selectedRequest.status}
                   </Tag>
                 </p>
-
-                <p style={{ fontWeight: "400" }}>Scheduled Date and Time:</p>
-                <p>{new Date(selectedRequest.datetime).toLocaleString()}</p>
-
-                <p style={{ fontWeight: "400" }}>Remarks/Comments:</p>
-                <p>{selectedRequest.remarks}</p>
+                
               </div>
             </section>
 
-            {/* Personnel Information */}
-            <section>
-              <h4>Personnel Information</h4>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "150px 1fr",
-                  gap: "10px",
-                }}
-              >
-                <p style={{ fontWeight: "400" }}>Assigned Personnel:</p>
-                <p>{selectedRequest.assigned_personnel}</p>
-
-                <p style={{ fontWeight: "400" }}>Personnel Type:</p>
-                <p>{selectedRequest.personnel_type}</p>
-              </div>
-            </section>
           </div>
         </Modal>
       )}
@@ -420,7 +396,7 @@ const Dashboard = () => {
     </Button>,
   ]}
   width="80%" // Adjust width dynamically (e.g., 80% of the viewport)
-  style={{ maxHeight: "100vh", overflowY: "auto" }}
+  style={{ maxHeight: "100vh", overflowY: "auto"}}
 >
   <Table
     dataSource={filteredRequests}

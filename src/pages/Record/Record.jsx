@@ -38,7 +38,16 @@ const Record = () => {
     {
       field: "Status",
       flex: 1,
-      filter: "agTextColumnFilter", // Enable Text Filter for Status
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        values: (params) => {
+          // Dynamically extract unique values from the data
+          const uniqueValues = Array.from(
+            new Set(params.api.getRowModel().rowsToDisplay.map((row) => row.data.Status))
+          );
+          params.success(uniqueValues);
+        },
+      },
     },
     { field: "Attachment", flex: 1 },
     // {
@@ -63,7 +72,7 @@ const Record = () => {
     "Request Type": request.request_technician,
     "Date Requested": formatDateTime(request.datetime),
     Location: request.request_location,
-    Status: request.status,
+    Status: request.status.toString(),
     Attachment:
       request.attachment && request.attachment.trim() !== ""
         ? request.attachment
@@ -95,6 +104,7 @@ const Record = () => {
         headers.map((header) => `"${row[header] || ""}"`).join(",")
       ), // Rows
     ];
+    
 
     const csvContent = csvRows.join("\n");
 
@@ -107,6 +117,7 @@ const Record = () => {
     link.click();
     document.body.removeChild(link);
   };
+
 
   return (
     <section className={classes.record}>

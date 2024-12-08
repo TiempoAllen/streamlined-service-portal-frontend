@@ -48,8 +48,8 @@ const PersonnelProfile = ({ tech_id, requests }) => {
   useEffect(() => {
     // Ensure that requests array has items and fetch technicianId based on the request_id
     console.log('useEffect called, requests:', requests);
-    if (requests.length > 0 && requests[0].request_id) {
-      fetchTechnicianId(requests[0].request_id); // Fetch technicianId using the request_id
+    if (Array.isArray(requests) && requests.length > 0 && requests[0].request_id) {
+      fetchTechnicianId(requests[0].request_id);
     }
   }, [requests]);
 
@@ -114,11 +114,15 @@ const PersonnelProfile = ({ tech_id, requests }) => {
     }
   };
 
-  const events = requests.map((request) => ({
-    title: request.title,
-    start: request.scheduledDate,
-    end: request.scheduledDate,
-  }));
+  const events = Array.isArray(requests)
+  ? requests.map((request) => ({
+      title: request.title || "Untitled",
+      start: request.scheduledDate || new Date(),
+      end: request.scheduledDate || new Date(),
+    }))
+  : [];
+
+  
 
   return (
     <Dialog.Portal>
