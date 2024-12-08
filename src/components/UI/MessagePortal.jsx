@@ -14,7 +14,7 @@ const MessagePortal = ({
   onRequestDone,
   onDenyRequest,
   scheduledStartDate,
-  assignedTechnician,
+  assignedTechnicians,
   onAssignTechnicianToRequest,
   onRequestStart,
 }) => {
@@ -77,7 +77,7 @@ const MessagePortal = ({
                   onClick={() =>
                     onAssignTechnicianToRequest(
                       request_id,
-                      assignedTechnician,
+                      assignedTechnicians,
                       scheduledStartDate
                     )
                   }

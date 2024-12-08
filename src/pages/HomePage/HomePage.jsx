@@ -48,7 +48,6 @@ const HomePage = () => {
   );
   const { user_id } = useParams();
 
-
   const handleCancelRequest = async (request_id) => {
     try {
       await axios.put(
@@ -95,7 +94,6 @@ const HomePage = () => {
     }
   };
 
-
   const [colDefs] = useState([
     { field: "Request Type", headerName: "Request Type" },
     { field: "Description", headerName: "Description" },
@@ -106,12 +104,12 @@ const HomePage = () => {
       headerName: "Actions",
       flex: 1, minWidth: 300, maxWidth: 300,
       cellRenderer: (params) => {
-
         const [isHistoryOpen, setIsHistoryOpen] = useState(false);
         const [isViewOpen, setIsViewOpen] = useState(false);
         const [selectedRequest, setSelectedRequest] = useState(null);
         const [isAddRemarkOpen, setIsAddRemarkOpen] = useState(false);
-        const [selectedRowForRemarks, setSelectedRowForRemarks] = useState(null);
+        const [selectedRowForRemarks, setSelectedRowForRemarks] =
+          useState(null);
 
         const openAddRemarkModal = () => {
           setIsAddRemarkOpen(true);
@@ -231,7 +229,6 @@ const HomePage = () => {
     Cancelled: "Cancelled",
   };
 
-
   return (
     <section className={isAdmin ? classes.adminHome : classes.home}>
       <div className={classes.main}>
@@ -293,9 +290,6 @@ const HomePage = () => {
           </div>
         )}
       </div>
-
-      
-
       <ToastContainer />
     </section>
   );

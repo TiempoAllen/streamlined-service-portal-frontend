@@ -21,12 +21,12 @@ const SuperUser = () => {
 
   const user = useRouteLoaderData("home");
   const user_id = user && user.user_id;
-  console.log("User ID:", user_id);
+ 
 
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await axios.get(`${API_URL}/request/all`);
+        const response = await axios.get(`${API_URL}/request/getAllRequest`);
         setRequests(response.data);
       } catch (error) {
         console.error("Error fetching requests:", error);
@@ -34,7 +34,7 @@ const SuperUser = () => {
     };
 
     fetchRequests();
-  }, []);
+  }, []);  
 
 
 

@@ -57,7 +57,6 @@ const MainNavigation = ({ user = {} }) => {
                   New Request
                 </NavLink>
               </li>
-              
             </>
           ) : (
             <></>

@@ -40,40 +40,38 @@ const Notification = ({ user_id, userType }) => {
   const handleNotificationClick = () => {
     setShowNotification(!showNotification);
   };
-
   const fetchNotifications = async () => {
     try {
       const response = await axios.get(`${API_URL}/notifications/${user_id}`);
       console.log("Fetched Notifications:", response.data);
-
+  
       const mappedNotifications = response.data.map((n) => ({
         ...n,
         notificationId: n.notification_id,
+        timestamp: new Date(n.timestamp), // Ensure proper Date parsing
       }));
-
+  
       const readStatusKey =
         userType === "admin"
           ? "readNotificationsAdmin"
           : "readNotificationsUser";
       console.log("Using LocalStorage key:", readStatusKey);
-
+  
       const storedReadStatus =
         JSON.parse(localStorage.getItem(readStatusKey)) || [];
       console.log("Stored Read Status:", storedReadStatus);
-
-      const notificationsWithReadStatus = mappedNotifications.map((n) => {
-        return {
-          ...n,
-          isRead: storedReadStatus.includes(n.notificationId) || n.isRead,
-        };
-      });
-
+  
+      const notificationsWithReadStatus = mappedNotifications.map((n) => ({
+        ...n,
+        isRead: storedReadStatus.includes(n.notificationId) || n.isRead,
+      }));
+  
       const sortedNotifications = notificationsWithReadStatus.sort(
-        (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+        (a, b) => b.timestamp - a.timestamp // Sort by timestamp, newest first
       );
-
+  
       setNotifications(sortedNotifications);
-
+  
       const unreadCount = sortedNotifications.filter((n) => !n.isRead).length;
       setNotificationCount(unreadCount);
     } catch (error) {
