@@ -44,11 +44,32 @@ const RequestDetailsPortal = ({ request_id, onCancelRequest }) => {
   }, [request_id]);
 
   const formatDateTime = (dateTimeString) => {
-    if (!dateTimeString) return ""; // Return empty if no value
+    if (!dateTimeString) return "";
     const date = new Date(dateTimeString);
-    const formattedDate = date.toLocaleDateString(); // Get date in format MM/DD/YYYY
-    const formattedTime = date.toLocaleTimeString(); // Get time in format HH:MM:SS AM/PM
+    const formattedDate = date.toLocaleDateString();
+    const formattedTime = date.toLocaleTimeString();
     return `${formattedDate} ${formattedTime}`;
+  };
+
+  const renderAttachment = () => {
+    if (!request.attachment) {
+      return "No Attachment";
+    }
+
+    const attachmentUrl = `data:application/octet-stream;base64,${request.attachment}`;
+    const isImage = request.attachment.startsWith("iVBOR"); // Checks if the Base64 string is a PNG (example: starts with "iVBOR" for PNG).
+
+    return isImage ? (
+      <img
+        src={attachmentUrl}
+        alt="Attachment"
+        style={{ maxWidth: "100%", maxHeight: "6rem" }}
+      />
+    ) : (
+      <a href={attachmentUrl} download={`attachment_${request_id}`}>
+        Download Attachment
+      </a>
+    );
   };
 
   return (
@@ -75,9 +96,7 @@ const RequestDetailsPortal = ({ request_id, onCancelRequest }) => {
               </div>
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Attachment</p>
-                <p className={classes.second}>
-                  {!request.attachment ? "No Attachment" : request.attachment}
-                </p>
+                <p className={classes.second}>{renderAttachment()}</p>
               </div>
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Location</p>
@@ -118,7 +137,6 @@ const RequestDetailsPortal = ({ request_id, onCancelRequest }) => {
                 </div>
               )}
             </div>
-            {/* Displays if a Personnel is assigned, if not assigned then empty. */}
             {["In Progress", "Done"].includes(request.status) && (
               <div className={classes.requestDetailsPortalReqInfo}>
                 <p className={classes.requestDetailsPortalSecHeader}>

@@ -59,14 +59,13 @@ const Approval = () => {
           .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
           .filter((request) => request.status === "Pending")
       );
-  
+
       // Add a 1-second delay before stopping the loader
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
     }
   }, [initialRequests]);
-
 
   const handleAssignTechnicianToRequest = async (
     request_id,
@@ -292,7 +291,6 @@ const Approval = () => {
     }
   };
 
-
   const markRequestAsOpened = async (request_id) => {
     console.log("Mark request as viewed triggered for request ID:", request_id);
     try {
@@ -310,7 +308,13 @@ const Approval = () => {
   };
 
   const columns = [
-    { headerName: "Request ID", field: "request_id", minWidth: 120, maxWidth: 120, flex: 1 },
+    {
+      headerName: "Request ID",
+      field: "request_id",
+      minWidth: 120,
+      maxWidth: 120,
+      flex: 1,
+    },
     {
       headerName: "User",
       field: "user_firstname",
@@ -335,28 +339,26 @@ const Approval = () => {
       flex: 1,
       valueFormatter: (params) => new Date(params.value).toLocaleString(),
     },
-    {
-      headerName: "Attachment",
-      field: "attachment",
-      flex: 1,
-      cellRenderer: (params) => (
-        <span>{params.value ? params.value : "No Attachment"}</span>
-      ),
-    },
+    { headerName: "Status", field: "status", flex: 1 },
     {
       headerName: "Actions",
-      flex: 1, minWidth: 300, maxWidth: 300,
+      flex: 1,
+      minWidth: 300,
+      maxWidth: 300,
       cellRenderer: (params) => {
         const [isViewOpen, setIsViewOpen] = useState(false);
         const [isHistoryOpen, setIsHistoryOpen] = useState(false);
         const [isAddRemarkOpen, setIsAddRemarkOpen] = useState(false);
         const [selectedRequest, setSelectedRequest] = useState(null);
-  
+
         return (
           <div style={{ display: "flex", gap: "10px" }}>
-             {/* View Button */}
-             <Dialog.Root
-              open={isViewOpen && selectedRequest?.request_id === params.data.request_id}
+            {/* View Button */}
+            <Dialog.Root
+              open={
+                isViewOpen &&
+                selectedRequest?.request_id === params.data.request_id
+              }
               onOpenChange={(open) => {
                 setIsViewOpen(open);
                 if (open) {
@@ -367,10 +369,13 @@ const Approval = () => {
               }}
             >
               <Dialog.Trigger asChild>
-                <Button type="primary" onClick={() => {
+                <Button
+                  type="primary"
+                  onClick={() => {
                     setIsViewOpen(true);
                     setSelectedRequest(params.data);
-                  }}>
+                  }}
+                >
                   View
                 </Button>
               </Dialog.Trigger>
@@ -387,11 +392,10 @@ const Approval = () => {
                   setSelectedRequest(null);
                 }}
               />
-  
             </Dialog.Root>
 
-               {/* Add Remark Button */}
-               <Button
+            {/* Add Remark Button */}
+            <Button
               onClick={() => {
                 setIsAddRemarkOpen(true);
                 setSelectedRequest(params.data);
@@ -405,15 +409,17 @@ const Approval = () => {
             {isAddRemarkOpen && (
               <AddRemarkModal
                 isOpen={isAddRemarkOpen}
-                onClose={() => { setIsAddRemarkOpen(false); setSelectedRequest(null);}}
+                onClose={() => {
+                  setIsAddRemarkOpen(false);
+                  setSelectedRequest(null);
+                }}
                 requestId={selectedRowForRemarks}
                 userId={user_id}
               />
             )}
-    
 
-             {/* History Button and Modal */}
-             <Button
+            {/* History Button and Modal */}
+            <Button
               onClick={() => {
                 setIsHistoryOpen(true);
                 setSelectedRequest(params.data);
@@ -435,8 +441,6 @@ const Approval = () => {
                   requestID={params.data.request_id}
                 />
               )}
-
-        
           </div>
         );
       },
@@ -498,7 +502,7 @@ const Approval = () => {
       <div
         className="ag-theme-quartz"
         style={{
-          height: rowData && rowData.length > 0 ? '100%' : '500px',  // Set height to 100% if data exists, or 300px if no data
+          height: rowData && rowData.length > 0 ? "100%" : "500px", // Set height to 100% if data exists, or 300px if no data
           width: "100%",
           marginTop: "1rem",
           zIndex: 0,

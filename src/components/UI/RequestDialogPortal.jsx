@@ -140,6 +140,25 @@ const RequestDialogPortal = ({
     }
   };
 
+  const renderAttachment = () => {
+    if (!request.attachment) {
+      return "No Attachment";
+    }
+
+    const attachmentUrl = `data:application/octet-stream;base64,${request.attachment}`;
+    const isImage = request.attachment.startsWith("iVBOR"); // Checks if the Base64 string is a PNG (example: starts with "iVBOR" for PNG).
+
+    return (
+      isImage && (
+        <img
+          src={attachmentUrl}
+          alt="Attachment"
+          style={{ maxWidth: "100%", maxHeight: "6rem" }}
+        />
+      )
+    );
+  };
+
   return (
     <>
       <Dialog.Portal>
@@ -165,7 +184,8 @@ const RequestDialogPortal = ({
 
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Attachment</p>
-                {!request.attachment ? (
+                <p className={classes.second}>{renderAttachment()}</p>
+                {/* {!request.attachment ? (
                   <p className={classes.second}>No Attachment</p>
                 ) : (
                   <div className={classes.attachmentPreview}>
@@ -173,7 +193,7 @@ const RequestDialogPortal = ({
                       {request.attachmentTitle}
                     </h4>
                     <button
-                      onClick={() => fetchAttachment(request.attachment)}
+                      onClick={() => fetchAttachment(renderAttachment())}
                       style={{
                         backgroundColor: "#007BFF",
                         color: "white",
@@ -189,7 +209,7 @@ const RequestDialogPortal = ({
                       {loading ? "Loading..." : "Preview Attachment"}
                     </button>
                   </div>
-                )}
+                )} */}
               </div>
               <div className={classes.requestDetailsPortalInputs}>
                 <p className={classes.first}>Request Type</p>

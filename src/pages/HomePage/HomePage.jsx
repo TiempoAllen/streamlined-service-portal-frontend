@@ -13,7 +13,7 @@ import RequestDetailsPortal from "../../components/UI/RequestDetailsPortal";
 import axios from "axios";
 import { Table, Tag, Modal, Button, Spin, Input } from "antd";
 
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined } from "@ant-design/icons";
 import RemarksModal from "../../components/UI/RemarksModal";
 import AddRemarkModal from "../../components/UI/AddRemarkModal";
 
@@ -102,7 +102,9 @@ const HomePage = () => {
     { field: "Date Requested", headerName: "Date Requested" },
     {
       headerName: "Actions",
-      flex: 1, minWidth: 300, maxWidth: 300,
+      flex: 1,
+      minWidth: 300,
+      maxWidth: 300,
       cellRenderer: (params) => {
         const [isHistoryOpen, setIsHistoryOpen] = useState(false);
         const [isViewOpen, setIsViewOpen] = useState(false);
@@ -116,43 +118,46 @@ const HomePage = () => {
           setSelectedRequest(params.data);
         };
 
-        return(
-        <div style={{ display: "flex", gap: "10px" }}>
-          <Dialog.Root>
-          <Dialog.Trigger asChild>
-          <Button type="primary" onClick={() => {
+        return (
+          <div style={{ display: "flex", gap: "10px" }}>
+            <Dialog.Root>
+              <Dialog.Trigger asChild>
+                <Button
+                  type="primary"
+                  onClick={() => {
                     setIsViewOpen(true);
                     setSelectedRequest(params.data);
-                  }}>
+                  }}
+                >
                   View
                 </Button>
-            </Dialog.Trigger>
-            <RequestDetailsPortal
-              request_id={params.data.RequestID}
-              onCancelRequest={handleCancelRequest}
-            />
-          </Dialog.Root>
+              </Dialog.Trigger>
+              <RequestDetailsPortal
+                request_id={params.data.RequestID}
+                onCancelRequest={handleCancelRequest}
+              />
+            </Dialog.Root>
 
-          <Button
-            onClick={openAddRemarkModal} // Open the Add Remark modal
-            className={classes.addRemarkBtn}
-          >
-            Add Remark
-          </Button>
+            <Button
+              onClick={openAddRemarkModal} // Open the Add Remark modal
+              className={classes.addRemarkBtn}
+            >
+              Add Remark
+            </Button>
 
-          {/* Add Remark Modal */}
-          {isAddRemarkOpen && (
-            <AddRemarkModal
-              isOpen={isAddRemarkOpen}
-              onClose={() => setIsAddRemarkOpen(false)}
-              requestId={params.data.RequestID}
-              userId = {user_id}
-              status={params.data.Status}
-            />
-          )}
+            {/* Add Remark Modal */}
+            {isAddRemarkOpen && (
+              <AddRemarkModal
+                isOpen={isAddRemarkOpen}
+                onClose={() => setIsAddRemarkOpen(false)}
+                requestId={params.data.RequestID}
+                userId={user_id}
+                status={params.data.Status}
+              />
+            )}
 
-          {/* History Button and Modal */}
-          <Button
+            {/* History Button and Modal */}
+            <Button
               onClick={() => {
                 setIsHistoryOpen(true);
                 setSelectedRequest(params.data);
@@ -162,20 +167,19 @@ const HomePage = () => {
             >
               History
             </Button>
-  
-            {isHistoryOpen && selectedRequest?.RequestID === params.data.RequestID && (
-              <RemarksModal
-                isOpen={isHistoryOpen}
-                onClose={() => {
-                  setIsHistoryOpen(false);
-                  setSelectedRequest(null);
-                }}
-                requestID={params.data.RequestID}
-              />
-            )}
-    
-  
-        </div>
+
+            {isHistoryOpen &&
+              selectedRequest?.RequestID === params.data.RequestID && (
+                <RemarksModal
+                  isOpen={isHistoryOpen}
+                  onClose={() => {
+                    setIsHistoryOpen(false);
+                    setSelectedRequest(null);
+                  }}
+                  requestID={params.data.RequestID}
+                />
+              )}
+          </div>
         );
       },
     },
@@ -253,23 +257,31 @@ const HomePage = () => {
                   </button>
                 ))}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Input
-                id="filter-text-box"
-                placeholder="Search request..."
-                prefix={<SearchOutlined />}
-                onChange={onFilterTextBoxChanged} // Ant Design's Input uses onChange instead of onInput
-                style={{ width: '100%' }} // Customize width as needed
-              />
-            </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Input
+                  id="filter-text-box"
+                  placeholder="Search request..."
+                  prefix={<SearchOutlined />}
+                  onChange={onFilterTextBoxChanged} // Ant Design's Input uses onChange instead of onInput
+                  style={{ width: "100%" }} // Customize width as needed
+                />
+              </div>
             </div>
             <div
               className={`${themeClass} ${classes.grid}`}
-              style={{ height: rowData && rowData.length > 0 ? '100%' : '500px',  // Set height to 100% if data exists, or 300px if no data
+              style={{
+                height: rowData && rowData.length > 0 ? "100%" : "500px", // Set height to 100% if data exists, or 300px if no data
                 width: "100%",
                 marginTop: "1rem",
                 zIndex: 0,
-                overflow: "auto",}}
+                overflow: "auto",
+              }}
             >
               {transformedRequests.length > 0 ? (
                 <AgGridReact
