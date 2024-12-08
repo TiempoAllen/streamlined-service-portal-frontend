@@ -413,8 +413,9 @@ const Approval = () => {
                   setIsAddRemarkOpen(false);
                   setSelectedRequest(null);
                 }}
-                requestId={selectedRowForRemarks}
+                requestId={params.data.request_id}
                 userId={user_id}
+                status={params.data.status}
               />
             )}
 
