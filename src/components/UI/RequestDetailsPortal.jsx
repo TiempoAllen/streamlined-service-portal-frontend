@@ -59,16 +59,22 @@ const RequestDetailsPortal = ({ request_id, onCancelRequest }) => {
     const attachmentUrl = `data:application/octet-stream;base64,${request.attachment}`;
     const isImage = request.attachment.startsWith("iVBOR"); // Checks if the Base64 string is a PNG (example: starts with "iVBOR" for PNG).
 
-    return isImage ? (
-      <img
-        src={attachmentUrl}
-        alt="Attachment"
-        style={{ maxWidth: "100%", maxHeight: "6rem" }}
-      />
-    ) : (
-      <a href={attachmentUrl} download={`attachment_${request_id}`}>
+    return (
+      isImage ? (
+        <img
+          src={attachmentUrl}
+          alt="Attachment"
+          style={{ maxWidth: "100%", maxHeight: "6rem" }}
+        />
+      ) : (
+        <a
+        href={attachmentUrl}
+        download="attachment"
+        style={{ textDecoration: "none", color: "blue" }}
+      >
         Download Attachment
       </a>
+      )
     );
   };
 
