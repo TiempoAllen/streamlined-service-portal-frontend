@@ -95,7 +95,6 @@ const HomePage = () => {
   };
 
   const [colDefs] = useState([
-    { field: "Request ID", headerName: "Request ID" },
     { field: "Request Type", headerName: "Request Type" },
     { field: "Description", headerName: "Description" },
     { field: "Location", headerName: "Location" },
@@ -214,7 +213,6 @@ const HomePage = () => {
           )
           .map((request) => {
             return {
-              "Request ID": request.request_id,
               "Request Type": request.request_technician,
               Description: request.description,
               Location: request.request_location,
