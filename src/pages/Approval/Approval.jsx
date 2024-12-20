@@ -381,6 +381,7 @@ const Approval = () => {
               </Dialog.Trigger>
               <RequestDialogPortal
                 request={params.data}
+                
                 technicians={technicians}
                 onApproveRequest={approveRequest}
                 onRequestDone={handleRequestDone}

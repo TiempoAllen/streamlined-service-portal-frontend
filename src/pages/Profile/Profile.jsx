@@ -16,19 +16,6 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 const Profile = () => {
   const profile = useRouteLoaderData("profile");
-    useEffect(() => { 
-        const fetchUserProfile = async () => {
-            try{
-                const response = await axios.get(`${API_URL}/user/${profile.user_id}`);
-                setProfile(response.data);
-                setIsLoading(false);
-            }catch(err){
-                setError("Failed to load Profile");
-                setIsLoading(false);
-            }
-        };
-        fetchUserProfile();
-    }, [profile.user_id]);
 
   const [showForm, setShowForm] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -40,28 +27,29 @@ const Profile = () => {
 
   useEffect(() => {
     console.log("Profile Data: ", profile);
-    fetchProfilePicture(); // Fetch the profile picture when the component loads
+    fetchProfilePicture();
   }, [profile]);
 
-  // Function to fetch the profile picture
-  const fetchProfilePicture = async () => {
-    try {
-      // Use the URL directly from the backend if it serves the image as a static resource
-      const response = await axios.get(`${API_URL}/user/${profile.user_id}/profile-picture`);
-      if (response.data) {
-        // Assuming the backend returns the file path (e.g., "uploads/profile_1.jpg")
-        const filePath = response.data; 
-        const imageUrl = `${API_URL}/${filePath}`; // Construct the URL for serving the image
-        setProfilePicture(imageUrl);
-      } else {
-        console.warn("No profile picture available. Using fallback.");
-        setProfilePicture(profileImg); // Use fallback
-      }
-    } catch (error) {
-      console.error("Error fetching profile picture:", error);
-      setProfilePicture(profileImg); // Use fallback
+const fetchProfilePicture = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/user/${profile.user_id}/profile-picture`, {
+      responseType: 'blob', 
+    });
+
+    if (response.data) {
+   
+      const imageUrl = URL.createObjectURL(response.data);
+      setProfilePicture(imageUrl); 
+    } else {
+      console.warn("No profile picture available. Using fallback.");
+      setProfilePicture(profileImg); 
     }
-  };
+  } catch (error) {
+    console.error("Error fetching profile picture:", error);
+    setProfilePicture(profileImg); 
+  }
+};
+
   
   
 
@@ -70,7 +58,7 @@ const Profile = () => {
     return <p>Loading profile...</p>;
   }
 
-  const censoredPassword = profile.password ? "*".repeat(profile.password.length) : "*******";
+  const censoredPassword = "***********";
 
   const handleEditPassword = () => {
     setShowForm(true);
@@ -124,11 +112,11 @@ const Profile = () => {
       );
   
       if (response.data) {
-        setSnackbarMessage(response.data); // Success message from the backend
+        setSnackbarMessage(response.data); 
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
   
-        // Refresh the profile picture after upload
+        
         fetchProfilePicture();
       }
     } catch (error) {
@@ -183,9 +171,9 @@ const Profile = () => {
           <div className={classes.uploadPicture} onClick={handleUpload}>
                 Upload Profile Picture
           </div>
-          <div className={classes.editPassword} onClick={handleEditPassword}>
+          {/* <div className={classes.editPassword} onClick={handleEditPassword}>
             Edit Password
-          </div>
+          </div> */}
         </div>
         <div className={classes.profileDetails}>
           <div className={classes.name}>

@@ -36,9 +36,9 @@ const RequestDetailsPortal = ({ request_id, onCancelRequest }) => {
       }
     } catch (error) {
       console.error(error);
+
     }
   };
-
   useEffect(() => {
     getRequestById();
   }, [request_id]);
