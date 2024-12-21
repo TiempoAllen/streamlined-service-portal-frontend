@@ -16,6 +16,8 @@ import { Table, Tag, Modal, Button, Spin, Input } from "antd";
 import { SearchOutlined } from '@ant-design/icons';
 import RemarksModal from "../../components/UI/RemarksModal";
 import AddRemarkModal from "../../components/UI/AddRemarkModal";
+import moment from "moment";
+
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
@@ -47,6 +49,11 @@ const HomePage = () => {
     )
   );
   const { user_id } = useParams();
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [isAddRemarkOpen, setIsAddRemarkOpen] = useState(false);
+  const [selectedRowForRemarks, setSelectedRowForRemarks] = useState(null);
 
   const handleCancelRequest = async (request_id) => {
     try {
@@ -94,130 +101,190 @@ const HomePage = () => {
     }
   };
 
-  const [colDefs] = useState([
-    { field: "Request Type", headerName: "Request Type" },
-    { field: "Description", headerName: "Description" },
-    { field: "Location", headerName: "Location" },
-    { field: "Status", headerName: "Status" },
-    { field: "Date Requested", headerName: "Date Requested" },
+  const getStatusColor = (status) => {
+    switch (status.toLowerCase()) {
+      case "approved":
+        return "green";
+      case "pending":
+        return "orange";
+      case "rejected":
+        return "red";
+      case "completed":
+      case "done":
+        return "blue";
+      case "in progress":
+        return "purple";
+      case "cancelled":
+        return "gray";
+      default:
+        return "gray";
+    }
+  };
+
+  const dateRanges = [
+    { text: "Today", value: "today" },
+    { text: "This Week", value: "week" },
+    { text: "This Month", value: "month" },
+    { text: "This Year", value: "year" },
+  ];
+
+  const columns = [
     {
-      headerName: "Actions",
-      flex: 1, minWidth: 300, maxWidth: 300,
-      cellRenderer: (params) => {
-        const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-        const [isViewOpen, setIsViewOpen] = useState(false);
-        const [selectedRequest, setSelectedRequest] = useState(null);
-        const [isAddRemarkOpen, setIsAddRemarkOpen] = useState(false);
-        const [selectedRowForRemarks, setSelectedRowForRemarks] =
-          useState(null);
-
-        const openAddRemarkModal = () => {
-          setIsAddRemarkOpen(true);
-          setSelectedRequest(params.data);
-        };
-
+      title: "Request ID",
+      dataIndex: "RequestID",
+      key: "RequestID",
+    },
+    {
+      title: "Request Type",
+      dataIndex: "RequestType",
+      key: "RequestType",
+      filters: [
+        { text: "Building Maintenance", value: "Building Maintenance" },
+        { text: "General Services", value: "General Services" },
+        { text: "Electrical Maintenance", value: "Electrical Maintenance" },
+      ],
+      onFilter: (value, record) => {
+        return record.RequestType?.toLowerCase() === value.toLowerCase();
+      },
+    },
+    {
+      title: "Description",
+      dataIndex: "Description",
+      key: "Description",
+    },
+    {
+      title: "Location",
+      dataIndex: "Location",
+      key: "Location",
+    },
+    {
+      title: "Status",
+      dataIndex: "Status",
+      key: "Status",
+      filters: [
+          { text: "Pending", value: "Pending" },
+          { text: "Approved", value: "Approved" },
+          { text: "In Progress", value: "In Progress" },
+          { text: "Completed", value: "Completed" },
+          { text: "Rejected", value: "Rejected" },
+      ],
+        onFilter: (value, record) => {
+          if (value === "Rejected") {
+            return (
+              record.Status === "Denied" ||
+              record.Status === "Cancelled" ||
+              record.Status === "Rejected"
+            );
+            }
+              return record.Status === value;
+            },
+        render: (status) => (
+          <Tag color={getStatusColor(status)}>
+            {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
+          </Tag>
+        ),
+    },
+    {
+      title: "Date Requested",
+      dataIndex: "DateRequested",
+      key: "DateRequested",
+      filters: dateRanges,
+      onFilter: (value, record) => {
+        const date = moment(record.DateRequested); // Assuming DateRequested is in a valid date format
+        switch (value) {
+          case "today":
+            return date.isSame(moment(), "day");
+          case "week":
+            return date.isSame(moment(), "week");
+          case "month":
+            return date.isSame(moment(), "month");
+          case "year":
+            return date.isSame(moment(), "year");
+          default:
+            return true;
+        }
+      },
+      render: (date) => moment(date).format("MM/DD/YYYY, hh:mm A"), // Format date for display
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => {
         return(
         <div style={{ display: "flex", gap: "10px" }}>
           <Dialog.Root>
           <Dialog.Trigger asChild>
           <Button type="primary" onClick={() => {
                     setIsViewOpen(true);
-                    setSelectedRequest(params.data);
+                    setSelectedRequest(record);
                   }}>
                   View
                 </Button>
             </Dialog.Trigger>
             <RequestDetailsPortal
-              request_id={params.data.RequestID}
+              request_id={record.RequestID}
               onCancelRequest={handleCancelRequest}
             />
           </Dialog.Root>
 
           <Button
-            onClick={openAddRemarkModal} // Open the Add Remark modal
+             onClick={() => {
+              setIsAddRemarkOpen(true);
+              setSelectedRequest(record);
+            }}
             className={classes.addRemarkBtn}
           >
             Add Remark
           </Button>
 
-          {/* Add Remark Modal */}
-          {isAddRemarkOpen && (
-            <AddRemarkModal
-              isOpen={isAddRemarkOpen}
-              onClose={() => setIsAddRemarkOpen(false)}
-              requestId={params.data.RequestID}
-              userId = {user_id}
-              status={params.data.Status}
-            />
-          )}
-
           {/* History Button and Modal */}
           <Button
               onClick={() => {
                 setIsHistoryOpen(true);
-                setSelectedRequest(params.data);
-                markRequestAsOpened(params.data.RequestID);
+                setSelectedRequest(record);
+                markRequestAsOpened(record.RequestID);
               }}
               className={classes.historyButton}
             >
               History
             </Button>
-  
-            {isHistoryOpen && selectedRequest?.RequestID === params.data.RequestID && (
-              <RemarksModal
-                isOpen={isHistoryOpen}
-                onClose={() => {
-                  setIsHistoryOpen(false);
-                  setSelectedRequest(null);
-                }}
-                requestID={params.data.RequestID}
-              />
-            )}
-    
-  
         </div>
         );
       },
     },
-  ]);
+  ];
 
   const handleTabClick = (status) => {
     setActiveTab(status);
+    setFilter(status);  // Set filter to the selected tab
     if (status === "all") {
       setRowData(requests);
     } else {
       setRowData(requests.filter((request) => request.status === status));
     }
   };
+  
 
   const onFilterTextBoxChanged = (event) => {
     setSearchTerm(event.target.value.toLowerCase());
   };
 
-  const transformedRequests =
-    !isAdmin && Array.isArray(rowData)
-      ? rowData
-          .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
-          .filter(
-            (request) => activeTab === "all" || request.status === activeTab
-          )
-          .filter(
-            (request) =>
-              request.description.toLowerCase().includes(searchTerm) ||
-              (request.request_technician &&
-                request.request_technician.toLowerCase().includes(searchTerm))
-          )
-          .map((request) => {
-            return {
-              RequestID: request.request_id,
-              "Request Type": request.request_technician,
-              Description: request.description,
-              Location: request.request_location,
-              Status: request.status,
-              "Date Requested": formatDateTime(request.datetime),
-            };
-          })
-      : [];
+  const transformedRequests = requests
+    .filter((request) =>
+      filter === "all" ? true : request.status === filter
+    )
+    .filter((request) =>
+      request.description.toLowerCase().includes(searchTerm)
+    )
+    .map((request) => ({
+      key: request.request_id,
+      RequestID: request.request_id,
+      RequestType: request.request_technician,
+      Description: request.description,
+      Location: request.request_location,
+      Status: request.status,
+      DateRequested: formatDateTime(request.datetime),
+    }));
 
   const statuses = {
     all: "All",
@@ -258,8 +325,8 @@ const HomePage = () => {
                 id="filter-text-box"
                 placeholder="Search request..."
                 prefix={<SearchOutlined />}
-                onChange={onFilterTextBoxChanged} // Ant Design's Input uses onChange instead of onInput
-                style={{ width: '100%' }} // Customize width as needed
+                onChange={onFilterTextBoxChanged}
+                style={{ width: '100%' }}
               />
             </div>
             </div>
@@ -271,26 +338,39 @@ const HomePage = () => {
                 zIndex: 0,
                 overflow: "auto",}}
             >
-              {transformedRequests.length > 0 ? (
-                <AgGridReact
-                  detailRowAutoHeight
-                  rowHeight={80}
-                  rowData={transformedRequests}
-                  columnDefs={colDefs}
-                  defaultColDef={{ flex: 1, minWidth: 150 }}
-                  pagination={true}
-                  paginationPageSize={10}
-                />
-              ) : (
-                <p style={{ width: "100%", textAlign: "center" }}>
-                  No requests found.
-                </p>
-              )}
+            <Table
+              dataSource={transformedRequests}
+              columns={columns}
+              pagination={{ pageSize: 10 }}
+              style={{ marginTop: "1rem", backgroundColor: "white", borderRadius: "6px" }}
+            />
             </div>
           </div>
         )}
       </div>
       <ToastContainer />
+
+       {/* Add Remark Modal */}
+       {isAddRemarkOpen && (
+            <AddRemarkModal
+              isOpen={isAddRemarkOpen}
+              onClose={() => setIsAddRemarkOpen(false)}
+              requestId={selectedRequest.RequestID}
+              userId = {user_id}
+              status={selectedRequest.Status}
+            />
+          )}
+
+        {isHistoryOpen && selectedRequest && (
+          <RemarksModal
+            isOpen={isHistoryOpen}
+            onClose={() => {
+            setIsHistoryOpen(false);
+            setSelectedRequest(null);
+                }}
+            requestID={selectedRequest.RequestID}
+            />
+          )}
     </section>
   );
 };

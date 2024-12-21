@@ -1,64 +1,150 @@
 import React, { useState, useEffect } from "react";
-import { Spin } from "antd"; // Import Ant Design Spin component
+import { Spin, Table, Button, Tooltip, Tag } from "antd";
 import classes from "./Record.module.css";
 import SelectArea from "../../components/UI/SelectArea";
 import { formatDateTime, loadRequestsAndTechnicians } from "../../util/auth";
-import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import { useLoaderData, useParams } from "react-router-dom";
+import moment from "moment";
+
+
+const getStatusColor = (status) => {
+  switch (status.toLowerCase()) {
+    case "approved":
+      return "green";
+    case "pending":
+      return "orange";
+    case "rejected":
+      return "red";
+    case "completed":
+    case "done":
+      return "blue";
+    case "in progress":
+      return "purple";
+    case "cancelled":
+      return "gray";
+    default:
+      return "gray";
+  }
+};
 
 const Record = () => {
-  const { requests, technicians } = useLoaderData();
+  const { requests } = useLoaderData();
   const { user_id } = useParams();
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
-  const [loading, setLoading] = useState(true); // Loading state
+  const truncateText = (text, maxLength = 30) => {
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+  };
 
-  const [colDefs] = useState([
-    { field: "RequestID", flex: 1 },
-    { field: "Requestor", flex: 1 },
+  const columns = [
     {
-      field: "Request Type",
-      flex: 1,
-      filter: "agTextColumnFilter",
+      title: "Request ID",
+      dataIndex: "RequestID",
+      key: "RequestID",
+      width: "15%",
     },
     {
-      field: "Date Requested",
-      flex: 1,
-      filter: "agDateColumnFilter",
-      filterParams: {
-        comparator: (filterDate, cellValue) => {
-          const cellDate = new Date(cellValue);
-          if (cellDate < filterDate) return -1;
-          if (cellDate > filterDate) return 1;
-          return 0;
-        },
-        browserDatePicker: true,
+      title: "Requestor",
+      dataIndex: "Requestor",
+      key: "Requestor",
+      width: "20%",
+    },
+    {
+      title: "Request Type",
+      dataIndex: "RequestType",
+      key: "RequestType",
+      width: "15%",
+      filters: [
+        { text: "Building Maintenance", value: "Building Maintenance" },
+        { text: "General Services", value: "General Services" },
+        { text: "Electrical Maintenance", value: "Electrical Maintenance" },
+      ],
+      onFilter: (value, record) => {
+        return record.RequestType.toLowerCase() === value.toLowerCase();
       },
     },
-    { field: "Location", flex: 1 },
     {
-      field: "Status",
-      flex: 1,
-      filter: "agSetColumnFilter",
-      filterParams: {
-        values: (params) => {
-          const uniqueValues = Array.from(
-            new Set(params.api.getRowModel().rowsToDisplay.map((row) => row.data.Status))
+      title: "Date Requested",
+      dataIndex: "DateRequested",
+      key: "DateRequested",
+      width: "20%",
+      filters: [
+        { text: "Today", value: "today" },
+        { text: "This Week", value: "week" },
+        { text: "This Month", value: "month" },
+        { text: "This Year", value: "year" },
+      ],
+      onFilter: (value, record) => {
+        const date = moment(record.DateRequested, "MM/DD/YYYY, hh:mm A");
+        const today = moment().startOf("day");
+    
+        switch (value) {
+          case "today":
+            return date.isSame(today, "day");
+          case "week":
+            return date.isSame(today, "week");
+          case "month": 
+            return date.isSame(today, "month");
+          case "year":
+            return date.isSame(today, "year");
+          default:
+            return false;
+        }
+      },
+    },
+    {
+      title: "Location",
+      dataIndex: "Location",
+      key: "Location",
+      width: "15%",
+    },
+    {
+      title: "Status",
+      dataIndex: "Status",
+      key: "Status",
+      width: "10%",
+      filters: [
+        { text: "Pending", value: "Pending" },
+        { text: "Approved", value: "Approved" },
+        { text: "In Progress", value: "In Progress" },
+        { text: "Completed", value: "Completed" },
+        { text: "Rejected", value: "Rejected" },
+      ],
+      onFilter: (value, record) => {
+        if (value === "Rejected") {
+          return (
+            record.Status === "Denied" ||
+            record.Status === "Cancelled" ||
+            record.Status === "Rejected"
           );
-          params.success(uniqueValues);
-        },
+        }
+        return record.Status === value;
       },
+      render: (status) => (
+        <Tag color={getStatusColor(status)}>
+          {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
+        </Tag>
+      ),
     },
-    { field: "Attachment", flex: 1 },
-  ]);
+    {
+      title: "Attachment",
+      dataIndex: "Attachment",
+      key: "Attachment",
+      width: "15%",
+      render: (text) => (
+        <Tooltip title={text}>
+          {truncateText(text)}
+        </Tooltip>
+      ),
+    },
+  ];
 
   const transformedRequests = requests.map((request) => ({
+    key: request.request_id,
     RequestID: request.request_id,
     Requestor: `${request.user_firstname} ${request.user_lastname}`,
-    "Request Type": request.request_technician,
-    "Date Requested": formatDateTime(request.datetime),
+    RequestType: request.request_technician,
+    DateRequested: formatDateTime(request.datetime),
     Location: request.request_location,
     Status: request.status.toString(),
     Attachment:
@@ -67,39 +153,21 @@ const Record = () => {
         : "No Attachment",
   }));
 
-  useEffect(() => {
-    // Simulate data loading delay
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer); // Cleanup timer on component unmount
-  }, []);
-
-  let gridApi;
-
-  const onGridReady = (params) => {
-    gridApi = params.api;
-  };
-
   const exportToCSV = () => {
-    const filteredRows = [];
-    gridApi.forEachNodeAfterFilter((node) => {
-      filteredRows.push(node.data);
-    });
-
-    if (filteredRows.length === 0) {
+    if (!transformedRequests.length) {
       alert("No data to export!");
       return;
     }
 
-    const headers = Object.keys(filteredRows[0]);
+    const headers = Object.keys(transformedRequests[0]);
     const csvRows = [
       headers.join(","),
-      ...filteredRows.map((row) =>
+      ...transformedRequests.map((row) =>
         headers.map((header) => `"${row[header] || ""}"`).join(",")
       ),
     ];
 
     const csvContent = csvRows.join("\n");
-
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -110,16 +178,21 @@ const Record = () => {
     document.body.removeChild(link);
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <section className={classes.record}>
-      {loading ? ( // Display loader over the entire section
+      {loading ? (
         <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
         >
           <Spin size="large" />
         </div>
@@ -127,27 +200,16 @@ const Record = () => {
         <>
           <div className={classes.recordHeader}>
             <SelectArea header="Records" isRecords={true} />
-            <button onClick={exportToCSV}>Export</button>
+            <Button type="primary" onClick={exportToCSV}>
+              Export
+            </Button>
           </div>
-          <div
-            className="ag-theme-quartz"
-            style={{
-              height: "100%",
-              width: "100%",
-              marginTop: "1rem",
-              minHeight: "50vh",
-            }}
-          >
-            <AgGridReact
-              rowData={transformedRequests}
-              columnDefs={colDefs}
-              rowHeight={80}
-              domLayout="autoHeight"
-              pagination={true}
-              paginationPageSize={10}
-              onGridReady={onGridReady}
-            />
-          </div>
+          <Table
+            columns={columns}
+            dataSource={transformedRequests}
+            pagination={{ pageSize: 10 }}
+            style={{ marginTop: "1rem", minHeight: "50vh", minWidth: "166vh", backgroundColor: "white", borderRadius: "6px" }}
+          />
         </>
       )}
     </section>
