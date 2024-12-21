@@ -95,6 +95,7 @@ const HomePage = () => {
   };
 
   const [colDefs] = useState([
+    { field: "RequestID", headerName: "RequestID" },
     { field: "Request Type", headerName: "Request Type" },
     { field: "Description", headerName: "Description" },
     { field: "Location", headerName: "Location" },

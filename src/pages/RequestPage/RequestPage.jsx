@@ -48,7 +48,7 @@ const RequestPage = () => {
   useEffect(() => {
     if (actionData) {
       if (actionData.status === "success") {
-        toast.success("Request submitted successfully!");
+        toast.success("Request submitted successfully. Please wait for approval.");
         formRef.current.reset(); 
         setFile(null); 
         fileInputRef.current.value = ""; 
