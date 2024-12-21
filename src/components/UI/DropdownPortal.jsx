@@ -3,6 +3,7 @@ import classes from "./DropdownPortal.module.css";
 import "./DropdownPortal.module.css";
 import logoutIcon from "../../assets/logout.svg";
 import myProfileIcon from "../../assets/MyProfile.svg";
+import { json, redirect, useRouteLoaderData } from "react-router-dom";
 import historyIcon from "../../assets/History.svg";
 import profileImg from "../../assets/profile-image.svg"; // Default fallback image
 
@@ -11,10 +12,11 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080"; // Replace with your actual API URL
 
-const DropdownPortal = ({ profile }) => {
+const DropdownPortal = ({  }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [profilePicture, setProfilePicture] = useState(profileImg); // Default to fallback image
   const dropdownRef = useRef(null);
+  const profile = useRouteLoaderData("profile");
 
   const handleShowProfile = () => {
     setShowProfile(!showProfile);
@@ -68,7 +70,7 @@ const DropdownPortal = ({ profile }) => {
         <div className={classes.dropdownMenu}>
           <NavLink to="profile" className={classes.dropdownItem}>
             <button type="myprofile" className={classes.myProfileButton}>
-              <img src={myProfileIcon} alt="myprofile" />
+              <img src={myProfileIcon} alt="myprofile"/>
               My Profile
             </button>
           </NavLink>
