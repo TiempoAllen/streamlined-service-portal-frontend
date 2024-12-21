@@ -64,22 +64,43 @@
 }
 
 
-.profileImage{
-  max-width: 50px;
-  max-height: 50px;
+.profileImage {
   border-radius: 50%; 
-  object-fit: cover; 
-  padding: 5px;
-  border-radius: 50%;
-  height: 50px;
-  width: 50px;
+  height: 100%;
+  width: 100%; 
   object-fit: cover;
+  object-position: center; 
+  align-items: center;
+  justify-content: center;
 }
 
-.profileImage:hover{
+.profileImgWrapper {
+  position: relative;
   display: flex;
-  cursor: pointer;
+  width: 30px; 
+  height: 30px;
+  border-radius: 50%; 
+  overflow: hidden; 
+  align-items: center;
+  justify-content: center;
+}
+
+.profileImgWrapper::before {
+  content: ''; 
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1); 
+  width: 50px; 
+  height: 50px; 
   background-color: rgba(240, 149, 59, 0.29);
-  border-radius: 50%;
-  padding: 5px;
+  border-radius: 50%; 
+  opacity: 0; 
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1; 
+}
+
+.profileImgWrapper:hover::before {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1); 
 }

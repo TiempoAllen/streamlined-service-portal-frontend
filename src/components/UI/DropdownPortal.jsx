@@ -74,7 +74,9 @@ const DropdownPortal = ({  }) => {
   return (
     <div className={classes.dropdown} ref={dropdownRef}>
       <button onClick={handleShowProfile} className={classes.profileTrigger}>
+        <div className={classes.profileImgWrapper}>
         <img src={profilePicture} alt="profile" className={classes.profileImage} />
+        </div>
       </button>
       {showProfile && (
         <div className={classes.dropdownMenu}>
