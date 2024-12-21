@@ -101,73 +101,6 @@ const HomePage = () => {
     }
   };
 
-<<<<<<< HEAD
-  const [colDefs] = useState([
-    { field: "RequestID", headerName: "RequestID" },
-    { field: "Request Type", headerName: "Request Type" },
-    { field: "Description", headerName: "Description" },
-    { field: "Location", headerName: "Location" },
-    { field: "Status", headerName: "Status" },
-    { field: "Date Requested", headerName: "Date Requested" },
-    {
-      headerName: "Actions",
-      flex: 1,
-      minWidth: 300,
-      maxWidth: 300,
-      cellRenderer: (params) => {
-        const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-        const [isViewOpen, setIsViewOpen] = useState(false);
-        const [selectedRequest, setSelectedRequest] = useState(null);
-        const [isAddRemarkOpen, setIsAddRemarkOpen] = useState(false);
-        const [selectedRowForRemarks, setSelectedRowForRemarks] =
-          useState(null);
-
-        const openAddRemarkModal = () => {
-          setIsAddRemarkOpen(true);
-          setSelectedRequest(params.data);
-        };
-
-        return (
-          <div style={{ display: "flex", gap: "10px" }}>
-            <Dialog.Root>
-              <Dialog.Trigger asChild>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    setIsViewOpen(true);
-                    setSelectedRequest(params.data);
-                  }}
-                >
-                  View
-                </Button>
-              </Dialog.Trigger>
-              <RequestDetailsPortal
-                request_id={params.data.RequestID}
-                onCancelRequest={handleCancelRequest}
-              />
-            </Dialog.Root>
-
-            <Button
-              onClick={openAddRemarkModal} // Open the Add Remark modal
-              className={classes.addRemarkBtn}
-            >
-              Add Remark
-            </Button>
-
-            {/* Add Remark Modal */}
-            {isAddRemarkOpen && (
-              <AddRemarkModal
-                isOpen={isAddRemarkOpen}
-                onClose={() => setIsAddRemarkOpen(false)}
-                requestId={params.data.RequestID}
-                userId={user_id}
-                status={params.data.Status}
-              />
-            )}
-
-            {/* History Button and Modal */}
-            <Button
-=======
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case "approved":
@@ -306,7 +239,6 @@ const HomePage = () => {
 
           {/* History Button and Modal */}
           <Button
->>>>>>> Justine
               onClick={() => {
                 setIsHistoryOpen(true);
                 setSelectedRequest(record);
@@ -316,23 +248,7 @@ const HomePage = () => {
             >
               History
             </Button>
-<<<<<<< HEAD
-
-            {isHistoryOpen &&
-              selectedRequest?.RequestID === params.data.RequestID && (
-                <RemarksModal
-                  isOpen={isHistoryOpen}
-                  onClose={() => {
-                    setIsHistoryOpen(false);
-                    setSelectedRequest(null);
-                  }}
-                  requestID={params.data.RequestID}
-                />
-              )}
-          </div>
-=======
         </div>
->>>>>>> Justine
         );
       },
     },
@@ -353,32 +269,6 @@ const HomePage = () => {
     setSearchTerm(event.target.value.toLowerCase());
   };
 
-<<<<<<< HEAD
-  const transformedRequests =
-    !isAdmin && Array.isArray(rowData)
-      ? rowData
-          .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
-          .filter(
-            (request) => activeTab === "all" || request.status === activeTab
-          )
-          .filter(
-            (request) =>
-              request.description.toLowerCase().includes(searchTerm) ||
-              (request.request_technician &&
-                request.request_technician.toLowerCase().includes(searchTerm))
-          )
-          .map((request) => {
-            return {
-              "RequestID": request.request_id,
-              "Request Type": request.request_technician,
-              Description: request.description,
-              Location: request.request_location,
-              Status: request.status,
-              "Date Requested": formatDateTime(request.datetime),
-            };
-          })
-      : [];
-=======
   const transformedRequests = requests
     .filter((request) =>
       filter === "all" ? true : request.status === filter
@@ -395,7 +285,6 @@ const HomePage = () => {
       Status: request.status,
       DateRequested: formatDateTime(request.datetime),
     }));
->>>>>>> Justine
 
   const statuses = {
     all: "All",
@@ -431,23 +320,6 @@ const HomePage = () => {
                   </button>
                 ))}
               </div>
-<<<<<<< HEAD
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Input
-                  id="filter-text-box"
-                  placeholder="Search request..."
-                  prefix={<SearchOutlined />}
-                  onChange={onFilterTextBoxChanged} // Ant Design's Input uses onChange instead of onInput
-                  style={{ width: "100%" }} // Customize width as needed
-                />
-              </div>
-=======
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Input
                 id="filter-text-box"
@@ -457,7 +329,6 @@ const HomePage = () => {
                 style={{ width: '100%' }}
               />
             </div>
->>>>>>> Justine
             </div>
             <div
               className={`${themeClass} ${classes.grid}`}

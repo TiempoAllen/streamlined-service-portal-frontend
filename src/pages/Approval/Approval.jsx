@@ -315,16 +315,6 @@ const Approval = () => {
   
 
   const columns = [
-<<<<<<< HEAD
-    {
-      headerName: "Request ID",
-      field: "request_id",
-      minWidth: 120,
-      maxWidth: 120,
-      flex: 1,
-    },
-=======
->>>>>>> Justine
     {
       title: "Request ID",
       dataIndex: "request_id",
@@ -354,51 +344,6 @@ const Approval = () => {
       dataIndex: "description",
       key: "description",
     },
-<<<<<<< HEAD
-    { headerName: "Status", field: "status", flex: 1 },
-    {
-      headerName: "Actions",
-      flex: 1,
-      minWidth: 300,
-      maxWidth: 300,
-      cellRenderer: (params) => {
-        const [isViewOpen, setIsViewOpen] = useState(false);
-        const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-        const [isAddRemarkOpen, setIsAddRemarkOpen] = useState(false);
-        const [selectedRequest, setSelectedRequest] = useState(null);
-
-        return (
-          <div style={{ display: "flex", gap: "10px" }}>
-            {/* View Button */}
-            <Dialog.Root
-              open={
-                isViewOpen &&
-                selectedRequest?.request_id === params.data.request_id
-              }
-              onOpenChange={(open) => {
-                setIsViewOpen(open);
-                if (open) {
-                  setSelectedRequest(params.data);
-                } else {
-                  setSelectedRequest(null);
-                }
-              }}
-            >
-              <Dialog.Trigger asChild>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    setIsViewOpen(true);
-                    setSelectedRequest(params.data);
-                  }}
-                >
-                  View
-                </Button>
-              </Dialog.Trigger>
-              <RequestDialogPortal
-                request={params.data}
-                
-=======
     {
       title: "Date/Time",
       dataIndex: "datetime",
@@ -482,7 +427,6 @@ const Approval = () => {
             {isViewOpen && selectedRequest && (
               <RequestDialogPortal
                 request={selectedRequest}
->>>>>>> Justine
                 technicians={technicians}
                 onApproveRequest={approveRequest}
                 onRequestDone={handleRequestDone}
@@ -494,61 +438,6 @@ const Approval = () => {
                   setSelectedRequest(null);
                 }}
               />
-<<<<<<< HEAD
-            </Dialog.Root>
-
-            {/* Add Remark Button */}
-            <Button
-              onClick={() => {
-                setIsAddRemarkOpen(true);
-                setSelectedRequest(params.data);
-              }}
-              className={classes.addRemarkBtn}
-            >
-              Add Remark
-            </Button>
-
-            {/* Add Remark Modal */}
-            {isAddRemarkOpen && (
-              <AddRemarkModal
-                isOpen={isAddRemarkOpen}
-                onClose={() => {
-                  setIsAddRemarkOpen(false);
-                  setSelectedRequest(null);
-                }}
-                requestId={params.data.request_id}
-                userId={user_id}
-                status={params.data.status}
-              />
-            )}
-
-            {/* History Button and Modal */}
-            <Button
-              onClick={() => {
-                setIsHistoryOpen(true);
-                setSelectedRequest(params.data);
-                markRequestAsOpened(params.data.request_id);
-              }}
-              className={classes.historyButton}
-            >
-              History
-            </Button>
-
-            {isHistoryOpen &&
-              selectedRequest?.request_id === params.data.request_id && (
-                <RemarksModal
-                  isOpen={isHistoryOpen}
-                  onClose={() => {
-                    setIsHistoryOpen(false);
-                    setSelectedRequest(null);
-                  }}
-                  requestID={params.data.request_id}
-                />
-              )}
-          </div>
-        );
-      },
-=======
             )}
           </Dialog.Root>
 
@@ -574,7 +463,6 @@ const Approval = () => {
           </Button>
         </div>
       ),
->>>>>>> Justine
     },
   ];
 

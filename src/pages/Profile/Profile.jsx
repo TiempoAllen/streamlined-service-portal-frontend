@@ -26,26 +26,6 @@ const Profile = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   useEffect(() => {
-<<<<<<< HEAD
-    console.log("Profile Data: ", profile);
-    fetchProfilePicture();
-  }, [profile]);
-
-const fetchProfilePicture = async () => {
-  try {
-    const response = await axios.get(`${API_URL}/user/${profile.user_id}/profile-picture`, {
-      responseType: 'blob', 
-    });
-
-    if (response.data) {
-   
-      const imageUrl = URL.createObjectURL(response.data);
-      setProfilePicture(imageUrl); 
-    } else {
-      console.warn("No profile picture available. Using fallback.");
-      setProfilePicture(profileImg); 
-    }
-=======
     if (profile?.user_id) {
       fetchProfilePicture();
     }
@@ -65,7 +45,6 @@ const fetchProfilePicture = async () => {
       console.warn("No profile picture available. Using fallback.");
       setProfilePicture(profileImg); 
     }
->>>>>>> Justine
   } catch (error) {
     console.error("Error fetching profile picture:", error);
     setProfilePicture(profileImg); 
