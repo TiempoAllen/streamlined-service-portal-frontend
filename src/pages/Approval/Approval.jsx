@@ -7,7 +7,7 @@ import React, { useState, useEffect } from "react";
 import { useLoaderData, useParams } from "react-router-dom";
 import RequestDialogPortal from "../../components/UI/RequestDialogPortal";
 import { ToastContainer, toast } from "react-toastify";
-import { Spin, Button, notification } from "antd";
+import { Spin, Button, notification, Table, Tooltip  } from "antd";
 import "react-toastify/dist/ReactToastify.css";
 import "antd/dist/reset.css"; // Import Ant Design CSS reset
 import { LoadingOutlined } from "@ant-design/icons"; // For custom loading icon
@@ -16,6 +16,8 @@ import classes from "./Approval.module.css";
 import SelectArea from "../../components/UI/SelectArea";
 import RemarksModal from "../../components/UI/RemarksModal.jsx";
 import AddRemarkModal from "../../components/UI/AddRemarkModal.jsx";
+import moment from "moment";
+
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
@@ -40,9 +42,12 @@ const Approval = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [rowData, setRowData] = useState([]);
   const [isRemarksModalOpen, setIsRemarksModalOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState(null);
   const [selectedRowForRemarks, setSelectedRowForRemarks] = useState(null);
   const { user_id } = useParams();
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [isAddRemarkOpen, setIsAddRemarkOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
 
   useEffect(() => {
     if (initialRequests.length === 0) {
@@ -307,7 +312,10 @@ const Approval = () => {
     }
   };
 
+  
+
   const columns = [
+<<<<<<< HEAD
     {
       headerName: "Request ID",
       field: "request_id",
@@ -315,30 +323,38 @@ const Approval = () => {
       maxWidth: 120,
       flex: 1,
     },
+=======
+>>>>>>> Justine
     {
-      headerName: "User",
-      field: "user_firstname",
-      cellRenderer: (params) =>
-        `${params.data.user_firstname} ${params.data.user_lastname}`,
-      flex: 1,
+      title: "Request ID",
+      dataIndex: "request_id",
+      key: "request_id",
     },
     {
-      headerName: "Request Type",
-      field: "request_technician",
-      flex: 1,
-      filter: "agSetColumnFilter", // Enable set-based filtering
-      filterParams: {
-        values: ["Building Maintenance", "Electrical", "Plumbing"], // Provide possible filter values
-        suppressMiniFilter: false, // Enable typing search
+      title: "Requestor",
+      key: "user",
+      render: (_, record) =>
+        `${record.user_firstname} ${record.user_lastname}`,
+    },
+    {
+      title: "Request Type",
+      dataIndex: "request_technician",
+      key: "request_technician",
+      filters: [
+        { text: "Building Maintenance", value: "Building Maintenance" },
+        { text: "General Services", value: "General Services" },
+        { text: "Electrical Maintenance", value: "Electrical Maintenance" },
+      ],
+      onFilter: (value, record) => {
+        return record.request_technician?.toLowerCase() === value.toLowerCase();
       },
     },
-    { headerName: "Description", field: "description", flex: 1 },
     {
-      headerName: "Date/Time",
-      field: "datetime",
-      flex: 1,
-      valueFormatter: (params) => new Date(params.value).toLocaleString(),
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
     },
+<<<<<<< HEAD
     { headerName: "Status", field: "status", flex: 1 },
     {
       headerName: "Actions",
@@ -382,6 +398,91 @@ const Approval = () => {
               <RequestDialogPortal
                 request={params.data}
                 
+=======
+    {
+      title: "Date/Time",
+      dataIndex: "datetime",
+      key: "datetime",
+      render: (text) => {
+        const date = new Date(text);
+        return date.toLocaleString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true, // Optional: use `false` for 24-hour format
+        });
+      },
+      filters: [
+        { text: "Today", value: "today" },
+        { text: "This Week", value: "week" },
+        { text: "This Month", value: "month" },
+        { text: "This Year", value: "year" },
+      ],
+      onFilter: (value, record) => {
+        const date = moment(record.datetime); // Adjust based on your data field
+        const today = moment().startOf("day");
+    
+        switch (value) {
+          case "today":
+            return date.isSame(today, "day");
+          case "week":
+            return date.isSame(today, "week");
+          case "month":
+            return date.isSame(today, "month");
+          case "year":
+            return date.isSame(today, "year");
+          default:
+            return false;
+        }
+      },
+    },
+    {
+    title: "Location",
+    dataIndex: "request_location",
+    key: "request_location",
+    },
+    {
+      title: "Attachment",
+      dataIndex: "attachment",
+      key: "attachment",
+      render: (text) => {
+        if (!text) return "No Attachment";
+        const maxLength = 20;
+        const truncatedText =
+          text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+        return (
+          <Tooltip title={text}>
+            <span>{truncatedText}</span>
+          </Tooltip>
+        );
+      },
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <div style={{ display: "flex", gap: "10px" }}>
+          {/* View Button */}
+          <Dialog.Root>
+          <Dialog.Trigger asChild>
+          <Button
+            type="primary"
+            onClick={() => {
+              setIsViewOpen(true);
+              setSelectedRequest(record);
+            }}
+          >
+            View
+          </Button>
+          </Dialog.Trigger>
+
+           {/* View Modal */}
+            {isViewOpen && selectedRequest && (
+              <RequestDialogPortal
+                request={selectedRequest}
+>>>>>>> Justine
                 technicians={technicians}
                 onApproveRequest={approveRequest}
                 onRequestDone={handleRequestDone}
@@ -393,6 +494,7 @@ const Approval = () => {
                   setSelectedRequest(null);
                 }}
               />
+<<<<<<< HEAD
             </Dialog.Root>
 
             {/* Add Remark Button */}
@@ -446,8 +548,36 @@ const Approval = () => {
           </div>
         );
       },
+=======
+            )}
+          </Dialog.Root>
+
+          {/* Add Remark Button */}
+          <Button
+            onClick={() => {
+              setIsAddRemarkOpen(true);
+              setSelectedRequest(record);
+            }}
+          >
+            Add Remark
+          </Button>
+
+          {/* History Button */}
+          <Button
+            onClick={() => {
+              setIsHistoryOpen(true);
+              setSelectedRequest(record);
+              markRequestAsOpened(record.request_id);
+            }}
+          >
+            History
+          </Button>
+        </div>
+      ),
+>>>>>>> Justine
     },
   ];
+
 
   const handleTabClick = (status) => {
     setActiveTab(status);
@@ -511,22 +641,39 @@ const Approval = () => {
           overflow: "auto",
         }}
       >
-        <AgGridReact
-          rowData={rowData} // Data for the grid rows
-          columnDefs={columns} // Column definitions
-          domLayout="auto" // Automatically adjust height
-          pagination={true} // Enable pagination
-          paginationPageSize={10} // Number of rows per page
-          rowHeight={80} // Height of each row
-          overlayNoRowsTemplate="No data"
+        <Table
+          dataSource={rowData}
+          columns={columns}
+          rowKey="request_id"
+          pagination={{ pageSize: 10 }}
+          style={{ backgroundColor: "white", borderRadius: "6px" }}
         />
       </div>
+     
 
-      {/* Remarks Modal */}
-      {isRemarksModalOpen && (
+      {/* Add Remark Modal */}
+      {isAddRemarkOpen && selectedRequest && (
+        <AddRemarkModal
+          isOpen={isAddRemarkOpen}
+          onClose={() => {
+            setIsAddRemarkOpen(false);
+            setSelectedRequest(null);
+          }}
+          requestId={selectedRequest.request_id}
+          userId={user_id}
+          status={selectedRequest.status}
+        />
+      )}
+
+      {/* History Modal */}
+      {isHistoryOpen && selectedRequest && (
         <RemarksModal
-          onClose={() => setIsRemarksModalOpen(false)}
-          data={selectedRowForRemarks}
+          isOpen={isHistoryOpen}
+          onClose={() => {
+            setIsHistoryOpen(false);
+            setSelectedRequest(null);
+          }}
+          requestID={selectedRequest.request_id}
         />
       )}
     </section>

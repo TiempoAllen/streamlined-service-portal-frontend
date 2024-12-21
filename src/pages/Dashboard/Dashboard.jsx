@@ -288,7 +288,7 @@ const Dashboard = () => {
               dataIndex="request_location"
               key="request_location"
             />
-            <Column title="Reason" dataIndex="description" key="description" />
+            <Column title="Description" dataIndex="description" key="description" />
             <Column
               title="Status"
               dataIndex="status"

@@ -56,6 +56,32 @@ const DropdownPortal = ({  }) => {
   }, [profile?.user_id]);
 
   useEffect(() => {
+    if (profile?.user_id) {
+      fetchProfilePicture();
+    }
+  }, [profile?.user_id]);
+
+  const fetchProfilePicture = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/user/${profile.user_id}/profile-picture`, {
+        responseType: "blob",
+      });
+
+      if (response.data) {
+        const imageUrl = URL.createObjectURL(response.data);
+        setProfilePicture(imageUrl); // Set the fetched profile picture
+      } else {
+        console.warn("No profile picture available. Using fallback.");
+        setProfilePicture(profileImg); // Use fallback
+      }
+    } catch (error) {
+      console.error("Error fetching profile picture:", error);
+      setProfilePicture(profileImg); // Use fallback
+    }
+  };
+
+
+  useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
