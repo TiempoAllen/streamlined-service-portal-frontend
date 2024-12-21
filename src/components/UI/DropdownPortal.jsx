@@ -28,12 +28,7 @@ const DropdownPortal = ({  }) => {
     }
   };
 
-  useEffect(() => {
-    if (profile?.user_id) {
-      fetchProfilePicture();
-    }
-  }, [profile?.user_id]);
-
+  // Fetch the profile picture dynamically
   const fetchProfilePicture = async () => {
     try {
       const response = await axios.get(`${API_URL}/user/${profile.user_id}/profile-picture`, {
@@ -52,6 +47,21 @@ const DropdownPortal = ({  }) => {
       setProfilePicture(profileImg); // Use fallback
     }
   };
+
+  // Update profile picture on mount or when `profile.user_id` changes
+  useEffect(() => {
+    if (profile?.user_id) {
+      fetchProfilePicture();
+    }
+  }, [profile?.user_id]);
+
+  useEffect(() => {
+    if (profile?.user_id) {
+      fetchProfilePicture();
+    }
+  }, [profile?.user_id]);
+
+  
 
 
   useEffect(() => {
