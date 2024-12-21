@@ -67,7 +67,7 @@ const Record = () => {
       title: "Date Requested",
       dataIndex: "DateRequested",
       key: "DateRequested",
-      width: "20%",
+       width: "20%",
       filters: [
         { text: "Today", value: "today" },
         { text: "This Week", value: "week" },

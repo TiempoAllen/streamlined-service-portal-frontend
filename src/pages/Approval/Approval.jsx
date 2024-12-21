@@ -64,14 +64,13 @@ const Approval = () => {
           .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
           .filter((request) => request.status === "Pending")
       );
-  
+
       // Add a 1-second delay before stopping the loader
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
     }
   }, [initialRequests]);
-
 
   const handleAssignTechnicianToRequest = async (
     request_id,
@@ -296,7 +295,6 @@ const Approval = () => {
       });
     }
   };
-
 
   const markRequestAsOpened = async (request_id) => {
     console.log("Mark request as viewed triggered for request ID:", request_id);
@@ -524,7 +522,7 @@ const Approval = () => {
       <div
         className="ag-theme-quartz"
         style={{
-          height: rowData && rowData.length > 0 ? '100%' : '500px',  // Set height to 100% if data exists, or 300px if no data
+          height: rowData && rowData.length > 0 ? "100%" : "500px", // Set height to 100% if data exists, or 300px if no data
           width: "100%",
           marginTop: "1rem",
           zIndex: 0,

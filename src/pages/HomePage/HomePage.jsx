@@ -13,7 +13,7 @@ import RequestDetailsPortal from "../../components/UI/RequestDetailsPortal";
 import axios from "axios";
 import { Table, Tag, Modal, Button, Spin, Input } from "antd";
 
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined } from "@ant-design/icons";
 import RemarksModal from "../../components/UI/RemarksModal";
 import AddRemarkModal from "../../components/UI/AddRemarkModal";
 import moment from "moment";
@@ -332,11 +332,13 @@ const HomePage = () => {
             </div>
             <div
               className={`${themeClass} ${classes.grid}`}
-              style={{ height: rowData && rowData.length > 0 ? '100%' : '500px',  // Set height to 100% if data exists, or 300px if no data
+              style={{
+                height: rowData && rowData.length > 0 ? "100%" : "500px", // Set height to 100% if data exists, or 300px if no data
                 width: "100%",
                 marginTop: "1rem",
                 zIndex: 0,
-                overflow: "auto",}}
+                overflow: "auto",
+              }}
             >
             <Table
               dataSource={transformedRequests}

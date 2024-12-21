@@ -10,7 +10,7 @@ import profileImg from "../../assets/profile-image.svg"; // Default fallback ima
 import { NavLink, Form } from "react-router-dom";
 import axios from "axios";
 
-const API_URL = "http://localhost:8080"; // Replace with your actual API URL
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080"; // Replace with your actual API URL
 
 const DropdownPortal = ({  }) => {
   const [showProfile, setShowProfile] = useState(false);
@@ -93,3 +93,4 @@ const DropdownPortal = ({  }) => {
 };
 
 export default DropdownPortal;
+
